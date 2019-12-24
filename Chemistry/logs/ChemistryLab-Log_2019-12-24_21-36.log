@@ -1,0 +1,34 @@
+[21:36:01.264/INFO][Render Manager]Initializing OpenGL...
+[21:36:01.546/INFO][Initialize Manager]Start load resources.
+[21:36:01.547/INFO][Initialize Manager]Loading textures...
+[21:36:08.244/INFO][Texture Loader]Loading fonts...
+[21:36:10.303/INFO][Texture Loader]Successfully loaded fonts.Used 2059 milliseconds.
+[21:36:10.305/FATAL][Main Looper]Program Crashed!
+java.lang.RuntimeException
+	at com.chemistrylab.init.TextureLoader.loadTexture(TextureLoader.java:82)
+	at com.chemistrylab.init.InitLoader.init(InitLoader.java:30)
+	at com.chemistrylab.ChemistryLab.main(ChemistryLab.java:69)
+[21:36:18.991/INFO][Main Looper]Stopping!
+[21:36:18.991/INFO][Main Looper]Releasing resources.
+[21:36:19.080/INFO][Main Looper]Game stopped.Releasing resources used 89 milliseconds.
+[21:36:35.519/INFO][Main Looper]Chemistry Lab v1.0_INDEV
+[21:36:35.520/INFO][Main Looper]Made by Nickid2018.Address https://github.com/Nickid2018/
+[21:36:35.520/INFO][Main Looper]LWJGL Version:2.9.3
+[21:36:35.545/INFO][Render Manager]Creating window...
+[21:36:36.105/INFO][Render Manager]Initializing OpenGL...
+[21:36:36.112/INFO][Initialize Manager]Start load resources.
+[21:36:36.113/INFO][Initialize Manager]Loading textures...
+[21:36:36.689/INFO][Texture Loader]Loading fonts...
+[21:36:38.590/INFO][Texture Loader]Successfully loaded fonts.Used 1901 milliseconds.
+[21:36:38.590/INFO][Texture Loader]Loading GUI Textures...
+[21:36:38.630/INFO][Texture Loader]Successfully loaded UI Textures.Used 40 milliseconds.
+[21:36:38.631/INFO][Initialize Manager]Loading Chemicals...
+[21:36:38.749/INFO][Chemical Loader]Successfully loaded all chemicals.
+[21:36:38.752/INFO][Initialize Manager]Loading I18N settings...
+[21:36:38.754/INFO][Internationalization Manager]Successfully loaded Language zh_CN.
+[21:36:38.825/INFO][Initialize Manager]Program Load Over.
+[21:36:38.916/INFO][Ticker]Ticker initialized.
+[21:36:43.138/INFO][Internationalization Manager]Successfully loaded Language en_us.
+[21:36:45.107/INFO][Main Looper]Cleared Log.
+[21:36:47.935/INFO][Internationalization Manager]Successfully loaded Language zh_cn.
+[21:36:52.998/INFO][Main Looper]Debug Mode:on

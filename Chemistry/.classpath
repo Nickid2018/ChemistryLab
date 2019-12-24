@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="D:/cj/Ext/log4j-1.2.17.jar" sourcepath="D:/cj/Ext/log4j-1.2.17.zip"/>
+	<classpathentry kind="lib" path="D:/cj/LWJGL/slick-util-lib/slick.jar" sourcepath="D:/cj/LWJGL/slick-util-lib/slick.zip"/>
+	<classpathentry kind="lib" path="D:/cj/Ext/sigar.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/D:/cj/Ext/hyperic-sigar-1.6.4.zip!/hyperic-sigar-1.6.4/docs/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/cj/Ext/fastjson-1.2.58.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/D:/cj/Ext/fastjson-1.2.58-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="D:/cj/Ext/commons-codec-1.13.jar" sourcepath="D:/cj/Ext/commons-codec-1.13-src.zip"/>
+	<classpathentry kind="lib" path="D:/cj/Ext/commons-io-2.6.jar" sourcepath="D:/cj/Ext/commons-io-2.6-src.zip"/>
+	<classpathentry kind="lib" path="D:/cj/LWJGL/lwjgl-2.9.3/jar/lwjgl.jar" sourcepath="D:/cj/Ext/lwjgl-source-2.9.3.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

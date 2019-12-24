@@ -1,0 +1,21 @@
+#Chemistry Lab Language File-For en_US
+
+program.null=Null
+program.cancel=Cancel
+
+#Side Bar Items
+sidebar.language.settings=Language
+sidebar.log.clear=Clear logs
+
+#Title
+window.title=Chemisty Lab
+
+#Operations
+dealing.log.clear=Clearing system log...
+i18n.change.lang=Changing Language
+i18n.change.title=Language...
+
+#Chemicals
+
+#Atoms
+chemicals.atoms.H=Hydrogen

@@ -1,0 +1,4 @@
+#Atoms
+atom/nonmetal=com.chemistrylab.chemicals.atoms.NonMentalAtom
+#Ions
+ion/H=com.chemistrylab.chemicals.ions.IonH

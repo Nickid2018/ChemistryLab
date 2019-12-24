@@ -1,0 +1,21 @@
+#Chemistry Lab Language File-For zh_CN
+
+program.null=空值
+program.cancel=取消
+
+#Side Bar Items
+sidebar.language.settings=语言设置
+sidebar.log.clear=清空日志
+
+#Title
+window.title=虚拟化学实验室
+i18n.change.lang=正在更改语言
+i18n.change.title=语言
+
+#Operations
+dealing.log.clear=正在清除日志...
+
+#Chemicals
+
+#Atoms
+chemicals.atoms.H=氢原子
