@@ -38,7 +38,7 @@ public class ChemistryLab {
 	public static void main(String[] args) {
 		Thread.currentThread().setName("Render Thread");
 		try {
-			
+			//Basic output
 			logger.info("Chemistry Lab v1.0_INDEV");
 			logger.info("Made by Nickid2018.Address https://github.com/Nickid2018/");
 			logger.info("LWJGL Version:"+Sys.getVersion());
@@ -63,6 +63,7 @@ public class ChemistryLab {
 
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			logger.info("OpenGL initialized.Version:" + GL11.glGetString(GL11.GL_VERSION));
 			
 			// Init program
 			InitLoader.logger.info("Start load resources.");
