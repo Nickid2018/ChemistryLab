@@ -47,27 +47,27 @@ public class CommonRender {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 
-	public static void drawFont(String s, float x, float f, int size, Color text) {
-		drawFont(s, x, f, size, text, false);
+	public static float drawFont(String s, float x, float f, int size, Color text) {
+		return drawFont(s, x, f, size, text, false);
 	}
 	
-	public static void drawFont(String s, float x, float next, int size, Color text, boolean withshade) {
-		drawFont(s, x, next, size, text, withshade, new Color(150, 150, 150, 75));
+	public static float drawFont(String s, float x, float next, int size, Color text, boolean withshade) {
+		return drawFont(s, x, next, size, text, withshade, new Color(150, 150, 150, 75));
 	}
 
-	public static void drawFont(String s, float x, float next, int size, Color text, boolean withshade, Color shade) {
+	public static float drawFont(String s, float x, float next, int size, Color text, boolean withshade, Color shade) {
 		float drawYS = winToOthHeight(size);
 		if(s.indexOf('\n') > -1){
 			String[] all = s.split("\n");
 			for(int i = 0; i < all.length; i++){
 				drawFont(all[i], x, next + i * drawYS, size, text, withshade, shade);
 			}
-			return;
+			return -1;
 		}
 		float drawXS = winToOthWidth(size);
 		if (!font_loaded) {
 			ChemistryLab.logger.error("Are you kidding me?I haven't load font!");
-			return;
+			return -1;
 		}
 		char[] all = s.toCharArray();
 		float lastx = x;
@@ -136,6 +136,44 @@ public class CommonRender {
 			}
 		}
 		glDisable(GL_TEXTURE_2D);
+		return lastx;
+	}
+	
+	public static float drawSpeFont(String s, float x, float next, int size, Color text) {
+		float drawYS = winToOthHeight(size) / 2;
+		float lastx = x;
+		char[] all = s.toCharArray();
+		boolean up = false, down = false;
+		int start = 0;
+		for(int i = 0; i < all.length; i++) {
+			char c = all[i];
+			if(c == '~') {
+				if(!down) {
+					up = !up;
+					if(up) {
+						lastx += drawFont(s.substring(start, i), lastx, next, size, text);
+						start = i + 1;
+					}else {
+						lastx += drawFont(s.substring(start, i), lastx, next, size / 2, text);
+						start = i + 1;
+					}
+				}
+			}
+			if(c == '\u00A7') {
+				if(!up) {
+					down = !down;
+					if(down) {
+						lastx += drawFont(s.substring(start, i), lastx, next, size, text);
+						start = i + 1;
+					}else {
+						lastx += drawFont(s.substring(start, i), lastx, next + drawYS, size / 2, text);
+						start = i + 1;
+					}
+				}
+			}
+		}
+		lastx += drawFont(s.substring(start, s.length()), lastx, next, size, text);
+		return lastx;
 	}
 
 	public static void drawRightFont(String s, float x, float y, float size, Color text, boolean withshade) {
