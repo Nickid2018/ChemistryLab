@@ -15,33 +15,36 @@ import com.chemistrylab.eventbus.*;
 
 public class ChemistryLab {
 
-	public static final Logger logger 						= 			Logger.getLogger("Main Looper");
-	public static final int WIDTH 								= 			1050;
-	public static final int HEIGHT 							= 			600;
-	public static final DisplayMode defaultMode 	= 			new DisplayMode(WIDTH, HEIGHT);
-	public static final DisplayMode fullScreen 			= 			Display.getDesktopDisplayMode();
-	public static final String DEFAULT_LOG_FILE		=			"logs";
-	
-	public static boolean f3 									=			false;
-	public static boolean f3_with_shift						=			false;
-	public static boolean f3_with_ctrl						=			false;
-	public static boolean f11 									= 			false;
-	public static int maxFPS										=			60;
-	
-	private static boolean f11ed 								= 			false;
-	
+	public static final Logger logger = Logger.getLogger("Main Looper");
+	public static final int WIDTH = 1050;
+	public static final int HEIGHT = 600;
+	public static final DisplayMode defaultMode = new DisplayMode(WIDTH, HEIGHT);
+	public static final DisplayMode fullScreen = Display.getDesktopDisplayMode();
+	public static final String DEFAULT_LOG_FILE = "logs";
+
+	public static boolean f3 = false;
+	public static boolean f3_with_shift = false;
+	public static boolean f3_with_ctrl = false;
+	public static boolean f11 = false;
+	public static int maxFPS = 60;
+
+	private static boolean f11ed = false;
+
 	private static DisplayMode storedDisplayMode;
 	private static long lastFPS;
 	private static int fps;
 	private static int printFPS;
 
+	// Status
+	private static boolean i18n_reload = false;
+
 	public static void main(String[] args) {
 		Thread.currentThread().setName("Render Thread");
 		try {
-			//Basic output
+			// Basic output
 			logger.info("Chemistry Lab v1.0_INDEV");
 			logger.info("Made by Nickid2018.Address https://github.com/Nickid2018/");
-			logger.info("LWJGL Version:"+Sys.getVersion());
+			logger.info("LWJGL Version:" + Sys.getVersion());
 
 			// Initialize basic settings
 			Sigar.load();
@@ -64,7 +67,7 @@ public class ChemistryLab {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			logger.info("OpenGL initialized.Version:" + GL11.glGetString(GL11.GL_VERSION));
-			
+
 			// Init program
 			InitLoader.logger.info("Start load resources.");
 			InitLoader.init();
@@ -76,15 +79,21 @@ public class ChemistryLab {
 			// Add background layer & expand handle
 			LayerRender.pushLayer(new Background());
 			LayerRender.pushLayer(new ExpandBar());
-			
-			//Ticker start
+
+			// Ticker start
 			Ticker.init();
 
 			// Main loop of program
 			while (!Display.isCloseRequested()) {
-				
+
+				// Status Changed
+				if (i18n_reload) {
+					i18n_reload = false;
+					Display.setTitle(I18N.getString("window.title"));
+				}
+
 				checkResize();
-				
+
 				// Input
 				pollInput();
 
@@ -99,15 +108,15 @@ public class ChemistryLab {
 			}
 		} catch (Throwable e) {
 			logger.fatal("Program Crashed!", e);
-			
+
 			String crash = "crash-report_" + System.currentTimeMillis() / 1000 + ".csh.log";
 			String stack = asStack(e);
-			
+
 			while (!Display.isCloseRequested()) {
-				
+
 				checkResize();
 				clearFace();
-				
+
 				while (Keyboard.next()) {
 					if (Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_F11)) {
 						f11 = !f11;
@@ -131,12 +140,15 @@ public class ChemistryLab {
 					}
 				}
 
-				CommonRender.drawFont("Program Crashed!", WIDTH/2-CommonRender.winToOthWidth(16 * 7), 20, 32, Color.red);
-				CommonRender.drawFont("The crash report has been saved in " + crash, 20, 40 + CommonRender.winToOthHeight(32), 16, Color.black);
-				CommonRender.drawItaticFont("Please report this crash report to https://github.com/Nickid2018/", 20, (int) (40 + CommonRender.winToOthHeight(48)), 16, Color.blue, .32f);
+				CommonRender.drawFont("Program Crashed!", WIDTH / 2 - CommonRender.winToOthWidth(16 * 7), 20, 32,
+						Color.red);
+				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
+						40 + CommonRender.winToOthHeight(32), 16, Color.black);
+				CommonRender.drawItaticFont("Please report this crash report to https://github.com/Nickid2018/", 20,
+						(int) (40 + CommonRender.winToOthHeight(48)), 16, Color.blue, .32f);
 				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(64), 16, Color.red);
 				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(80), 16, Color.yellow.darker(0.3f));
-				
+
 				// Update Window
 				Display.update();
 				Display.sync(maxFPS);
@@ -170,7 +182,7 @@ public class ChemistryLab {
 			fps = 0; // reset the FPS counter
 			lastFPS += 1000; // add one second
 		}
-		if(fps%12==0)
+		if (fps % 12 == 0)
 			DebugSystem.addMemInfo(CommonRender.RUNTIME.totalMemory() - CommonRender.RUNTIME.freeMemory());
 		fps++;
 	}
@@ -185,47 +197,48 @@ public class ChemistryLab {
 	public static void clearFace() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
-	
-	public static void flush(){
+
+	public static void flush() {
 		checkResize();
 		pollInput();
 		checkGLError();
 		checkClose();
 	}
-	
-	public static void checkGLError(){
-		int ret=GL11.glGetError();
-		if(ret!=GL11.GL_NO_ERROR){
-			String error="";
+
+	public static void checkGLError() {
+		int ret = GL11.glGetError();
+		if (ret != GL11.GL_NO_ERROR) {
+			String error = "";
 			switch (ret) {
 			case GL11.GL_INVALID_ENUM:
-				error="Invalid enum("+ret+")";
+				error = "Invalid enum(" + ret + ")";
 				break;
 			case GL11.GL_INVALID_OPERATION:
-				error="Invalid operation("+ret+")";
+				error = "Invalid operation(" + ret + ")";
 				break;
 			case GL11.GL_INVALID_VALUE:
-				error="Invalid value("+ret+")";
+				error = "Invalid value(" + ret + ")";
 				break;
 			case GL11.GL_STACK_OVERFLOW:
-				error="Stack overflow("+ret+")";
+				error = "Stack overflow(" + ret + ")";
 				break;
 			case GL11.GL_STACK_UNDERFLOW:
-				error="Stack underflow("+ret+")";
+				error = "Stack underflow(" + ret + ")";
 				break;
 			case GL11.GL_OUT_OF_MEMORY:
-				error="Out of memory("+ret+")";
+				error = "Out of memory(" + ret + ")";
 				break;
 			}
-			LayerRender.logger.error("#GL ERROR#"+error);
+			LayerRender.logger.error("#GL ERROR#" + error);
 		}
 	}
 
-	public static void checkClose(){
-		if(Display.isCloseRequested())release();
+	public static void checkClose() {
+		if (Display.isCloseRequested())
+			release();
 	}
-	
-	public static void checkResize(){
+
+	public static void checkResize() {
 		if (Display.wasResized() || f11ed) {
 			f11ed = false;
 			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -267,8 +280,8 @@ public class ChemistryLab {
 			LayerRender.postKey();
 		}
 	}
-	
-	public static void release(){
+
+	public static void release() {
 		logger.info("Stopping!");
 		long tt = getTime();
 		logger.info("Releasing resources.");
@@ -278,30 +291,32 @@ public class ChemistryLab {
 		logger.info("Game stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");
 		System.exit(0);
 	}
-	
-	private static long clearingLogTime=getTime();
-	public static void clearLog(){
-		if(getTime()-clearingLogTime<1000)return;
-		LayerRender.pushLayer(new PleaseWaitLayer(I18N.getString("dealing.log.clear"), ()->{
-			File dir=new File(DEFAULT_LOG_FILE);
-			File[] todels=dir.listFiles((FilenameFilter) (dir1, name) -> !name.equals("ChemistryLab-Log"));
-			for(File del:todels){
+
+	private static long clearingLogTime = getTime();
+
+	public static void clearLog() {
+		if (getTime() - clearingLogTime < 1000)
+			return;
+		LayerRender.pushLayer(new PleaseWaitLayer(I18N.getString("dealing.log.clear"), () -> {
+			File dir = new File(DEFAULT_LOG_FILE);
+			File[] todels = dir.listFiles((FilenameFilter) (dir1, name) -> !name.equals("ChemistryLab-Log"));
+			for (File del : todels) {
 				del.delete();
 			}
-			clearingLogTime=getTime();
+			clearingLogTime = getTime();
 			logger.info("Cleared Log.");
 		}).start());
 	}
-	
-	public static String asStack(Throwable e){
-		StringBuilder sb=new StringBuilder(e+"\n");
+
+	public static String asStack(Throwable e) {
+		StringBuilder sb = new StringBuilder(e + "\n");
 		StackTraceElement[] sks = e.getStackTrace();
 		for (StackTraceElement ste : sks) {
-			sb.append("\tat " + ste+"\n");
+			sb.append("\tat " + ste + "\n");
 		}
 		Throwable t = e;
 		while ((t = t.getCause()) != null) {
-			sb.append("Caused by:" + t+"\n");
+			sb.append("Caused by:" + t + "\n");
 			StackTraceElement[] sks0 = t.getStackTrace();
 			int i = 0;
 			for (StackTraceElement ste : sks0) {
@@ -314,13 +329,13 @@ public class ChemistryLab {
 					sb.append("\t... " + (sks0.length - i) + " more\n");
 					break;
 				}
-				sb.append("\tat " + ste+"\n");
+				sb.append("\tat " + ste + "\n");
 				i++;
 			}
 		}
 		Throwable[] ss = e.getSuppressed();
 		for (Throwable s : ss) {
-			sb.append("Suppressed:" + s+"\n");
+			sb.append("Suppressed:" + s + "\n");
 			StackTraceElement[] sks0 = s.getStackTrace();
 			int i = 0;
 			for (StackTraceElement ste : sks0) {
@@ -333,13 +348,17 @@ public class ChemistryLab {
 					sb.append("\t... " + (sks0.length - i) + " more\n");
 					break;
 				}
-				sb.append("\tat " + ste+"\n");
+				sb.append("\tat " + ste + "\n");
 			}
 		}
-		return sb.deleteCharAt(sb.length()-1).toString();
+		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
 
 	static {
 		PropertyConfigurator.configure(ChemistryLab.class.getResource("/assets/log4j.properties"));
+		EventBus.registerListener((e) -> {
+			if (e.equals(I18N.I18N_RELOADED))
+				i18n_reload = true;
+		});
 	}
 }
