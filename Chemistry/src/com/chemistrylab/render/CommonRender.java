@@ -411,6 +411,48 @@ public class CommonRender {
 	public static float othToWinHeight(float oth){
 		return oth*Display.getHeight()/ChemistryLab.HEIGHT;
 	}
+	
+	public static float calcTextWidth(String text, int size) {
+		float drawXS = winToOthWidth(size);
+		char[] all = text.toCharArray();
+		float lastx = 0;
+		for (char c : all) {
+			if (c < 0x0600 && !Character.isSpaceChar(c) && !Character.isISOControl(c)) {
+				lastx += drawXS / 2;
+			} else if (Character.isSpaceChar(c)) {
+				lastx += drawXS / 2;
+			} else if (c == '\t'){
+				lastx += drawXS * 2;
+			}else {
+				lastx += drawXS;
+			}
+		}
+		return lastx;
+	}
+	
+	public static String subTextWidth(String text, int size, float limit) {
+		float drawXS = winToOthWidth(size);
+		char[] all = text.toCharArray();
+		float lastx = 0;
+		int end = text.length();
+		for (int i = 0; i < all.length; i++) {
+			char c = all[i];
+			if (c < 0x0600 && !Character.isSpaceChar(c) && !Character.isISOControl(c)) {
+				lastx += drawXS / 2;
+			} else if (Character.isSpaceChar(c)) {
+				lastx += drawXS / 2;
+			} else if (c == '\t'){
+				lastx += drawXS * 2;
+			}else {
+				lastx += drawXS;
+			}
+			if(lastx >= limit) {
+				end = i;
+				break;
+			}
+		}
+		return text.substring(0, end);
+	}
 
 	public static void showMemoryUsed() {
 		long used = RUNTIME.totalMemory() - RUNTIME.freeMemory();
