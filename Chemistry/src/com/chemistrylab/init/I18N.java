@@ -3,10 +3,13 @@ package com.chemistrylab.init;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
+import com.chemistrylab.eventbus.*;
 
 public class I18N {
 	
 	public static final Logger logger = Logger.getLogger("Internationalization Manager");
+	public static final Event I18N_RELOADED = Event.createNewEvent();
+	
 	private static final Locale SYSTEM_DEFAULT=Locale.getDefault();
 	private static final Properties langStrings=new Properties();
 	private static final Properties langNameStrings=new Properties();
