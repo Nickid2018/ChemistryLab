@@ -1,21 +1,3 @@
-[13:10:05.276/INFO][Main Looper]Chemistry Lab v1.0_INDEV
-[13:10:05.279/INFO][Main Looper]Made by Nickid2018.Address https://github.com/Nickid2018/
-[13:10:05.279/INFO][Main Looper]LWJGL Version:2.9.3
-[13:10:05.308/INFO][Render Manager]Creating window...
-[13:10:05.682/INFO][Render Manager]Initializing OpenGL...
-[13:10:05.682/INFO][Main Looper]OpenGL initialized.Version:3.1.0 - Build 9.17.10.4229
-[13:10:05.691/INFO][Initialize Manager]Start load resources.
-[13:10:05.693/INFO][Initialize Manager]Loading textures...
-[13:10:06.237/INFO][Texture Loader]Loading fonts...
-[13:10:07.012/INFO][Texture Loader]Successfully loaded fonts.Used 775 milliseconds.
-[13:10:07.013/INFO][Texture Loader]Loading GUI Textures...
-[13:10:07.044/INFO][Texture Loader]Successfully loaded UI Textures.Used 30 milliseconds.
-[13:10:07.044/INFO][Initialize Manager]Loading Chemicals...
-[13:10:07.055/INFO][Chemical Loader]Successfully loaded all chemicals.
-[13:10:07.058/INFO][Initialize Manager]Loading I18N settings...
-[13:10:07.059/INFO][Internationalization Manager]Successfully loaded Language zh_CN.
-[13:10:07.107/INFO][Initialize Manager]Program Load Over.
-[13:10:07.119/INFO][Ticker]Ticker initialized.
-[13:10:10.420/INFO][Main Looper]Stopping!
-[13:10:10.420/INFO][Main Looper]Releasing resources.
-[13:10:10.479/INFO][Main Looper]Game stopped.Releasing resources used 59 milliseconds.
+[12:39:20.746/INFO][Main Looper]Stopping!
+[12:39:20.750/INFO][Main Looper]Releasing resources.
+[12:39:20.817/INFO][Main Looper]Game stopped.Releasing resources used 63 milliseconds.

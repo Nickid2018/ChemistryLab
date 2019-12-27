@@ -151,10 +151,10 @@ public class CommonRender {
 				if(!down) {
 					up = !up;
 					if(up) {
-						lastx += drawFont(s.substring(start, i), lastx, next, size, text);
+						lastx = drawFont(s.substring(start, i), lastx, next, size, text);
 						start = i + 1;
 					}else {
-						lastx += drawFont(s.substring(start, i), lastx, next, size / 2, text);
+						lastx = drawFont(s.substring(start, i), lastx, next, size / 2, text);
 						start = i + 1;
 					}
 				}
@@ -163,16 +163,16 @@ public class CommonRender {
 				if(!up) {
 					down = !down;
 					if(down) {
-						lastx += drawFont(s.substring(start, i), lastx, next, size, text);
+						lastx = drawFont(s.substring(start, i), lastx, next, size, text);
 						start = i + 1;
 					}else {
-						lastx += drawFont(s.substring(start, i), lastx, next + drawYS, size / 2, text);
+						lastx = drawFont(s.substring(start, i), lastx, next + drawYS, size / 2, text);
 						start = i + 1;
 					}
 				}
 			}
 		}
-		lastx += drawFont(s.substring(start, s.length()), lastx, next, size, text);
+		lastx = drawFont(s.substring(start, s.length()), lastx, next, size, text);
 		return lastx;
 	}
 
