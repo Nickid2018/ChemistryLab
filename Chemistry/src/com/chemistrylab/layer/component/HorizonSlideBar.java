@@ -1,58 +1,114 @@
 package com.chemistrylab.layer.component;
 
 import java.util.*;
-import com.chemistrylab.*;
+import org.newdawn.slick.*;
+import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
-import org.newdawn.slick.opengl.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class HorizonSlideBar extends Component {
-	
-	private static final Texture bar=ChemistryLab.getTextures().get("texture.slidebar.hori");
-	private final ArrayList<Slidable> cons;
+
 	private final int honzsize;
 	private final int barheight;
-	//Warning:This is a percent.
+	private ArrayList<Slidable> cons;
+	// Warning:This is a percent.
 	private float postion;
+	private Range slibar = new Range();
+	private Color barcolor = Color.darkGray;
 
-	public HorizonSlideBar(int x0, int y0, int x1, int y1, Layer l,ArrayList<Slidable> cons,int honzsize,int barheight) {
+	public HorizonSlideBar(int x0, int y0, int x1, int y1, Layer l, ArrayList<Slidable> cons, int honzsize,
+			int barheight) {
 		super(x0, y0, x1, y1, l);
-		this.cons=cons;
-		this.honzsize=honzsize;
-		this.barheight=barheight;
+		this.cons = cons;
+		this.honzsize = honzsize;
+		this.barheight = barheight;
+		slibar.x0 = x0;
+		slibar.x1 = x1;
+		slibar.y0 = y1 - barheight;
+		slibar.y1 = y1;
 	}
-	
+
 	@Override
 	public void debugRender() {
-		super.debugRender();
-		for(Slidable c:cons){
-			c.debugRender();
+		float mysize = range.x1 - range.x0;
+		float shouldDraw = cons.size() * honzsize;
+		if (shouldDraw > mysize) {
+			float percent = mysize / shouldDraw;
+			if (percent > 1)
+				percent = 0;
+			float barlength = (percent == 0 ? 1 : percent) * mysize;
+			float drawup = (mysize - barlength) * postion + range.x0;
+			float drawdown = (mysize - barlength) * postion + barlength + range.x0;
+			slibar.x0 = (int) drawup;
+			slibar.x1 = (int) drawdown;
+			// Bar
+			barcolor.bind();
+			glBegin(GL_QUADS);
+				glVertex2f(drawup, range.y1 - barheight);
+				glVertex2f(drawdown, range.y1 - barheight);
+				glVertex2f(drawdown, range.y1);
+				glVertex2f(drawup, range.y1);
+			glEnd();
+			// Inside
+			int canDraws = MathHelper.fastFloor(mysize / honzsize);
+			int firstnear = MathHelper.fastFloor(postion * cons.size());
+			int first = firstnear - 1;
+			for (int i = first < 0 ? 0 : first, count = 0; i < cons.size() && i < firstnear + canDraws; i++, count++) {
+				Slidable s = cons.get(i);
+				s.setNowPositon(MathHelper.fastFloor(mysize * count / canDraws + range.x0),
+						MathHelper.fastFloor(mysize * count / canDraws + range.x0 + honzsize), range.y0, range.y1);
+				s.debugRender();
+			}
+		} else {
+			for (int i = 0; i < cons.size() && i < cons.size(); i++) {
+				Slidable s = cons.get(i);
+				s.setNowPositon(MathHelper.fastFloor(i * honzsize + range.x0),
+						MathHelper.fastFloor(i * honzsize + range.x0 + honzsize), range.y0, range.y1);
+				s.debugRender();
+			}
 		}
 	}
 
 	@Override
 	public void render() {
-		float shouldDraw=cons.size()*honzsize;
-		float percent=(range.x1-range.x0)/shouldDraw;
-		float barlength=percent*(range.x1-range.x0);
-		float drawleft=(range.x1-range.x0-barlength)*postion-barlength/2;
-		float drawright=(range.x1-range.x0-barlength)*postion+barlength/2;
-		//Bar
-		glEnable(GL_TEXTURE_2D);
-		bar.bind();
-		glBegin(GL_QUADS);
-			glTexCoord2f(0, 0);
-			glVertex2f(drawleft, range.y0-barheight);
-			glTexCoord2f(1, 0);
-			glVertex2f(drawright, range.y1-barheight);
-			glTexCoord2f(1, 0.125f);
-			glVertex2f(drawright, range.y1);
-			glTexCoord2f(0, 0.125f);
-			glVertex2f(drawleft, range.y0);
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
-		//Inside
+		float mysize = range.x1 - range.x0;
+		float shouldDraw = cons.size() * honzsize;
+		if (shouldDraw > mysize) {
+			float percent = mysize / shouldDraw;
+			if (percent > 1)
+				percent = 0;
+			float barlength = (percent == 0 ? 1 : percent) * mysize;
+			float drawup = (mysize - barlength) * postion + range.x0;
+			float drawdown = (mysize - barlength) * postion + barlength + range.x0;
+			slibar.x0 = (int) drawup;
+			slibar.x1 = (int) drawdown;
+			// Bar
+			barcolor.bind();
+			glBegin(GL_QUADS);
+				glVertex2f(drawup, range.y1 - barheight);
+				glVertex2f(drawdown, range.y1 - barheight);
+				glVertex2f(drawdown, range.y1);
+				glVertex2f(drawup, range.y1);
+			glEnd();
+			// Inside
+			int canDraws = MathHelper.fastFloor(mysize / honzsize);
+			int firstnear = MathHelper.fastFloor(postion * cons.size());
+			int first = firstnear - 1;
+			for (int i = first < 0 ? 0 : first, count = 0; i < cons.size() && i < firstnear + canDraws; i++, count++) {
+				Slidable s = cons.get(i);
+				s.setNowPositon(MathHelper.fastFloor(mysize * count / canDraws + range.x0),
+						MathHelper.fastFloor(mysize * count / canDraws + range.x0 + honzsize), range.y0, range.y1);
+				s.render();
+			}
+		} else {
+			for (int i = 0; i < cons.size() && i < cons.size(); i++) {
+				Slidable s = cons.get(i);
+				s.setNowPositon(MathHelper.fastFloor(i * honzsize + range.x0),
+						MathHelper.fastFloor(i * honzsize + range.x0 + honzsize), range.y0, range.y1);
+				s.render();
+			}
+		}
 	}
 
 	public int getHorizonSize() {
@@ -63,7 +119,27 @@ public class HorizonSlideBar extends Component {
 		return cons;
 	}
 
+	public void setComponent(ArrayList<Slidable> cons) {
+		this.cons = cons;
+	}
+
 	public int getBarHeight() {
 		return barheight;
+	}
+	
+	public Color getBarcolor() {
+		return barcolor;
+	}
+
+	public void setBarcolor(Color barcolor) {
+		this.barcolor = barcolor;
+	}
+
+	public float getPostion() {
+		return postion;
+	}
+
+	public void setPostion(float postion) {
+		this.postion = postion;
 	}
 }
