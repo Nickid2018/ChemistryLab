@@ -4,6 +4,7 @@ import java.io.*;
 import org.lwjgl.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.*;
 import org.hyperic.sigar.*;
 import org.newdawn.slick.*;
@@ -111,6 +112,23 @@ public class ChemistryLab {
 
 			String crash = "crash-report_" + System.currentTimeMillis() / 1000 + ".csh.log";
 			String stack = asStack(e);
+			
+			//Write crash log
+			
+			File crashrep = new File("crash-reports/" + crash);
+			crash = crashrep.getAbsolutePath();
+			FileWriter w;
+			try {
+				crashrep.createNewFile();
+				w = new FileWriter(crashrep);
+				IOUtils.write("Program had crashed.This report is the detail of this error.\r\n"
+						+ "=== S T A C K T R A C E ===\r\n", w);
+				IOUtils.write(stack + "\r\n", w);
+				w.close();
+			} catch (IOException e2) {
+				logger.error("Write crash-report error.", e2);
+			}
+			
 
 			while (!Display.isCloseRequested()) {
 
