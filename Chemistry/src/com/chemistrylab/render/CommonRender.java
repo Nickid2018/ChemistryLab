@@ -64,6 +64,8 @@ public class CommonRender {
 			}
 			return -1;
 		}
+		//Replaced \r
+		s = s.replaceAll("\r", "");
 		float drawXS = winToOthWidth(size);
 		if (!font_loaded) {
 			ChemistryLab.logger.error("Are you kidding me?I haven't load font!");

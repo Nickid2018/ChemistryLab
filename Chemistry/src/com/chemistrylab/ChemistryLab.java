@@ -1,15 +1,16 @@
 package com.chemistrylab;
 
 import java.io.*;
+import java.util.*;
 import org.lwjgl.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.*;
 import org.hyperic.sigar.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
+import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.textures.*;
 import com.chemistrylab.eventbus.*;
@@ -108,9 +109,12 @@ public class ChemistryLab {
 				Display.sync(maxFPS);
 			}
 		} catch (Throwable e) {
-			logger.fatal("Program Crashed!", e);
+			logger.fatal("qwq, this program crashed!", e);
 
-			String crash = "crash-report_" + System.currentTimeMillis() / 1000 + ".csh.log";
+			Date date = new Date();
+			
+			String crash = "crash-report_" + String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".csh.log";
+			String l = System.getProperty("line.separator");
 			String stack = asStack(e);
 			
 			//Write crash log
@@ -121,9 +125,16 @@ public class ChemistryLab {
 			try {
 				crashrep.createNewFile();
 				w = new FileWriter(crashrep);
-				IOUtils.write("Program had crashed.This report is the detail of this error.\r\n"
-						+ "=== S T A C K T R A C E ===\r\n", w);
-				IOUtils.write(stack + "\r\n", w);
+				IOUtils.write("Program had crashed.This report is the detail of this error." + l, w);
+				IOUtils.write("Time " + String.format("%tc", date) + l, w);
+				IOUtils.write("=== S T A C K T R A C E ===" + l, w);
+				IOUtils.write(stack + l, w);
+				IOUtils.write("=== S Y S T E M ===" + l, w);
+				IOUtils.write("Operating System:" + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch") + l, w);
+				IOUtils.write("Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l, w);
+				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
+				IOUtils.write("LWJGL Version:" + Sys.getVersion() + l, w);
+				IOUtils.write("OpenGL Version:" + GL11.glGetString(GL11.GL_VERSION) + l, w);
 				w.close();
 			} catch (IOException e2) {
 				logger.error("Write crash-report error.", e2);
@@ -327,14 +338,15 @@ public class ChemistryLab {
 	}
 
 	public static String asStack(Throwable e) {
-		StringBuilder sb = new StringBuilder(e + "\n");
+		String l = System.getProperty("line.separator");
+		StringBuilder sb = new StringBuilder(e + l);
 		StackTraceElement[] sks = e.getStackTrace();
 		for (StackTraceElement ste : sks) {
-			sb.append("\tat " + ste + "\n");
+			sb.append("\tat " + ste + l);
 		}
 		Throwable t = e;
 		while ((t = t.getCause()) != null) {
-			sb.append("Caused by:" + t + "\n");
+			sb.append("Caused by:" + t + l);
 			StackTraceElement[] sks0 = t.getStackTrace();
 			int i = 0;
 			for (StackTraceElement ste : sks0) {
@@ -344,16 +356,16 @@ public class ChemistryLab {
 				} catch (Exception e2) {
 				}
 				if (ste.equals(ate)) {
-					sb.append("\t... " + (sks0.length - i) + " more\n");
+					sb.append("\t... " + (sks0.length - i) + " more" + l);
 					break;
 				}
-				sb.append("\tat " + ste + "\n");
+				sb.append("\tat " + ste + l);
 				i++;
 			}
 		}
 		Throwable[] ss = e.getSuppressed();
 		for (Throwable s : ss) {
-			sb.append("Suppressed:" + s + "\n");
+			sb.append("Suppressed:" + s + l);
 			StackTraceElement[] sks0 = s.getStackTrace();
 			int i = 0;
 			for (StackTraceElement ste : sks0) {
@@ -363,10 +375,10 @@ public class ChemistryLab {
 				} catch (Exception e2) {
 				}
 				if (ste.equals(ate)) {
-					sb.append("\t... " + (sks0.length - i) + " more\n");
+					sb.append("\t... " + (sks0.length - i) + " more" + "l");
 					break;
 				}
-				sb.append("\tat " + ste + "\n");
+				sb.append("\tat " + ste + l);
 			}
 		}
 		return sb.deleteCharAt(sb.length() - 1).toString();
