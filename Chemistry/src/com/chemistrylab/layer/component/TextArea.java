@@ -15,7 +15,7 @@ public class TextArea extends Component {
 	private int ypostion = 0;
 	private Range slibarx = new Range();
 	private Range slibary = new Range();
-	private Color barcolor = Color.darkGray;;
+	private Color barcolor = Color.darkGray;
 	private int barheight;
 
 	public TextArea(int x0, int y0, int x1, int y1, Layer l) {
@@ -102,7 +102,7 @@ public class TextArea extends Component {
 				break;
 			}
 		}
-		//Horzion
+		//Horizon
 		float shouldDrawx = maxWidth * size;
 		if (shouldDrawx > honzsize) {
 			float percent = honzsize / shouldDrawx;
