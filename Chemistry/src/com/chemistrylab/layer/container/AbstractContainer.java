@@ -26,6 +26,11 @@ public abstract class AbstractContainer extends Layer{
 	}
 	
 	@Override
+	public void onMouseEvent() {
+		
+	}
+	
+	@Override
 	public final boolean useComponent() {
 		return false;
 	}
