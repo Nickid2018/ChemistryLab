@@ -6,4 +6,6 @@ public abstract class Chemical {
 
 	public Chemical(JSONObject o) {
 	}
+	
+	public abstract double getMess();
 }

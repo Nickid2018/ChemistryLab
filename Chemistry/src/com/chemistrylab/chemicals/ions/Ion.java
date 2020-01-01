@@ -9,4 +9,9 @@ public class Ion extends Chemical {
 		super(o);
 	}
 
+	@Override
+	public double getMess() {
+		return 0;
+	}
+
 }

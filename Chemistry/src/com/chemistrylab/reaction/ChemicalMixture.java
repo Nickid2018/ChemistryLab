@@ -35,13 +35,15 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	
 	@Override
 	public Unit put(ChemicalResource key, Unit value) {
-		Unit u = super.put(key, value);
-		if (!containsKey(key)) {
+		if (containsKey(key)) {
+			return replace(key, value.add(get(key)));
+		} else {
+			Unit u = super.put(key, value);
 			Event post = CHEMICAL_CHANGED.clone();
 			post.putExtra(CHEMICAL_ADDED, key);
 			EventBus.postEvent(post);
+			return u;
 		}
-		return u;
 	}
 
 	public ReactionController getController() {
