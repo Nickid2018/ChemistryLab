@@ -5,8 +5,8 @@ import java.util.*;
 import org.lwjgl.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
-import org.apache.log4j.*;
 import org.hyperic.sigar.*;
+import org.apache.log4j.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
@@ -23,6 +23,9 @@ public class ChemistryLab {
 	public static final DisplayMode defaultMode = new DisplayMode(WIDTH, HEIGHT);
 	public static final DisplayMode fullScreen = Display.getDesktopDisplayMode();
 	public static final String DEFAULT_LOG_FILE = "logs";
+
+	public static final Event DEBUG_ON = Event.createNewEvent();
+	public static final Event DEBUG_OFF = Event.createNewEvent();
 
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
@@ -77,6 +80,11 @@ public class ChemistryLab {
 					return;
 				f3 = !f3;
 				logger.info("Debug Mode:" + (f3 ? "on" : "off"));
+				if (f3) {
+					EventBus.postEvent(DEBUG_ON);
+				} else {
+					EventBus.postEvent(DEBUG_OFF);
+				}
 				f3_with_shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 				f3_with_ctrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
 			});
@@ -143,6 +151,7 @@ public class ChemistryLab {
 			}
 		} catch (Throwable e) {
 			logger.fatal("qwq, this program crashed!", e);
+			LayerRender.popLayers();
 
 			Date date = new Date();
 
