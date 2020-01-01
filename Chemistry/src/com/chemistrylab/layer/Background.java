@@ -2,15 +2,20 @@ package com.chemistrylab.layer;
 
 import java.util.*;
 import org.lwjgl.*;
+import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import com.chemistrylab.*;
+import com.chemistrylab.debug.CommandController;
+
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
-import com.chemistrylab.reaction.Environment;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
+import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
+import com.chemistrylab.layer.effect.*;
+import com.chemistrylab.layer.component.*;
 
 import static org.lwjgl.opengl.GL11.*;
 import static com.chemistrylab.ChemistryLab.*;
@@ -22,7 +27,7 @@ public class Background extends Layer {
 	public static final Texture table = ChemistryLab.getTextures().get("texture.background.table");
 
 	public Background() {
-		super(0, 0, 0, 0);
+		super(0, 0, WIDTH, HEIGHT);
 	}
 
 	private int count = 1;
@@ -66,6 +71,8 @@ public class Background extends Layer {
 			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", WIDTH, next * 5, 16, Color.white, true);
 			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", WIDTH, next * 6, 16, Color.white, true);
 			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", WIDTH, next * 7, 16, Color.white, true);
+			if(!last_ret.isEmpty())
+				CommonRender.drawRightFont(last_ret, WIDTH, next * 8, 16, last_failed ? Color.red : Color.yellow, true);
 			
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
@@ -113,5 +120,46 @@ public class Background extends Layer {
 				glEnd();
 			}
 		}
+	}
+	
+	@Override
+	public void debugRender() {
+		if (useComponent())
+			compoRender();
+		else
+			render();
+	}
+	
+	private boolean onCommand = false;
+	private String last_ret = "";
+	private boolean last_failed = false;
+	
+	@Override
+	public void onKeyActive() {
+		super.onKeyActive();
+		if(!onCommand&&Keyboard.isKeyDown(Keyboard.KEY_C)){
+			TextField f = new TextField(0,HEIGHT-16,WIDTH,HEIGHT,this,16);
+			f.addEffect(new BackgroundEffect(new Color(150,150,150,75)));
+			f.setEnterEvent(s -> {
+				comps.clear();
+				onCommand = false;
+				focus = null;
+				try {
+					last_ret = CommandController.runCommand(s);
+					last_failed = false;
+				} catch (Exception e) {
+					last_ret = "Last Command Failed:" + e.getMessage();
+					last_failed = true;
+				}
+			});
+			comps.add(f);
+			focus = f;
+			onCommand = true;
+		}
+	}
+	
+	@Override
+	public boolean useComponent() {
+		return onCommand;
 	}
 }
