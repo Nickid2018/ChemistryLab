@@ -1,12 +1,11 @@
 package com.chemistrylab.layer.component;
 
+import java.io.*;
 import java.awt.Toolkit;
 import org.lwjgl.input.*;
-import org.newdawn.slick.*;
 import com.chemistrylab.*;
+import org.newdawn.slick.*;
 import java.awt.datatransfer.*;
-import java.io.IOException;
-
 import com.chemistrylab.layer.*;
 import com.chemistrylab.render.*;
 
