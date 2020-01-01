@@ -2,6 +2,8 @@ package com.chemistrylab.reaction;
 
 import java.io.*;
 import java.util.*;
+import com.cj.jmcl.*;
+import com.chemistrylab.init.MathHelper;
 import com.chemistrylab.properties.*;
 
 public final class Environment {
@@ -12,15 +14,23 @@ public final class Environment {
 		Properties pro=new Properties();
 		InputStream is=Environment.class.getResourceAsStream("/assets/models/environment.properties");
 		pro.load(is);
+		JMCLRegister.registerVariable("T");
+		JMCLRegister.registerVariable("P");
 		settings=Property.getProperties(pro, (PropertyReader)name->{
 			switch (name) {
 			case "temperature":
 			case "pressure":
 				return new DoubleProperty();
+			case "gasmolv":
+				return new MathStatementProperty("T","P");
 			default:
 				throw new RuntimeException("Unrecognize tag for "+name);
 			}
 		});
+		MathStatementProperty p = (MathStatementProperty) settings.get("gasmolv");
+		p.setValue("T", getTemperature());
+		p.setValue("P", getPressure());
+		p.calc();
 	}
 	
 	public static final double getTemperature(){
@@ -29,6 +39,11 @@ public final class Environment {
 	
 	public static final double getPressure(){
 		return (double) settings.get("pressure").getValue();
+	}
+	
+	public static final double getGasMolV(){
+		MathStatementProperty p = (MathStatementProperty) settings.get("gasmolv");
+		return MathHelper.eplison(p.getValue());
 	}
 	
 	public static final void setTemperature(double t){
