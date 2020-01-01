@@ -17,5 +17,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/org/newdawn/slick.jar" sourcepath="D:/cj/LWJGL/slick-util-lib/slick.zip"/>
+	<classpathentry kind="lib" path="libs/com/cj/jmcl-1.0/jmcl-1.0.jar" sourcepath="/JMCL/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
