@@ -88,6 +88,14 @@ public abstract class Layer {
 
 	public void onContainerResized() {
 	}
+	
+	public void onPop(){
+		if (useComponent()) {
+			for(Component c:comps){
+				c.onPop();
+			}
+		}
+	}
 
 	public void onKeyActive() {
 		if (useComponent()) {

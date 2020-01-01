@@ -29,7 +29,16 @@ public class LayerRender {
 				break;
 			}
 		}
-		return find!=null&&layers.remove(find);
+		boolean ret=find!=null&&layers.remove(find);
+		find.onPop();
+		return ret;
+	}
+
+	public static void popLayers() {
+		for(Layer l:layers){
+			l.onPop();
+			layers.remove(l);
+		}
 	}
 	
 	public static void postKey(){

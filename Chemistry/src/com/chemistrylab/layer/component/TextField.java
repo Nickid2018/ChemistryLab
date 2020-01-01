@@ -1,6 +1,7 @@
 package com.chemistrylab.layer.component;
 
 import java.io.*;
+import java.util.function.Consumer;
 import java.awt.Toolkit;
 import org.lwjgl.input.*;
 import com.chemistrylab.*;
@@ -22,6 +23,7 @@ public class TextField extends Component {
 	private int start_to_sel = 0;
 	private Color color = Color.white;
 	private Color selcolor = new Color(20, 20, 255, 150);
+	private Consumer<String> fire_enter;
 
 	private static final Clipboard CLIP = Toolkit.getDefaultToolkit().getSystemClipboard();
 
@@ -66,6 +68,14 @@ public class TextField extends Component {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	public Consumer<String> getEnterEvent() {
+		return fire_enter;
+	}
+
+	public void setEnterEvent(Consumer<String> fire_enter) {
+		this.fire_enter = fire_enter;
 	}
 
 	private boolean focus_on = false;
@@ -269,6 +279,11 @@ public class TextField extends Component {
 					startpaint = postion;
 				}
 			}
+			return;
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)){
+			if(fire_enter != null)
+				fire_enter.accept(pa);
 			return;
 		}
 		// Other Chars
