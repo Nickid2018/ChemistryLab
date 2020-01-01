@@ -177,10 +177,23 @@ public class CommonRender {
 		lastx = drawFont(s.substring(start, s.length()), lastx, next, size, text);
 		return lastx;
 	}
-
+	
 	public static void drawRightFont(String s, float x, float y, float size, Color text, boolean withshade) {
+		drawRightFont(s, x, y, size, text, withshade, new Color(150, 150, 150, 75));
+	}
+
+	public static void drawRightFont(String s, float x, float y, float size, Color text, boolean withshade, Color shade) {
+		float drawYS = winToOthHeight(size);
+		if(s.indexOf('\n') > -1){
+			String[] all = s.split("\n");
+			for(int i = 0; i < all.length; i++){
+				drawRightFont(all[i], x, y + i * drawYS, size, text, withshade, shade);
+			}
+			return;
+		}
+		//Replaced \r
+		s = s.replaceAll("\r", "");
 		float drawXS=winToOthWidth(size);
-		float drawYS=winToOthHeight(size);
 		if (!font_loaded) {
 			ChemistryLab.logger.error("Are you kidding me?I haven't load font!");
 			return;
@@ -199,7 +212,7 @@ public class CommonRender {
 			}
 		}
 		if (withshade) {
-			new Color(150, 150, 150, 75).bind();
+			shade.bind();
 			glBegin(GL_QUADS);
 				glVertex2f(x, y);
 				glVertex2f(lastx, y);
