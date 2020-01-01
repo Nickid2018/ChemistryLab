@@ -70,6 +70,39 @@ public class ChemistryLab {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			logger.info("OpenGL initialized.Version:" + GL11.glGetString(GL11.GL_VERSION));
 
+			// HotKey Active
+			Keyboard.enableRepeatEvents(true);
+			HotKeyMap.addHotKey(Keyboard.KEY_F3, () -> {
+				if (Keyboard.isRepeatEvent())
+					return;
+				f3 = !f3;
+				logger.info("Debug Mode:" + (f3 ? "on" : "off"));
+				f3_with_shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+				f3_with_ctrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+			});
+			HotKeyMap.addHotKey(Keyboard.KEY_F11, () -> {
+				if (Keyboard.isRepeatEvent())
+					return;
+				f11 = !f11;
+				logger.info("Fullscreen:" + (f11 ? "on" : "off"));
+				f11ed = true;
+				if (f11)
+					try {
+						storedDisplayMode = Display.getDisplayMode();
+						Display.setDisplayModeAndFullscreen(fullScreen);
+						GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+					} catch (LWJGLException e) {
+						e.printStackTrace();
+					}
+				else
+					try {
+						Display.setDisplayMode(storedDisplayMode);
+						GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+					} catch (LWJGLException e) {
+						e.printStackTrace();
+					}
+			});
+
 			// Init program
 			InitLoader.logger.info("Start load resources.");
 			InitLoader.init();
@@ -112,13 +145,14 @@ public class ChemistryLab {
 			logger.fatal("qwq, this program crashed!", e);
 
 			Date date = new Date();
-			
-			String crash = "crash-report_" + String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".csh.log";
+
+			String crash = "crash-report_"
+					+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".csh.log";
 			String l = System.getProperty("line.separator");
 			String stack = asStack(e);
-			
-			//Write crash log
-			
+
+			// Write crash log
+
 			File crashrep = new File("crash-reports/" + crash);
 			crash = crashrep.getAbsolutePath();
 			FileWriter w;
@@ -130,8 +164,11 @@ public class ChemistryLab {
 				IOUtils.write("=== S T A C K T R A C E ===" + l, w);
 				IOUtils.write(stack + l, w);
 				IOUtils.write("=== S Y S T E M ===" + l, w);
-				IOUtils.write("Operating System:" + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch") + l, w);
-				IOUtils.write("Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l, w);
+				IOUtils.write("Operating System:" + System.getProperty("os.name") + " "
+						+ System.getProperty("os.version") + " " + System.getProperty("os.arch") + l, w);
+				IOUtils.write(
+						"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l,
+						w);
 				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
 				IOUtils.write("LWJGL Version:" + Sys.getVersion() + l, w);
 				IOUtils.write("OpenGL Version:" + GL11.glGetString(GL11.GL_VERSION) + l, w);
@@ -139,7 +176,6 @@ public class ChemistryLab {
 			} catch (IOException e2) {
 				logger.error("Write crash-report error.", e2);
 			}
-			
 
 			while (!Display.isCloseRequested()) {
 
@@ -229,6 +265,7 @@ public class ChemistryLab {
 
 	public static void flush() {
 		checkResize();
+		updateFPS();
 		pollInput();
 		checkGLError();
 		checkClose();
@@ -280,31 +317,8 @@ public class ChemistryLab {
 		LayerRender.postMouse();
 		// For keyboard
 		while (Keyboard.next()) {
-			if (Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_F3)) {
-				f3 = !f3;
-				logger.info("Debug Mode:" + (f3 ? "on" : "off"));
-				f3_with_shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-				f3_with_ctrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
-			}
-			if (Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_F11)) {
-				f11 = !f11;
-				logger.info("Fullscreen:" + (f11 ? "on" : "off"));
-				f11ed = true;
-				if (f11)
-					try {
-						storedDisplayMode = Display.getDisplayMode();
-						Display.setDisplayModeAndFullscreen(fullScreen);
-						GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-					} catch (LWJGLException e) {
-						e.printStackTrace();
-					}
-				else
-					try {
-						Display.setDisplayMode(storedDisplayMode);
-						GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-					} catch (LWJGLException e) {
-						e.printStackTrace();
-					}
+			if (Keyboard.getEventKeyState()) {
+				HotKeyMap.activeKey();
 			}
 			LayerRender.postKey();
 		}

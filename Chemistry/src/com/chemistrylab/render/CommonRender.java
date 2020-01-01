@@ -407,11 +407,11 @@ public class CommonRender {
 	}
 	
 	public static float othToWinWidth(float oth){
-		return oth*Display.getWidth()/ChemistryLab.WIDTH;
+		return oth*Display.getWidth()/(float)ChemistryLab.WIDTH;
 	}
 	
 	public static float othToWinHeight(float oth){
-		return oth*Display.getHeight()/ChemistryLab.HEIGHT;
+		return oth*Display.getHeight()/(float)ChemistryLab.HEIGHT;
 	}
 	
 	public static float calcTextWidth(String text, int size) {

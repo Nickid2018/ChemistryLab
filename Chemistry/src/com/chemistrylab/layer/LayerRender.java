@@ -11,6 +11,7 @@ public class LayerRender {
 	public static final Logger logger=Logger.getLogger("Render Manager");
 	private static final Stack<Layer> layers=new Stack<>();
 	private static final Set<Runnable> sr=new HashSet<>();
+	private static Layer focus = null;
 	
 	public static void pushLayer(Layer layer){
 		layers.push(layer);
@@ -32,18 +33,24 @@ public class LayerRender {
 	}
 	
 	public static void postKey(){
-		for(Layer l:layers){
-			l.onKeyActive();
-		}
+		if(layers.contains(focus)){
+			focus.onKeyActive();
+		} else 
+			focus = null;
 	}
 	
 	public static void postMouse(){
 		int x=Mouse.getX();
 		int y=Mouse.getY();
+		boolean top = true;
 		for(int i=layers.size()-1;i>=0;i--){
 			Layer l=layers.elementAt(i);
 			if(l.checkRange(x,y)){
 				l.onMouseEvent();
+				if(top){
+					top = false;
+					focus = l;
+				}
 				if(l.isMouseEventStop())break;
 			}
 		}

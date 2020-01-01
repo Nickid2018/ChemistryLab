@@ -1,5 +1,6 @@
 package com.chemistrylab.init;
 
+import com.cj.jmcl.*;
 import org.apache.log4j.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.render.*;
@@ -29,8 +30,9 @@ public class InitLoader {
 		logger.info("Loading textures...");
 		textureloader.loadTexture();
 		logger.info("Loading Chemicals...");
-		ChemicalsLoader.loadChemicals();
+		JMCL.init();
 		Environment.init();
+		ChemicalsLoader.loadChemicals();
 		logger.info("Loading I18N settings...");
 		I18N.load();
 		MathHelper.init();

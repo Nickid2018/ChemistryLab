@@ -3,6 +3,7 @@ package com.chemistrylab.layer.component;
 import java.util.*;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
+import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
@@ -98,7 +99,7 @@ public class VerticalSlideBar extends Component {
 			int canDraws = MathHelper.fastFloor(mysize / vertsize);
 			int firstnear = MathHelper.fastFloor(postion * cons.size());
 			int first = firstnear - 1;
-			for (int i = first < 0 ? 0 : first, count = 0; i < cons.size() && i < firstnear + canDraws; i++, count++) {
+			for (int i = first < 0 ? 0 : first, count = 0; i < cons.size() && i < firstnear + canDraws - 1; i++, count++) {
 				Slidable s = cons.get(i);
 				s.setNowPositon(range.x0, range.x1, MathHelper.fastFloor(mysize * count / canDraws + range.y0),
 						MathHelper.fastFloor(mysize * count / canDraws + range.y0 + vertsize));
@@ -113,11 +114,17 @@ public class VerticalSlideBar extends Component {
 			} 
 		}
 	}
+	
+	private boolean focus_on = false;
+	private long last_focus = -1;
 
 	@Override
 	public void onMouseEvent() {
 		if(!isClickLegal(10))
 			return;
+		if(ChemistryLab.getTime() - last_focus > 20){
+			focus_on = false;
+		}
 		int down;
 		if((down=Mouse.getDWheel())!=0){
 			float mysize = range.y1 - range.y0;
@@ -127,9 +134,11 @@ public class VerticalSlideBar extends Component {
 			postion -= down / (mysize - barlength);
 			postion = postion > 1 ? 1 : postion;
 			postion = postion < 0 ? 0 : postion;
-		}else if (checkRange(slibar, Mouse.getX(), Mouse.getY())) {
+		}else if (checkRange(slibar, Mouse.getX(), Mouse.getY())||focus_on) {
 			if (!Mouse.isButtonDown(0))
 				return;
+			focus_on = true;
+			last_focus = ChemistryLab.getTime();
 			int why = Mouse.getY();
 			float mysize = range.y1 - range.y0;
 			float shouldDraw = cons.size() * vertsize;

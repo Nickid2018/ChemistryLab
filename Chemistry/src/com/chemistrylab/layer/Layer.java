@@ -15,6 +15,7 @@ public abstract class Layer {
 	protected final Range range;
 	protected Set<Component> comps = new HashSet<>();
 	protected long lastClick = -1;
+	protected Component focus = null;
 
 	public Layer(int x0, int y0, int x1, int y1) {
 		range = new Range();
@@ -77,8 +78,10 @@ public abstract class Layer {
 	public void onMouseEvent() {
 		if (useComponent()) {
 			for (Component c : comps) {
-				if (c.checkRange(Mouse.getX(), Mouse.getY()))
+				if (c.checkRange(Mouse.getX(), Mouse.getY())){
 					c.onMouseEvent();
+					focus = c;
+				}
 			}
 		}
 	}
@@ -87,6 +90,12 @@ public abstract class Layer {
 	}
 
 	public void onKeyActive() {
+		if (useComponent()) {
+			if(comps.contains(focus)){
+				focus.onKeyActive();
+			} else 
+				focus = null;
+		}
 	}
 
 	public boolean isMouseEventStop() {

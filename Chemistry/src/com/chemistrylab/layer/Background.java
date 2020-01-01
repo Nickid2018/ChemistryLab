@@ -7,6 +7,7 @@ import org.hyperic.sigar.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.reaction.Environment;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
 import com.chemistrylab.eventbus.*;
@@ -61,7 +62,11 @@ public class Background extends Layer {
 				CommonRender.drawRightFont("CPU:Cannot get information about CPU", WIDTH, next * 3, 16, Color.white,
 						true);
 			}
-
+			CommonRender.drawRightFont("==Environment Infos==", WIDTH, next * 4, 16, Color.white, true);
+			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", WIDTH, next * 5, 16, Color.white, true);
+			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", WIDTH, next * 6, 16, Color.white, true);
+			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", WIDTH, next * 7, 16, Color.white, true);
+			
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
 				CommonRender.drawFont("FPS Infos:", 0, next * 5, 16, Color.white, true, new Color(255, 10, 10, 100));
