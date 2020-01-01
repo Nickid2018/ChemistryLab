@@ -12,6 +12,7 @@ public final class Ticker implements EventBusListener {
 	public static final Logger logger = Logger.getLogger("Ticker");
 
 	private static final Ticker tickerInstance = new Ticker();
+	private static final int EVENTBUS_UNIT = EventBus.addUnit();
 	
 	private static boolean lastSendOver = true;
 	private static long lastTicks;
@@ -20,7 +21,7 @@ public final class Ticker implements EventBusListener {
 
 	private static final Timer tick_sender = new Timer(40, (e) -> {
 		if (lastSendOver == true) {
-			EventBus.awaitPostEvent(NEXT_TICK, tickerInstance, 2, TimeUnit.SECONDS);
+			EventBus.awaitPostEvent(NEXT_TICK, tickerInstance, 2, TimeUnit.SECONDS, EVENTBUS_UNIT);
 			lastSendOver = false;
 		}
 	});
@@ -56,6 +57,17 @@ public final class Ticker implements EventBusListener {
 
 	public static int getTicks() {
 		return printTicks;
+	}
+	
+	public static void stopTick(){
+		tick_sender.stop();
+		lastSendOver = false;
+		printTicks = 0;
+	}
+	
+	public static void startTick(){
+		lastSendOver = true;
+		tick_sender.start();
 	}
 
 	private static void updateTick() {
