@@ -74,4 +74,12 @@ public class EventBus {
 					source.listen(AWAIT_EVENT_TIMEOUT);
 			});
 	}
+	
+	public static final int getNonawaitSize() {
+		return ((ThreadPoolExecutor)nonwaitBusSender).getActiveCount();
+	}
+	
+	public static final int getAvailableAwaitUnits() {
+		return awaitBusSenderUnits.size();
+	}
 }

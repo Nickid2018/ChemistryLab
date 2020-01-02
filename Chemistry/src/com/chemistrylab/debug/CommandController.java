@@ -39,5 +39,6 @@ public class CommandController {
 	
 	static{
 		addCommandDecomper("tick", new TickerCommand());
+		addCommandDecomper("eventbus", new EventBusComand());
 	}
 }
