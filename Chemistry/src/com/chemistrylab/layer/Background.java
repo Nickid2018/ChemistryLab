@@ -6,10 +6,9 @@ import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import com.chemistrylab.*;
-import com.chemistrylab.debug.CommandController;
-
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.debug.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
 import com.chemistrylab.reaction.*;
@@ -68,32 +67,35 @@ public class Background extends Layer {
 						true);
 			}
 			CommonRender.drawRightFont("==Environment Infos==", WIDTH, next * 4, 16, Color.white, true);
-			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", WIDTH, next * 5, 16, Color.white, true);
-			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", WIDTH, next * 6, 16, Color.white, true);
-			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", WIDTH, next * 7, 16, Color.white, true);
-			if(!last_ret.isEmpty())
+			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", WIDTH, next * 5, 16,
+					Color.white, true);
+			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", WIDTH, next * 6, 16,
+					Color.white, true);
+			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", WIDTH, next * 7,
+					16, Color.white, true);
+			if (!last_ret.isEmpty())
 				CommonRender.drawRightFont(last_ret, WIDTH, next * 8, 16, last_failed ? Color.red : Color.yellow, true);
-			
+
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
 				CommonRender.drawFont("FPS Infos:", 0, next * 5, 16, Color.white, true, new Color(255, 10, 10, 100));
 				Color.white.bind();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 6 + 155);
-					glVertex2f(161, next * 6 + 155);
+				glVertex2f(10, next * 6 + 155);
+				glVertex2f(161, next * 6 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 6 + 5);
-					glVertex2f(10, next * 6 + 155);
+				glVertex2f(10, next * 6 + 5);
+				glVertex2f(10, next * 6 + 155);
 				glEnd();
 				Queue<Integer> fpss = DebugSystem.getFPSs();
 				new Color(255, 10, 10, 150).bind();
 				fpss.forEach(i -> {
 					glBegin(GL_QUADS);
-						glVertex2f(10 + count, next * 6 + 154 - 150.0f * i / maxFPS * 0.8f);
-						glVertex2f(10 + count, next * 6 + 154);
-						glVertex2f(10 + count + 1, next * 6 + 154);
-						glVertex2f(10 + count + 1, next * 6 + 154 - 150.0f * i / maxFPS * 0.8f);
+					glVertex2f(10 + count, next * 6 + 154 - 150.0f * i / maxFPS * 0.8f);
+					glVertex2f(10 + count, next * 6 + 154);
+					glVertex2f(10 + count + 1, next * 6 + 154);
+					glVertex2f(10 + count + 1, next * 6 + 154 - 150.0f * i / maxFPS * 0.8f);
 					glEnd();
 					count++;
 				});
@@ -103,12 +105,12 @@ public class Background extends Layer {
 				Color.white.bind();
 				Queue<Long> mems = DebugSystem.getMems();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 7 + 160 +155);
-					glVertex2f(160, next * 7 + 160 + 155);
+				glVertex2f(10, next * 7 + 160 + 155);
+				glVertex2f(160, next * 7 + 160 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 7 + 160 + 5);
-					glVertex2f(10, next * 7 + 160 + 155);
+				glVertex2f(10, next * 7 + 160 + 5);
+				glVertex2f(10, next * 7 + 160 + 155);
 				glEnd();
 				new Color(255, 10, 10, 150).bind();
 				glBegin(GL_LINE_STRIP);
@@ -121,7 +123,7 @@ public class Background extends Layer {
 			}
 		}
 	}
-	
+
 	@Override
 	public void debugRender() {
 		if (useComponent())
@@ -129,21 +131,23 @@ public class Background extends Layer {
 		else
 			render();
 	}
-	
+
 	private boolean onCommand = false;
 	private String last_ret = "";
 	private boolean last_failed = false;
-	
+
 	@Override
 	public void onKeyActive() {
 		super.onKeyActive();
-		if(!onCommand&&Keyboard.isKeyDown(Keyboard.KEY_C)){
-			TextField f = new TextField(0,HEIGHT-16,WIDTH,HEIGHT,this,16);
-			f.addEffect(new BackgroundEffect(new Color(150,150,150,75)));
+		if (!onCommand && Keyboard.isKeyDown(Keyboard.KEY_C)) {
+			TextField f = new TextField(0, HEIGHT - 16, WIDTH, HEIGHT, this, 16);
+			f.addEffect(new BackgroundEffect(new Color(150, 150, 150, 75)));
 			f.setEnterEvent(s -> {
 				comps.clear();
 				onCommand = false;
 				focus = null;
+				if(s.isEmpty())
+					return;
 				try {
 					last_ret = CommandController.runCommand(s);
 					last_failed = false;
@@ -157,7 +161,7 @@ public class Background extends Layer {
 			onCommand = true;
 		}
 	}
-	
+
 	@Override
 	public boolean useComponent() {
 		return onCommand;

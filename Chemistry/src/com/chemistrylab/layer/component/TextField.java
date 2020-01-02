@@ -305,10 +305,12 @@ public class TextField extends Component {
 					- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
 		}
 	}
-
+	
 	@Override
 	public void render() {
 		super.render();
+		long now_t = ChemistryLab.getTime();
+		boolean pt_pos = now_t % 1000 < 500;
 		float honzsize = range.x1 - range.x0;
 		float vertsize = range.y1 - range.y0;
 		float hei = CommonRender.winToOthHeight(size);
@@ -318,7 +320,7 @@ public class TextField extends Component {
 		if (all_length < honzsize) {
 			CommonRender.drawFont(pa, range.x0, nexty, size, color);
 			float pos = CommonRender.calcTextWidth(pa.substring(0, postion), size) + range.x0;
-			if (pos <= range.x1) {
+			if (pos <= range.x1 && pt_pos) {
 				glBegin(GL_LINE_STRIP);
 					glVertex2f(pos, range.y0);
 					glVertex2f(pos, range.y1);
@@ -339,7 +341,7 @@ public class TextField extends Component {
 			String topaint = CommonRender.subTextWidth(pa.substring(startpaint), size, honzsize);
 			float tx = CommonRender.drawFont(topaint, range.x0, nexty, size, color);
 			float pos = CommonRender.calcTextWidth(pa.substring(startpaint, postion), size) + range.x0;
-			if (pos <= range.x1) {
+			if (pos <= range.x1 && pt_pos) {
 				glBegin(GL_LINE_STRIP);
 					glVertex2f(pos, range.y0);
 					glVertex2f(pos, range.y1);

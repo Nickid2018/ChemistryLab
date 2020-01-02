@@ -72,6 +72,10 @@ public abstract class Layer {
 			lastClick = ChemistryLab.getTime();
 		return b;
 	}
+	
+	protected final boolean isFocus(Component c) {
+		return c.equals(focus);
+	}
 
 	public abstract void render();
 

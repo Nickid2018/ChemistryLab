@@ -3,7 +3,7 @@ package com.chemistrylab.layer;
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
-import com.chemistrylab.layer.animation.SideBarClose;
+import com.chemistrylab.layer.animation.*;
 import com.chemistrylab.layer.component.*;
 
 import static org.lwjgl.opengl.GL11.*;

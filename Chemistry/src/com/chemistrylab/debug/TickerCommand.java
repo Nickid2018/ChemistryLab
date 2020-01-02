@@ -13,6 +13,10 @@ public class TickerCommand extends Command {
 		case "stop":
 			Ticker.stopTick();
 			return "Stopped ticker.";
+		case "reset":
+			Ticker.stopTick();
+			Ticker.startTick();
+			return "Reset ticker.";
 		}
 		throw new CommandException("Unknown Command");
 	}
