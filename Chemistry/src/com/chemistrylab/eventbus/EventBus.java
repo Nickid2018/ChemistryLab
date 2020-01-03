@@ -12,13 +12,14 @@ public class EventBus {
 	private static final ExecutorService nonwaitBusSender = Executors.newCachedThreadPool();
 	private static final ExecutorService awaitBusSenderListener = Executors.newCachedThreadPool();
 	private static final Set<EventBusListener> registeredClassToSend = new HashSet<>();
-	private static final ArrayList<ExecutorService> awaitBusSenderUnits=new ArrayList<>();
+	private static final ArrayList<ExecutorService> awaitBusSenderUnits = new ArrayList<>();
+	protected static final ArrayList<Event> regedEvents = new ArrayList<>();
 
 	public static final void registerListener(EventBusListener listener) {
 		registeredClassToSend.add(listener);
 	}
-	
-	public static final int addUnit(){
+
+	public static final int addUnit() {
 		awaitBusSenderUnits.add(Executors.newCachedThreadPool());
 		return awaitBusSenderUnits.size() - 1;
 	}
@@ -63,8 +64,8 @@ public class EventBus {
 					return;
 				}
 				boolean over = true;
-				for(Future<Object> f:os){
-					if(!f.isDone()){
+				for (Future<Object> f : os) {
+					if (!f.isDone()) {
 						over = false;
 					}
 				}
@@ -74,11 +75,15 @@ public class EventBus {
 					source.listen(AWAIT_EVENT_TIMEOUT);
 			});
 	}
-	
+
 	public static final int getNonawaitSize() {
-		return ((ThreadPoolExecutor)nonwaitBusSender).getActiveCount();
+		return ((ThreadPoolExecutor) nonwaitBusSender).getActiveCount();
 	}
 	
+	public static final long getPassedNonwaitEvents(){
+		return ((ThreadPoolExecutor) nonwaitBusSender).getCompletedTaskCount();
+	}
+
 	public static final int getAvailableAwaitUnits() {
 		return awaitBusSenderUnits.size();
 	}

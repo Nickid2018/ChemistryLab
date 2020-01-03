@@ -9,6 +9,8 @@ public class EventBusComand extends Command {
 		switch (info) {
 		case "nonwait-size":
 			return "EventBus Nonwait Size:" + EventBus.getNonawaitSize();
+		case "nonwait-pass":
+			return "EventBus Nonwait Passed Size:" + EventBus.getPassedNonwaitEvents();
 		case "await-units":
 			return "EventBus Await Unit Size:" + EventBus.getAvailableAwaitUnits();
 		}
