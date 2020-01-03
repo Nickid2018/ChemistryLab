@@ -111,13 +111,13 @@ public class ChemistryLab {
 					}
 			});
 
+			lastFPS = getTime();
+
 			// Init program
 			InitLoader.logger.info("Start load resources.");
 			InitLoader.init();
 
 			Display.setTitle(I18N.getString("window.title"));
-
-			lastFPS = getTime();
 
 			// Add background layer & expand handle
 			LayerRender.pushLayer(new Background());
@@ -274,7 +274,6 @@ public class ChemistryLab {
 
 	public static void flush() {
 		checkResize();
-		updateFPS();
 		pollInput();
 		checkGLError();
 		checkClose();
