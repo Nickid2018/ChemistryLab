@@ -6,9 +6,9 @@ import java.lang.reflect.*;
 import org.lwjgl.opengl.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
+import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
-import org.newdawn.slick.Color;
 import com.chemistrylab.render.*;
 
 public class ChemicalsLoader {
