@@ -1,6 +1,9 @@
 package com.chemistrylab.layer.component;
 
 import java.util.*;
+import org.lwjgl.input.*;
+import org.lwjgl.opengl.*;
+import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
@@ -111,6 +114,47 @@ public class HorizonSlideBar extends Component {
 		}
 	}
 
+	private boolean focus_on = false;
+	private long last_focus = -1;
+
+	@Override
+	public void onMouseEvent() {
+		if (!isClickLegal(10))
+			return;
+		if (ChemistryLab.getTime() - last_focus > 20) {
+			focus_on = false;
+		}
+		int down;
+		if ((down = Mouse.getDWheel()) != 0) {
+			float mysize = range.y1 - range.y0;
+			float shouldDraw = cons.size() * honzsize;
+			float percent = mysize / shouldDraw;
+			float barlength = (percent > 1 ? 1 : percent) * mysize;
+			postion -= down / (mysize - barlength);
+			postion = postion > 1 ? 1 : postion;
+			postion = postion < 0 ? 0 : postion;
+		} else if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
+			if (!Mouse.isButtonDown(0))
+				return;
+			focus_on = true;
+			last_focus = ChemistryLab.getTime();
+			int why = Mouse.getX();
+			float mysize = range.x1 - range.x0;
+			float shouldDraw = cons.size() * honzsize;
+			float percent = mysize / shouldDraw;
+			float barlength = (percent > 1 ? 1 : percent) * mysize;
+			postion = (Display.getHeight() - why - range.x0 - barlength / 2) / (mysize - barlength);
+			postion = postion > 1 ? 1 : postion;
+			postion = postion < 0 ? 0 : postion;
+		} else {
+			for (Slidable s : cons) {
+				if (s.checkRange(Mouse.getX(), Mouse.getY())) {
+					s.onMouseEvent();
+				}
+			}
+		}
+	}
+
 	public int getHorizonSize() {
 		return honzsize;
 	}
@@ -126,7 +170,7 @@ public class HorizonSlideBar extends Component {
 	public int getBarHeight() {
 		return barheight;
 	}
-	
+
 	public Color getBarcolor() {
 		return barcolor;
 	}
