@@ -38,7 +38,7 @@ public class Background extends Layer {
 
 		// Debug Render Layer
 		if (f3) {
-			float next = CommonRender.winToOthHeight(16);
+			float next = CommonRender.winToOthHeight(CommonRender.formatSize(16));
 
 			// Left part
 			CommonRender.drawFont("Chemistry Lab version 1.0_INDEV", 0, 0, 16, Color.white, true);

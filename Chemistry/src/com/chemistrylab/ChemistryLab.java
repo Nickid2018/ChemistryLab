@@ -214,14 +214,14 @@ public class ChemistryLab {
 					}
 				}
 
-				CommonRender.drawFont("Program Crashed!", WIDTH / 2 - CommonRender.winToOthWidth(16 * 7), 20, 32,
+				CommonRender.drawFont("Program Crashed!", WIDTH / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32,
 						Color.red);
 				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
-						40 + CommonRender.winToOthHeight(32), 16, Color.black);
+						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
 				CommonRender.drawItaticFont("Please report this crash report to https://github.com/Nickid2018/", 20,
-						(int) (40 + CommonRender.winToOthHeight(48)), 16, Color.blue, .32f);
-				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(64), 16, Color.red);
-				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(80), 16, Color.yellow.darker(0.3f));
+						(int) (40 + CommonRender.winToOthHeight(CommonRender.formatSize(48))), 16, Color.blue, .32f);
+				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)), 16, Color.red);
+				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16, Color.yellow.darker(0.3f));
 
 				// Update Window
 				Display.update();

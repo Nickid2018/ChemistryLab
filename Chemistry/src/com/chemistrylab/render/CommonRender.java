@@ -55,14 +55,20 @@ public class CommonRender {
 		return drawFont(s, x, next, size, text, withshade, new Color(150, 150, 150, 75));
 	}
 
-	public static float drawFont(String s, float x, float next, int size, Color text, boolean withshade, Color shade) {
+	public static float drawFont(String s, float x, float next, float size, Color text, boolean withshade, Color shade) {
 		float drawYS = winToOthHeight(size);
 		if(s.indexOf('\n') > -1){
 			String[] all = s.split("\n");
+			size = formatSize(size);
+			drawYS = winToOthHeight(size);
 			for(int i = 0; i < all.length; i++){
 				drawFont(all[i], x, next + i * drawYS, size, text, withshade, shade);
 			}
 			return -1;
+		}
+		if(s.indexOf('\r') < 0){
+			size = formatSize(size);
+			drawYS = winToOthHeight(size);
 		}
 		//Replaced \r
 		s = s.replaceAll("\r", "");
@@ -186,10 +192,16 @@ public class CommonRender {
 		float drawYS = winToOthHeight(size);
 		if(s.indexOf('\n') > -1){
 			String[] all = s.split("\n");
+			size = formatSize(size);
+			drawYS = winToOthHeight(size);
 			for(int i = 0; i < all.length; i++){
 				drawRightFont(all[i], x, y + i * drawYS, size, text, withshade, shade);
 			}
 			return;
+		}
+		if(s.indexOf('\r') < 0){
+			size = formatSize(size);
+			drawYS = winToOthHeight(size);
 		}
 		//Replaced \r
 		s = s.replaceAll("\r", "");
@@ -266,7 +278,8 @@ public class CommonRender {
 		glDisable(GL_TEXTURE_2D);
 	}
 	
-	public static void drawItaticFont(String s, int x, int y, int size, Color text,float shr) {
+	public static void drawItaticFont(String s, int x, int y, float size, Color text,float shr) {
+		size = formatSize(size);
 		float drawXS=winToOthWidth(size);
 		float drawYS=winToOthHeight(size);
 		if (!font_loaded) {
@@ -326,6 +339,7 @@ public class CommonRender {
 	}
 
 	public static void drawAsciiFont(String s, int x, int y, float size, Color text, boolean withshade) {
+		size = formatSize(size);
 		float drawXS=winToOthWidth(size);
 		float drawYS=winToOthHeight(size);
 		char[] all = s.toCharArray();
@@ -427,7 +441,8 @@ public class CommonRender {
 		return oth*Display.getHeight()/(float)ChemistryLab.HEIGHT;
 	}
 	
-	public static float calcTextWidth(String text, int size) {
+	public static float calcTextWidth(String text, float size) {
+		size = formatSize(size);
 		float drawXS = winToOthWidth(size);
 		char[] all = text.toCharArray();
 		float lastx = 0;
@@ -445,7 +460,8 @@ public class CommonRender {
 		return lastx;
 	}
 	
-	public static String subTextWidth(String text, int size, float limit) {
+	public static String subTextWidth(String text, float size, float limit) {
+		size = formatSize(size);
 		float drawXS = winToOthWidth(size);
 		char[] all = text.toCharArray();
 		float lastx = 0;
@@ -467,6 +483,12 @@ public class CommonRender {
 			}
 		}
 		return text.substring(0, end);
+	}
+	
+	public static float formatSize(float size){
+		int mul = Display.getWidth() / ChemistryLab.WIDTH;
+		mul = mul == 0 ? 1 : mul;
+		return size * mul;
 	}
 
 	public static void showMemoryUsed() {
