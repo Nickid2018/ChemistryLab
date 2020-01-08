@@ -2,6 +2,7 @@ package com.chemistrylab.eventbus;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 
 public class EventBus {
 
@@ -9,10 +10,14 @@ public class EventBus {
 	public static final Event AWAIT_EVENT_TIMEOUT = Event.createNewEvent();
 	public static final Event AWAIT_EVENT_ERROR = Event.createNewEvent();
 
-	private static final ExecutorService nonwaitBusSender = Executors.newCachedThreadPool();
-	private static final ExecutorService awaitBusSenderListener = Executors.newCachedThreadPool();
+	private static final ExecutorService nonwaitBusSender = Executors
+			.newCachedThreadPool(new ThreadFact("Non-wait EventBus"));
+	private static final ExecutorService awaitBusSenderListener = Executors
+			.newCachedThreadPool(new ThreadFact("Await EventBus"));
 	private static final Set<EventBusListener> registeredClassToSend = new HashSet<>();
 	private static final ArrayList<ExecutorService> awaitBusSenderUnits = new ArrayList<>();
+	private static final ReentrantLock unitLock = new ReentrantLock();
+	private static final ReentrantLock sendLock = new ReentrantLock();
 	protected static final ArrayList<Event> regedEvents = new ArrayList<>();
 
 	public static final void registerListener(EventBusListener listener) {
@@ -20,20 +25,43 @@ public class EventBus {
 	}
 
 	public static final int addUnit() {
-		awaitBusSenderUnits.add(Executors.newCachedThreadPool());
+		unitLock.lock();
+		awaitBusSenderUnits
+				.add(Executors.newCachedThreadPool(new ThreadFact("Await Unit-" + awaitBusSenderUnits.size())));
+		unitLock.unlock();
 		return awaitBusSenderUnits.size() - 1;
 	}
 
+	public static final int addUnit(String name) {
+		unitLock.lock();
+		awaitBusSenderUnits.add(Executors.newCachedThreadPool(new ThreadFact(name)));
+		unitLock.unlock();
+		return awaitBusSenderUnits.size() - 1;
+	}
+
+	public static final void removeUnit(int unit) {
+		unitLock.lock();
+		ExecutorService es = awaitBusSenderUnits.get(unit);
+		awaitBusSenderUnits.remove(unit);
+		awaitBusSenderUnits.add(unit, null);
+		unitLock.unlock();
+		es.shutdownNow();
+	}
+
 	public static final void removeListener(EventBusListener listener) {
+		sendLock.lock();
 		registeredClassToSend.remove(listener);
+		sendLock.unlock();
 	}
 
 	public static final void postEvent(Event e) {
+		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
 				nonwaitBusSender.execute(() -> linss.listen(e));
 			}
 		}
+		sendLock.unlock();
 	}
 
 	public static final void awaitPostEvent(Event e, EventBusListener source, int unit) {
@@ -43,6 +71,7 @@ public class EventBus {
 	public static final void awaitPostEvent(Event e, EventBusListener source, int awmax, TimeUnit tu, int unit) {
 		int listens = 0;
 		Set<Callable<Object>> tasks = new HashSet<>();
+		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
 				tasks.add(() -> {
@@ -52,6 +81,7 @@ public class EventBus {
 				listens++;
 			}
 		}
+		sendLock.unlock();
 		if (listens == 0) {
 			nonwaitBusSender.execute(() -> source.listen(AWAIT_EVENT_RUN_OVER));
 		} else
@@ -79,12 +109,27 @@ public class EventBus {
 	public static final int getNonawaitSize() {
 		return ((ThreadPoolExecutor) nonwaitBusSender).getActiveCount();
 	}
-	
-	public static final long getPassedNonwaitEvents(){
+
+	public static final long getPassedNonwaitEvents() {
 		return ((ThreadPoolExecutor) nonwaitBusSender).getCompletedTaskCount();
 	}
 
 	public static final int getAvailableAwaitUnits() {
 		return awaitBusSenderUnits.size();
+	}
+
+	private static final class ThreadFact implements ThreadFactory {
+
+		private String name;
+
+		public ThreadFact(String n) {
+			name = n;
+		}
+
+		@Override
+		public Thread newThread(Runnable r) {
+			return new Thread(r, name);
+		}
+
 	}
 }

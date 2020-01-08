@@ -12,7 +12,7 @@ public final class Ticker implements EventBusListener {
 	public static final Logger logger = Logger.getLogger("Ticker");
 
 	private static final Ticker tickerInstance = new Ticker();
-	private static final int EVENTBUS_UNIT = EventBus.addUnit();
+	private static final int EVENTBUS_UNIT = EventBus.addUnit("Ticker");
 	
 	private static boolean lastSendOver = true;
 	private static long lastTicks;
