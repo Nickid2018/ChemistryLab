@@ -43,5 +43,6 @@ public class CommandController {
 		addCommandDecomper("tick", new TickerCommand());
 		addCommandDecomper("eventbus", new EventBusComand());
 		addCommandDecomper("container", new ContainerCommand());
+		addCommandDecomper("environment", new EnvironmentCommand());
 	}
 }
