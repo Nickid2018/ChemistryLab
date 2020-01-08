@@ -1,6 +1,7 @@
 package com.chemistrylab.layer.container;
 
 import java.util.*;
+import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
 //import com.chemistrylab.render.*;
@@ -14,6 +15,7 @@ public abstract class AbstractContainer extends Layer {
 	protected Texture layer_1;
 	protected final Size size;
 	protected final UUID uuid = MathHelper.getRandomUUID();
+	protected boolean broken = false;
 
 	public AbstractContainer(int x0, int y0, Size s) {
 		super(x0, y0, x0 + s.diameter, y0 + s.height);
@@ -38,7 +40,20 @@ public abstract class AbstractContainer extends Layer {
 		return size;
 	}
 	
-	public void specials(String json){
+	public boolean isBroken() {
+		return broken;
+	}
+
+	public void breakContainer() {
+		broken = true;
+	}
+
+	public JSONObject specials(String json){
+		JSONObject obj = JSON.parseObject(json);
+		if(obj.containsKey("broken")){
+			broken = obj.getBooleanValue("broken");
+		}
+		return obj;
 	}
 
 	@Override
