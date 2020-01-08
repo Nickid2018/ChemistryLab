@@ -1,11 +1,12 @@
 package com.chemistrylab.properties;
 
 public final class BooleanProperty extends Property<Boolean> {
-	
+
 	private boolean val;
-	
-	public void setValue(boolean b){
-		val=b;
+
+	public BooleanProperty setValue(Boolean b) {
+		val = b;
+		return this;
 	}
 
 	@Override
@@ -15,7 +16,7 @@ public final class BooleanProperty extends Property<Boolean> {
 
 	@Override
 	public void parseStringAsObject(String input) throws Exception {
-		val=Boolean.getBoolean(input);
+		val = Boolean.getBoolean(input);
 	}
 
 }

@@ -4,22 +4,22 @@ import java.util.*;
 import com.cj.jmcl.*;
 
 public class MathStatementProperty extends Property<Double> {
-	
+
 	private MathStatement ms;
 	private double storedLast = 0;
-	private Map<String,Double> values = new HashMap<>();
-	
-	public MathStatementProperty(String...varns) {
-		for(String n:varns){
+	private Map<String, Double> values = new HashMap<>();
+
+	public MathStatementProperty(String... varns) {
+		for (String n : varns) {
 			values.put(n, 0.0);
 		}
 	}
-	
-	public void setValue(String n,double v){
+
+	public void setValue(String n, double v) {
 		values.replace(n, v);
 	}
-	
-	public void calc(){
+
+	public void calc() {
 		storedLast = ms.calc(values);
 	}
 
@@ -31,6 +31,11 @@ public class MathStatementProperty extends Property<Double> {
 	@Override
 	public void parseStringAsObject(String input) throws Exception {
 		ms = MathStatement.format(input);
+	}
+
+	@Override
+	public MathStatementProperty setValue(Double t) {
+		throw new RuntimeException();
 	}
 
 }
