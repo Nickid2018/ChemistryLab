@@ -20,10 +20,6 @@ public class EventBus {
 	private static final ReentrantLock sendLock = new ReentrantLock();
 	protected static final ArrayList<Event> regedEvents = new ArrayList<>();
 
-	public static final void registerListener(EventBusListener listener) {
-		registeredClassToSend.add(listener);
-	}
-
 	public static final int addUnit() {
 		unitLock.lock();
 		awaitBusSenderUnits
@@ -48,7 +44,22 @@ public class EventBus {
 		es.shutdownNow();
 	}
 
+	public static final void registerListener(EventBusListener listener) {
+		sendLock.lock();
+		registeredClassToSend.add(listener);
+		sendLock.unlock();
+	}
+
+	public static final boolean haveListener(EventBusListener listener) {
+		sendLock.lock();
+		boolean ret = registeredClassToSend.contains(listener);
+		sendLock.unlock();
+		return ret;
+	}
+
 	public static final void removeListener(EventBusListener listener) {
+		if (!haveListener(listener))
+			throw new IllegalArgumentException("Can't find listener " + listener);
 		sendLock.lock();
 		registeredClassToSend.remove(listener);
 		sendLock.unlock();

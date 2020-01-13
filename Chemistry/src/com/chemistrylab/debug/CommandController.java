@@ -44,5 +44,6 @@ public class CommandController {
 		addCommandDecomper("eventbus", new EventBusComand());
 		addCommandDecomper("container", new ContainerCommand());
 		addCommandDecomper("environment", new EnvironmentCommand());
+		addCommandDecomper("chemical", new ChemicalCommand());
 	}
 }
