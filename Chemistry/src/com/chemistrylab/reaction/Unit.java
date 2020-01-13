@@ -12,23 +12,55 @@ public class Unit implements EventBusListener {
 	/** Unit: L */
 	public static final int UNIT_L = 0x2;
 
-	private final Chemical chemical;
+	private final ChemicalResource chemical;
 	private final int unit;
 	private double num;
 
-	public Unit(Chemical chem, int unit, double num) {
+	public Unit(ChemicalResource chem, String unit, double num) {
+		this(chem, unitFromString(unit), num);
+	}
+
+	public Unit(ChemicalResource chem, int unit, double num) {
 		chemical = chem;
 		this.unit = unit;
 		checkUnit();
 		this.num = num;
+		EventBus.registerListener(this);
 	}
 
-	void checkUnit() throws RuntimeException {
+	public static final int unitFromString(String v) {
+		if (v.equalsIgnoreCase("mol"))
+			return UNIT_MOLE;
+		if (v.equalsIgnoreCase("g"))
+			return UNIT_G;
+		if (v.equalsIgnoreCase("l"))
+			return UNIT_L;
+		throw new IllegalArgumentException("Illegal Unit " + v);
+	}
+
+	public static final String unitToString(int unit) {
+		switch (unit) {
+		case UNIT_MOLE:
+			return "mol";
+		case UNIT_G:
+			return "g";
+		case UNIT_L:
+			return "L";
+		}
+		throw new IllegalArgumentException("Illegal Unit " + unit);
+	}
+
+	void checkUnit() {
 		if (unit != UNIT_MOLE && unit != UNIT_G && unit != UNIT_L)
-			throw new RuntimeException("Illegal Unit " + unit);
+			throw new IllegalArgumentException("Illegal Unit " + unit);
+	}
+	
+	public Unit setNotListen(){
+		EventBus.removeListener(this);
+		return this;
 	}
 
-	public Chemical getChemical() {
+	public ChemicalResource getChemical() {
 		return chemical;
 	}
 
@@ -83,6 +115,11 @@ public class Unit implements EventBusListener {
 	}
 
 	@Override
+	public String toString() {
+		return chemical.getName() + ":" + num + unitToString(unit);
+	}
+
+	@Override
 	public boolean receiveEvents(Event e) {
 		return e.equals(Environment.ENVIRONMENT_CHANGED);
 	}
@@ -95,4 +132,5 @@ public class Unit implements EventBusListener {
 			num = num / old * Environment.getGasMolV();
 		}
 	}
+
 }

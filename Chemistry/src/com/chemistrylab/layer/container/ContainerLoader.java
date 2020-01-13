@@ -14,7 +14,7 @@ public class ContainerLoader {
 
 	public static final ArrayList<String> containers = new ArrayList<>();
 	private final Map<String, Constructor<? extends AbstractContainer>> mapping = new HashMap<>();
-	private final Map<String, Map<String, Size>> sizes = new HashMap<>();
+	private final Map<String, TreeMap<String, Size>> sizes = new TreeMap<>();
 	private ProgressBar load_con = new ProgressBar(containers.size(), 20);
 
 	public void loadContainer() throws Throwable {
@@ -29,7 +29,7 @@ public class ContainerLoader {
 					.getConstructor(int.class, int.class, Size.class);
 			mapping.put("container." + containers.get(i) + ".model", con);
 			JSONArray array = obj.getJSONArray("sizes");
-			Map<String, Size> sss = new HashMap<>();
+			TreeMap<String, Size> sss = new TreeMap<>();
 			for (int j = 0; j < array.size(); j++) {
 				JSONObject o = array.getJSONObject(j);
 				Size s = new Size();

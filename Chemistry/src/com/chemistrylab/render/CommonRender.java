@@ -167,7 +167,7 @@ public class CommonRender {
 					}
 				}
 			}
-			if(c == '\u00A7') {
+			if(c == '`') {
 				if(!up) {
 					down = !down;
 					if(down) {

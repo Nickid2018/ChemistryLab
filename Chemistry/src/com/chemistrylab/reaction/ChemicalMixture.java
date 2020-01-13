@@ -1,6 +1,7 @@
 package com.chemistrylab.reaction;
 
 import java.util.*;
+import java.util.concurrent.locks.*;
 import com.chemistrylab.eventbus.*;
 import com.chemistrylab.chemicals.*;
 
@@ -8,6 +9,7 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	
 	public static final Event CHEMICAL_CHANGED = Event.createNewEvent();
 	public static final int CHEMICAL_ADDED = 0x0;
+	public static final int CHEMICAL_CHANGE = 0x1;
 
 	/**
 	 * 
@@ -16,6 +18,7 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	
 	private boolean shadow;
 	private ReactionController contr;
+	private ReentrantLock lock = new ReentrantLock();
 
 	public ChemicalMixture() {
 		this(false);
@@ -29,16 +32,26 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	}
 	
 	public void copy(ChemicalMixture mix){
+		lock.lock();
 		clear();
 		putAll(mix);
+		lock.unlock();
 	}
 	
 	@Override
 	public Unit put(ChemicalResource key, Unit value) {
+		checkNonListen(value);
+		lock.lock();
 		if (containsKey(key)) {
-			return replace(key, value.add(get(key)));
+			Unit ret = replace(key, value.add(get(key)));
+			lock.unlock();
+			Event post = CHEMICAL_CHANGED.clone();
+			post.putExtra(CHEMICAL_CHANGE, null);
+			EventBus.postEvent(post);
+			return ret;
 		} else {
 			Unit u = super.put(key, value);
+			lock.unlock();
 			Event post = CHEMICAL_CHANGED.clone();
 			post.putExtra(CHEMICAL_ADDED, key);
 			EventBus.postEvent(post);
@@ -50,5 +63,10 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 		if(shadow)
 			throw new RuntimeException("Shadow Mixture");
 		return contr;
+	}
+	
+	static void checkNonListen(Unit u){
+		if(EventBus.haveListener(u))
+			throw new IllegalArgumentException("This unit isn't a non-listen unit.");
 	}
 }

@@ -37,8 +37,8 @@ public class LayerRender {
 	public static void popLayers() {
 		for(Layer l:layers){
 			l.onPop();
-			layers.remove(l);
 		}
+		layers.removeAllElements();
 	}
 	
 	public static void postKey(){

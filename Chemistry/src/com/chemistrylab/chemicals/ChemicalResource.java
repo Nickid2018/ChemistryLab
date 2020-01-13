@@ -65,4 +65,13 @@ public class ChemicalResource {
 		}
 		return false;
 	}
+
+	public double getMess() {
+		double ret = 0;
+		for (Chemical c : clazz.values()) {
+			if (c.isActualMess())
+				ret = c.getMess();
+		}
+		return ret;
+	}
 }

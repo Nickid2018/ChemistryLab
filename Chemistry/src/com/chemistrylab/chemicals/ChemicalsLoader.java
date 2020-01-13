@@ -15,21 +15,26 @@ public class ChemicalsLoader {
 
 	public static final Map<String, Constructor<?>> mapping = new HashMap<>();
 	public static final Chemicals chemicals = new Chemicals();
+
+	public static final Set<String> atoms = new TreeSet<>();
+	public static final Set<String> ions = new TreeSet<>();
+	public static final Set<String> chemical = new TreeSet<>();
+
 	public static final Logger logger = Logger.getLogger("Chemical Loader");
-	
+
 	private static int failedClasses = 0;
-	private static long lastTime=ChemistryLab.getTime();
-	private static int counter=0;
-	
-	private static final String[] CHEMICAL_LOAD_STATUS={
-		"Loading chemical resolver(1/4)",
-		"Loading atoms(2/4)",
-		"Loading ions(3/4)",
-		"Loading chemicals(4/4)"
+	private static long lastTime = ChemistryLab.getTime();
+	private static int counter = 0;
+
+	private static final String[] CHEMICAL_LOAD_STATUS = {
+			"Loading chemical resolver(1/4)",
+			"Loading atoms(2/4)",
+			"Loading ions(3/4)",
+			"Loading chemicals(4/4)"
 	};
-	
-	private static ProgressBar load_chemical_status=new ProgressBar(4,20);
-	private static ProgressBar load_details=new ProgressBar(-1,20);
+
+	private static ProgressBar load_chemical_status = new ProgressBar(4, 20);
+	private static ProgressBar load_details = new ProgressBar(-1, 20);
 
 	public static final void loadChemicals() throws Exception {
 		Properties pro = new Properties();
@@ -49,21 +54,21 @@ public class ChemicalsLoader {
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
-				ChemistryLab.updateFPS();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(1);
 				load_details.setNow(counter);
 				load_details.render(100, 520, 800);
-				CommonRender.drawAsciiFont("Loading type class:"+ns, 100, 503, 16,Color.black);
+				CommonRender.drawAsciiFont("Loading type class:" + ns, 100, 503, 16, Color.black);
 				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}
 		});
-		
+
 		loadAtoms();
 		loadIons();
+		loadChemical();
 
 		if (failedClasses == 0 && chemicals.getFailedPartLoad() == 0) {
 			logger.info("Successfully loaded all chemicals.");
@@ -74,16 +79,88 @@ public class ChemicalsLoader {
 	}
 
 	private static final void loadAtoms() throws Exception {
-		chemicals.put("H", new ChemicalResource("/assets/models/chemicals/atoms/H.json").preInit());
+		counter = 0;
+		load_details.setMax(atoms.size());
+		for (String path : atoms) {
+			String actualpath = "/assets/models/chemicals/atoms/" + path + ".json";
+			chemicals.put(path, new ChemicalResource(actualpath).preInit());
+			counter++;
+			if (ChemistryLab.getTime() - lastTime > 16) {
+				ChemistryLab.clearFace();
+				CommonRender.showMemoryUsed();
+				InitLoader.showAllProgress(3);
+				renderChemicalStatus(2);
+				load_details.setNow(counter);
+				load_details.render(100, 520, 800);
+				CommonRender.drawAsciiFont("Loading Atom[" + actualpath + "]", 100, 503, 16, Color.black);
+				Display.update();
+				lastTime = ChemistryLab.getTime();
+				ChemistryLab.flush();
+			}
+		}
 	}
 
 	private static final void loadIons() throws Exception {
-		chemicals.put("H_1p", new ChemicalResource("/assets/models/chemicals/ions/H_1p.json").preInit());
+		counter = 0;
+		load_details.setMax(ions.size());
+		for (String path : ions) {
+			String actualpath = "/assets/models/chemicals/ions/" + path + ".json";
+			chemicals.put(path, new ChemicalResource(actualpath).preInit());
+			counter++;
+			if (ChemistryLab.getTime() - lastTime > 16) {
+				ChemistryLab.clearFace();
+				CommonRender.showMemoryUsed();
+				InitLoader.showAllProgress(3);
+				renderChemicalStatus(3);
+				load_details.setNow(counter);
+				load_details.render(100, 520, 800);
+				CommonRender.drawAsciiFont("Loading Ion[" + actualpath + "]", 100, 503, 16, Color.black);
+				Display.update();
+				lastTime = ChemistryLab.getTime();
+				ChemistryLab.flush();
+			}
+		}
 	}
-	
-	private static final void renderChemicalStatus(int i){
+
+	private static final void loadChemical() throws Exception {
+		counter = 0;
+		load_details.setMax(chemical.size());
+		for (String path : chemical) {
+			String[] sps = path.split("/");
+			String actualpath = "/assets/models/chemicals/" + path + ".json";
+			chemicals.put(sps[sps.length - 1], new ChemicalResource(actualpath).preInit());
+			counter++;
+			if (ChemistryLab.getTime() - lastTime > 16) {
+				ChemistryLab.clearFace();
+				CommonRender.showMemoryUsed();
+				InitLoader.showAllProgress(3);
+				renderChemicalStatus(4);
+				load_details.setNow(counter);
+				load_details.render(100, 520, 800);
+				CommonRender.drawAsciiFont("Loading Chemical[" + actualpath + "]", 100, 503, 16, Color.black);
+				Display.update();
+				lastTime = ChemistryLab.getTime();
+				ChemistryLab.flush();
+			}
+		}
+	}
+
+	private static final void renderChemicalStatus(int i) {
 		load_chemical_status.setNow(i);
 		load_chemical_status.render(100, 460, 800);
-		CommonRender.drawAsciiFont(CHEMICAL_LOAD_STATUS[i-1], 100, 443, 16,Color.black);
+		CommonRender.drawAsciiFont(CHEMICAL_LOAD_STATUS[i - 1], 100, 443, 16, Color.black);
+	}
+
+	static {
+		// Atoms
+		atoms.add("H");
+		atoms.add("O");
+		atoms.add("Na");
+		// Ions
+		ions.add("H_1p");
+		ions.add("OH_1n");
+		ions.add("Na_1p");
+		// Chemical
+		chemical.add("alkalis/NaOH");
 	}
 }
