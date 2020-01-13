@@ -1,9 +1,9 @@
 package com.chemistrylab.layer.component;
 
 import java.io.*;
-import java.util.function.Consumer;
 import java.awt.Toolkit;
 import org.lwjgl.input.*;
+import java.util.function.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.awt.datatransfer.*;
