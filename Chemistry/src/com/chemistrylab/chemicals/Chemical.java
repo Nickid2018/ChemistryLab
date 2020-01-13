@@ -8,4 +8,8 @@ public abstract class Chemical {
 	}
 	
 	public abstract double getMess();
+	
+	public boolean isActualMess(){
+		return false;
+	}
 }

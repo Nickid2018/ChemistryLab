@@ -9,13 +9,21 @@ sidebar.log.clear=清空日志
 
 #Title
 window.title=虚拟化学实验室
-i18n.change.lang=正在更改语言
-i18n.change.title=语言
 
 #Operations
 dealing.log.clear=正在清除日志...
-
-#Chemicals
+i18n.change.lang=正在更改语言
+i18n.change.title=语言
 
 #Atoms
 chemicals.atoms.H=氢原子
+chemicals.atoms.O=氧原子
+chemicals.atoms.Na=钠原子
+
+#Ions
+chemicals.ions.H_1p=氢离子
+chemicals.ions.OH_1n=氢氧根离子
+chemicals.ions.Na_1p=钠离子
+
+#Alkali
+chemicals.alkali.NaOH=氢氧化钠

@@ -15,7 +15,15 @@ dealing.log.clear=Clearing system log...
 i18n.change.lang=Changing Language
 i18n.change.title=Language...
 
-#Chemicals
-
 #Atoms
 chemicals.atoms.H=Hydrogen
+chemicals.atoms.O=Oxygen
+chemicals.atoms.Na=Sodium
+
+#Ions
+chemicals.ions.H_1p=Hydrogen Ion
+chemicals.ions.OH_1n=Hydroxide
+chemicals.ions.Na_1p=Sodion
+
+#Alkali
+chemicals.alkali.NaOH=Sodium Hydroxide

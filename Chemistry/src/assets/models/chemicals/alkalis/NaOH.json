@@ -1,0 +1,9 @@
+{
+	"classes":["alkali/strong"],
+	"name":"NaOH",
+	"unlocalizedName":"chemicals.alkali.NaOH",
+	"cas":"1310-73-2",
+	"type:alkali/strong":{
+		"relativeIon":["Na_1p:1","OH_1n:1"]
+	}
+}

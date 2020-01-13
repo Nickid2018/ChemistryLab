@@ -1,0 +1,9 @@
+{
+	"classes":["ion/strong"],
+	"name":"Na~+~",
+	"unlocalizedName":"chemicals.ions.Na_1p",
+	"cas":"7440-23-5",
+	"type:ion/strong":{
+		"relativeAtom":["Na"]
+	}
+}

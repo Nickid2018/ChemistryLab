@@ -1,0 +1,10 @@
+{
+	"classes":["atom/metal"],
+	"name":"Na",
+	"unlocalizedName":"chemicals.atoms.Na",
+	"cas":"7440-23-5",
+	"type:atom/metal":{
+		"mess":22.989768,
+		"valence":[1]
+	}
+}

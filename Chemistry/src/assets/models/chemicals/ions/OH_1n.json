@@ -1,0 +1,9 @@
+{
+	"classes":["ion/OH"],
+	"name":"OH~-~",
+	"unlocalizedName":"chemicals.ions.OH",
+	"cas":"Undefined",
+	"type:ion/OH":{
+		"relativeAtom":["O","H"]
+	}
+}

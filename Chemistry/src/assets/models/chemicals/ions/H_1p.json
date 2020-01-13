@@ -1,7 +1,7 @@
 {
 	"classes":["ion/H"],
-	"name":"H",
-	"unlocalizedName":"chemicals.ions.H",
+	"name":"H~+~",
+	"unlocalizedName":"chemicals.ions.H_1p",
 	"cas":"1333-74-0",
 	"type:ion/H":{
 		"relativeAtom":["H"]
