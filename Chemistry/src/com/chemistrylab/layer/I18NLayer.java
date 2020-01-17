@@ -20,13 +20,14 @@ public class I18NLayer extends Layer {
 		langs.addEffect(new LineBorderEffect(3, Color.white));
 		flush();
 		comps.add(langs);
-		comps.add(new TextComponent(100, 48, 100, 96, this, I18N.getString("i18n.change.title"), ()->{}, 48, Color.white,true));
+		comps.add(new TextComponent(100, 48, 200, 96, this, I18N.getString("i18n.change.title"), ()->{}, 48, Color.white,true).setAlignCenter());
 		TextComponent cancel=new TextComponent(100, 120, 250, 168, this, I18N.getString("program.cancel"), ()->{
 			if (Mouse.isButtonDown(0))
 				LayerRender.addEndEvent(() -> {
 					LayerRender.popLayer(I18NLayer.this);
+					LayerRender.pushLayer(new ExpandBar());
 				});
-		}, 48, Color.white,true);
+		}, 48, Color.white,true).setAlignCenter();
 		cancel.addEffect(new LineBorderEffect(3, Color.white));
 		comps.add(cancel);
 	}
@@ -47,6 +48,7 @@ public class I18NLayer extends Layer {
 							}
 						}).start());
 					});
+					LayerRender.pushLayer(new ExpandBar());
 				}
 			}, 32, Color.white);
 			if (I18N.getSurporttedLanguageName(lang).equalsIgnoreCase(I18N.getNowLanguage()))

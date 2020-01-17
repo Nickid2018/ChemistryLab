@@ -86,7 +86,11 @@ public class LayerRender {
 		sr.clear();
 	}
 	
-	
+	/**
+	 * <p>Ensure not an {@linkplain java.util.ConcurrentModificationException} happens.</p>
+	 * <p>Info:The event will be run in Render Thread(Have OpenGL)</p>
+	 * @param r an event
+	 */
 	public static void addEndEvent(Runnable r){
 		sr.add(r);
 	}

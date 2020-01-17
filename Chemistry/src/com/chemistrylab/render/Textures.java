@@ -1,4 +1,4 @@
-package com.chemistrylab.textures;
+package com.chemistrylab.render;
 
 import java.util.*;
 import org.newdawn.slick.opengl.*;

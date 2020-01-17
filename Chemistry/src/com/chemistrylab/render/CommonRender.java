@@ -42,8 +42,8 @@ public class CommonRender {
 		}
 	}
 	
-	public static void drawFontUNI(String s, int x, int y, Color text) {
-		CommonRender.FONT.drawString(x, y, s, text);
+	public static void drawFontUNI(String s, float start, int y, Color text) {
+		FONT.drawString(start, y, s, text);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 

@@ -18,12 +18,20 @@ public class SideBar extends Layer {
 				LayerRender.addEndEvent(()->{
 					LayerRender.pushLayer(new I18NLayer());
 					LayerRender.popLayer(CloseBar.class);
-					LayerRender.pushLayer(new SideBarClose());
+					LayerRender.pushLayer(new SideBarClose(true));
 				});
 		}, 48, Color.white,true));
 		comps.add(new TextComponent(12, 66, 200, 130, this, I18N.getString("sidebar.log.clear"), ()->{
 			if(Mouse.isButtonDown(0))
 				clearLog();
+		}, 48, Color.white,true));
+		comps.add(new TextComponent(12, 132, 200, 196, this, I18N.getString("sidebar.reaction.add"), ()->{
+			if(Mouse.isButtonDown(0))
+				LayerRender.addEndEvent(()->{
+					LayerRender.pushLayer(new AddReactionLayer());
+					LayerRender.popLayer(CloseBar.class);
+					LayerRender.pushLayer(new SideBarClose(true));
+				});
 		}, 48, Color.white,true));
 	}
 
@@ -44,10 +52,16 @@ public class SideBar extends Layer {
 			glVertex2f(10,0);
 		glEnd();
 		glBegin(GL_QUADS);
-			glVertex2f(0,0);
+			glVertex2f(0,66);
 			glVertex2f(0,130);
 			glVertex2f(10,130);
-			glVertex2f(10,0);
+			glVertex2f(10,66);
+		glEnd();
+		glBegin(GL_QUADS);
+			glVertex2f(0,132);
+			glVertex2f(0,196);
+			glVertex2f(10,196);
+			glVertex2f(10,132);
 		glEnd();
 	}
 	

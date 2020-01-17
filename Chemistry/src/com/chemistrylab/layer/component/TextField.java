@@ -320,7 +320,7 @@ public class TextField extends Component {
 		if (all_length < honzsize) {
 			CommonRender.drawFont(pa, range.x0, nexty, size, color);
 			float pos = CommonRender.calcTextWidth(pa.substring(0, postion), size) + range.x0;
-			if (pos <= range.x1 && pt_pos) {
+			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
 				glBegin(GL_LINE_STRIP);
 					glVertex2f(pos, range.y0);
 					glVertex2f(pos, range.y1);
@@ -341,7 +341,7 @@ public class TextField extends Component {
 			String topaint = CommonRender.subTextWidth(pa.substring(startpaint), size, honzsize);
 			float tx = CommonRender.drawFont(topaint, range.x0, nexty, size, color);
 			float pos = CommonRender.calcTextWidth(pa.substring(startpaint, postion), size) + range.x0;
-			if (pos <= range.x1 && pt_pos) {
+			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
 				glBegin(GL_LINE_STRIP);
 					glVertex2f(pos, range.y0);
 					glVertex2f(pos, range.y1);

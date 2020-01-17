@@ -1,6 +1,7 @@
 #Atoms
 atom/nonmetal=com.chemistrylab.chemicals.atoms.NonMentalAtom
 atom/metal=com.chemistrylab.chemicals.atoms.MentalAtom
+simple=com.chemistrylab.chemicals.atoms.SimpleSubstance
 
 #Ions
 ion/H=com.chemistrylab.chemicals.ions.IonH
@@ -9,3 +10,6 @@ ion/strong=com.chemistrylab.chemicals.ions.IonStrong
 
 #Alkali
 alkali/strong=com.chemistrylab.chemicals.alkalis.AlkaliStrong
+
+#Oxide
+chemical/H2O=com.chemistrylab.chemicals.oxides.H2O

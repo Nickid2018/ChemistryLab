@@ -48,7 +48,8 @@ public class Background extends Layer {
 					true);
 			CommonRender.drawFont("Chemicals L:" + chemicals.size() + " F:" + chemicals.getFailedPartLoad() + " A:"
 					+ chemicals.atoms() + " I:" + chemicals.ions(), 0, next * 3, 16, Color.white, true);
-			CommonRender.drawFont("Tick per second:" + Ticker.getTicks() + "ct/s", 0, next * 4, 16, Color.white, true);
+			CommonRender.drawFont("Reactions L:" + ReactionLoader.reactions.size(), 0, next * 4, 16, Color.white, true);
+			CommonRender.drawFont("Tick per second:" + Ticker.getTicks() + "ct/s", 0, next * 5, 16, Color.white, true);
 
 			// Right part
 			CommonRender.drawRightFont(
@@ -78,44 +79,44 @@ public class Background extends Layer {
 
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
-				CommonRender.drawFont("FPS Infos:", 0, next * 5, 16, Color.white, true, new Color(255, 10, 10, 100));
+				CommonRender.drawFont("FPS Infos:", 0, next * 6, 16, Color.white, true, new Color(255, 10, 10, 100));
 				Color.white.bind();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 6 + 155);
-					glVertex2f(161, next * 6 + 155);
+					glVertex2f(10, next * 7 + 155);
+					glVertex2f(161, next * 7 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 6 + 5);
-					glVertex2f(10, next * 6 + 155);
+					glVertex2f(10, next * 7 + 5);
+					glVertex2f(10, next * 7 + 155);
 				glEnd();
 				Queue<Integer> fpss = DebugSystem.getFPSs();
 				new Color(255, 10, 10, 150).bind();
 				fpss.forEach(i -> {
 					glBegin(GL_QUADS);
-						glVertex2f(10 + count, next * 6 + 154 - 150.0f * i / maxFPS * 0.8f);
-						glVertex2f(10 + count, next * 6 + 154);
-						glVertex2f(10 + count + 1, next * 6 + 154);
-						glVertex2f(10 + count + 1, next * 6 + 154 - 150.0f * i / maxFPS * 0.8f);
+						glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+						glVertex2f(10 + count, next * 7 + 154);
+						glVertex2f(10 + count + 1, next * 7 + 154);
+						glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
 					glEnd();
 					count++;
 				});
 				count = 1;
-				CommonRender.drawFont("Memory Infos:", 0, next * 6 + 160, 16, Color.white, true,
+				CommonRender.drawFont("Memory Infos:", 0, next * 7 + 160, 16, Color.white, true,
 						new Color(255, 10, 10, 100));
 				Color.white.bind();
 				Queue<Long> mems = DebugSystem.getMems();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 7 + 160 + 155);
-					glVertex2f(160, next * 7 + 160 + 155);
+					glVertex2f(10, next * 8 + 160 + 155);
+					glVertex2f(160, next * 8 + 160 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 7 + 160 + 5);
-					glVertex2f(10, next * 7 + 160 + 155);
+					glVertex2f(10, next * 8 + 160 + 5);
+					glVertex2f(10, next * 8 + 160 + 155);
 				glEnd();
 				new Color(255, 10, 10, 150).bind();
 				glBegin(GL_LINE_STRIP);
 				mems.forEach(i -> {
-					glVertex2f(10 + count, next * 7 + 160 + 154 - 150.0f * i / CommonRender.RUNTIME.maxMemory());
+					glVertex2f(10 + count, next * 8 + 160 + 154 - 150.0f * i / CommonRender.RUNTIME.maxMemory());
 					count++;
 				});
 				count = 1;

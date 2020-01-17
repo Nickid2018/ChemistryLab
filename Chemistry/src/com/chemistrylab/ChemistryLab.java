@@ -8,13 +8,14 @@ import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import org.apache.log4j.*;
 import org.newdawn.slick.*;
+import proguard.annotation.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
 import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
-import com.chemistrylab.textures.*;
 import com.chemistrylab.eventbus.*;
 
+@KeepApplication
 public class ChemistryLab {
 
 	public static final Logger logger = Logger.getLogger("Main Looper");
@@ -26,6 +27,7 @@ public class ChemistryLab {
 
 	public static final Event DEBUG_ON = Event.createNewEvent();
 	public static final Event DEBUG_OFF = Event.createNewEvent();
+	public static final Event THREAD_FATAL = Event.createNewEvent();
 
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
@@ -71,7 +73,7 @@ public class ChemistryLab {
 
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			logger.info("OpenGL initialized.Version:" + GL11.glGetString(GL11.GL_VERSION));
+			LayerRender.logger.info("OpenGL initialized.Version:" + GL11.glGetString(GL11.GL_VERSION));
 
 			// HotKey Active
 			Keyboard.enableRepeatEvents(true);
@@ -136,6 +138,7 @@ public class ChemistryLab {
 				}
 
 				checkResize();
+				checkErrors();
 
 				// Input
 				pollInput();
@@ -208,20 +211,23 @@ public class ChemistryLab {
 							try {
 								Display.setDisplayMode(storedDisplayMode);
 								GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+								Display.setResizable(true);
 							} catch (LWJGLException e1) {
 								e.printStackTrace();
 							}
 					}
 				}
 
-				CommonRender.drawFont("Program Crashed!", WIDTH / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32,
-						Color.red);
+				CommonRender.drawFont("Program Crashed!",
+						WIDTH / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
 				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
 						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
 				CommonRender.drawItaticFont("Please report this crash report to https://github.com/Nickid2018/", 20,
 						(int) (40 + CommonRender.winToOthHeight(CommonRender.formatSize(48))), 16, Color.blue, .32f);
-				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)), 16, Color.red);
-				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16, Color.yellow.darker(0.3f));
+				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)),
+						16, Color.red);
+				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16,
+						Color.yellow.darker(0.3f));
 
 				// Update Window
 				Display.update();
@@ -320,6 +326,13 @@ public class ChemistryLab {
 		}
 	}
 
+	private static Throwable error;
+
+	private static void checkErrors() throws Throwable {
+		if(error != null)
+			throw error;
+	}
+
 	public static void pollInput() {
 		// For mouse
 		LayerRender.postMouse();
@@ -339,7 +352,7 @@ public class ChemistryLab {
 		if (getTextures() != null)
 			getTextures().releaseAll();
 		Display.destroy();
-		logger.info("Game stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");
+		logger.info("Program stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");
 		System.exit(0);
 	}
 
@@ -411,6 +424,8 @@ public class ChemistryLab {
 		EventBus.registerListener((e) -> {
 			if (e.equals(I18N.I18N_RELOADED))
 				i18n_reload = true;
+			if (e.equals(THREAD_FATAL))
+				error = (Throwable) e.getExtra(0);
 		});
 	}
 }

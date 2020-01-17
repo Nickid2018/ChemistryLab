@@ -26,12 +26,8 @@ public class ChemicalsLoader {
 	private static long lastTime = ChemistryLab.getTime();
 	private static int counter = 0;
 
-	private static final String[] CHEMICAL_LOAD_STATUS = {
-			"Loading chemical resolver(1/4)",
-			"Loading atoms(2/4)",
-			"Loading ions(3/4)",
-			"Loading chemicals(4/4)"
-	};
+	private static final String[] CHEMICAL_LOAD_STATUS = { "Loading chemical resolver(1/4)", "Loading atoms(2/4)",
+			"Loading ions(3/4)", "Loading chemicals(4/4)" };
 
 	private static ProgressBar load_chemical_status = new ProgressBar(4, 20);
 	private static ProgressBar load_details = new ProgressBar(-1, 20);
@@ -83,7 +79,7 @@ public class ChemicalsLoader {
 		load_details.setMax(atoms.size());
 		for (String path : atoms) {
 			String actualpath = "/assets/models/chemicals/atoms/" + path + ".json";
-			chemicals.put(path, new ChemicalResource(actualpath).preInit());
+			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
@@ -105,7 +101,7 @@ public class ChemicalsLoader {
 		load_details.setMax(ions.size());
 		for (String path : ions) {
 			String actualpath = "/assets/models/chemicals/ions/" + path + ".json";
-			chemicals.put(path, new ChemicalResource(actualpath).preInit());
+			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
@@ -128,7 +124,7 @@ public class ChemicalsLoader {
 		for (String path : chemical) {
 			String[] sps = path.split("/");
 			String actualpath = "/assets/models/chemicals/" + path + ".json";
-			chemicals.put(sps[sps.length - 1], new ChemicalResource(actualpath).preInit());
+			chemicals.put(sps[sps.length - 1], new ChemicalResource(actualpath, sps[sps.length - 1]).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
@@ -162,5 +158,6 @@ public class ChemicalsLoader {
 		ions.add("Na_1p");
 		// Chemical
 		chemical.add("alkalis/NaOH");
+		chemical.add("oxides/H2O");
 	}
 }

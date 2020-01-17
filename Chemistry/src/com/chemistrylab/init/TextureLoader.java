@@ -8,7 +8,6 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.util.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
-import com.chemistrylab.textures.*;
 
 import static org.lwjgl.opengl.GL11.*;
 

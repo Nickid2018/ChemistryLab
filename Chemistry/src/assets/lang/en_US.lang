@@ -2,10 +2,14 @@
 
 program.null=Null
 program.cancel=Cancel
+program.ok=OK
+program.add=Add
+program.writing=Writing
 
 #Side Bar Items
 sidebar.language.settings=Language
 sidebar.log.clear=Clear logs
+sidebar.reaction.add=Add Reaction
 
 #Title
 window.title=Chemisty Lab
@@ -14,6 +18,13 @@ window.title=Chemisty Lab
 dealing.log.clear=Clearing system log...
 i18n.change.lang=Changing Language
 i18n.change.title=Language...
+addreact.react=Reactants
+addreact.get=Products
+addreact.deltaH=Enthalpy Change
+addreact.deltaS=Entropy Change
+addreact.reversible=Reversible
+addreact.nonreversible=Nonreversible
+addreact.title=Add Reaction
 
 #Atoms
 chemicals.atoms.H=Hydrogen

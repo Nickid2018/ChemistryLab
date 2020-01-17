@@ -13,7 +13,7 @@ public class InitLoader {
 	public static final Logger logger = Logger.getLogger("Initialize Manager");
 
 	private static final String[] STATUS_MAP = { "Preparing to load", "Preparing Font Texture", "Preparing GUI Texture",
-			"Loading Chemicals", "Loading Containers" };
+			"Loading Chemicals", "Loading Containers", "Loading Reactions"};
 	private static ProgressBar all_progress = new ProgressBar(3, 20);
 
 	private static TextureLoader textureloader;
@@ -34,6 +34,8 @@ public class InitLoader {
 		ChemicalsLoader.loadChemicals();
 		logger.info("Loading Containers...");
 		containerloader.loadContainer();
+		logger.info("Loading Reactions...");
+		ReactionLoader.loadReaction();
 		logger.info("Loading I18N settings...");
 		I18N.load();
 		MathHelper.init();

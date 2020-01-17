@@ -7,9 +7,16 @@ import static org.lwjgl.opengl.GL11.*;
 import static com.chemistrylab.ChemistryLab.*;
 
 public class SideBarClose extends Animation {
-
+	
+	private boolean pop;
+	
 	public SideBarClose() {
+		this(false);
+	}
+
+	public SideBarClose(boolean pop) {
 		super(10);
+		this.pop=pop;
 		LayerRender.popLayer(SideBar.class);
 	}
 
@@ -26,6 +33,8 @@ public class SideBarClose extends Animation {
 	
 	@Override
 	public void onEnd() {
+		if(pop)
+			return;
 		LayerRender.addEndEvent(()->LayerRender.pushLayer(new ExpandBar()));
 	}
 }

@@ -73,7 +73,7 @@ public abstract class Layer {
 		return b;
 	}
 	
-	protected final boolean isFocus(Component c) {
+	public final boolean isFocus(Component c) {
 		return c.equals(focus);
 	}
 
@@ -84,7 +84,8 @@ public abstract class Layer {
 			for (Component c : comps) {
 				if (c.checkRange(Mouse.getX(), Mouse.getY())){
 					c.onMouseEvent();
-					focus = c;
+					if(Mouse.isButtonDown(0))
+						focus = c;
 				}
 			}
 		}

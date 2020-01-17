@@ -2,10 +2,14 @@
 
 program.null=空值
 program.cancel=取消
+program.ok=确定
+program.add=添加
+program.writing=写入中
 
 #Side Bar Items
 sidebar.language.settings=语言设置
 sidebar.log.clear=清空日志
+sidebar.reaction.add=添加反应
 
 #Title
 window.title=虚拟化学实验室
@@ -14,6 +18,13 @@ window.title=虚拟化学实验室
 dealing.log.clear=正在清除日志...
 i18n.change.lang=正在更改语言
 i18n.change.title=语言
+addreact.react=反应物
+addreact.get=生成物
+addreact.deltaH=焓变
+addreact.deltaS=熵变
+addreact.reversible=可逆
+addreact.nonreversible=非可逆
+addreact.title=添加化学反应
 
 #Atoms
 chemicals.atoms.H=氢原子

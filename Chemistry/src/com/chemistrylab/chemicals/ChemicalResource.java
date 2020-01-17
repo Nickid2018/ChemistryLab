@@ -9,13 +9,15 @@ import org.apache.commons.io.*;
 public class ChemicalResource {
 
 	private final String resourcePath;
-	private Map<String, Chemical> clazz = new HashMap<>();
+	private final String fname;
+	private final Map<String, Chemical> clazz = new HashMap<>();
 	private String name;
 	private String unlocalizedName;
 	private String cas;
 
-	public ChemicalResource(String respath) {
+	public ChemicalResource(String respath, String name) {
 		resourcePath = respath;
+		fname = name;
 	}
 
 	final ChemicalResource preInit() throws Exception {
@@ -42,28 +44,8 @@ public class ChemicalResource {
 		return this;
 	}
 
-	public String getResourcePath() {
-		return resourcePath;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getUnlocalizedName() {
-		return unlocalizedName;
-	}
-
 	public String getCAS() {
 		return cas;
-	}
-
-	public boolean hasAttribute(String cls) {
-		for (String cl : clazz.keySet()) {
-			if (cl.startsWith(cls))
-				return true;
-		}
-		return false;
 	}
 
 	public double getMess() {
@@ -73,5 +55,29 @@ public class ChemicalResource {
 				ret = c.getMess();
 		}
 		return ret;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getFinalName() {
+		return fname;
+	}
+
+	public String getResourcePath() {
+		return resourcePath;
+	}
+
+	public String getUnlocalizedName() {
+		return unlocalizedName;
+	}
+
+	public boolean hasAttribute(String cls) {
+		for (String cl : clazz.keySet()) {
+			if (cl.startsWith(cls))
+				return true;
+		}
+		return false;
 	}
 }
