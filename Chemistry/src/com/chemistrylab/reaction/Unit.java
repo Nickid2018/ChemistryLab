@@ -2,6 +2,7 @@ package com.chemistrylab.reaction;
 
 import com.chemistrylab.eventbus.*;
 import com.chemistrylab.chemicals.*;
+import com.chemistrylab.properties.*;
 
 public class Unit implements EventBusListener {
 
@@ -54,8 +55,8 @@ public class Unit implements EventBusListener {
 		if (unit != UNIT_MOLE && unit != UNIT_G && unit != UNIT_L)
 			throw new IllegalArgumentException("Illegal Unit " + unit);
 	}
-	
-	public Unit setNotListen(){
+
+	public Unit setNotListen() {
 		EventBus.removeListener(this);
 		return this;
 	}
@@ -126,9 +127,8 @@ public class Unit implements EventBusListener {
 
 	@Override
 	public void listen(Event e) {
-		Environment.EventEnvironmentChanged ev = (Environment.EventEnvironmentChanged) e;
-		if (ev.getChangedItem().equals("gasmolv") && unit == UNIT_L) {
-			double old = (Double) ev.getOldValue().getValue();
+		if (e.getExtra(Environment.ENVIRONMENT_CHANGE_ITEM).equals("gasmolv") && unit == UNIT_L) {
+			double old = (Double) ((DoubleProperty) (e.getExtra(Environment.ENVIRONMENT_OLD_VALUE))).getValue();
 			num = num / old * Environment.getGasMolV();
 		}
 	}

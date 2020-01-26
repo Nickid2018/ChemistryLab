@@ -7,7 +7,7 @@ import com.chemistrylab.chemicals.*;
 
 public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	
-	public static final Event CHEMICAL_CHANGED = Event.createNewEvent();
+	public static final Event CHEMICAL_CHANGED = Event.createNewEvent("Chemical changed");
 	public static final int CHEMICAL_ADDED = 0x0;
 	public static final int CHEMICAL_CHANGE = 0x1;
 
