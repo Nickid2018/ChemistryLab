@@ -7,13 +7,13 @@ import java.util.concurrent.*;
 
 public final class Ticker implements EventBusListener {
 
-	public static final Event NEXT_TICK = Event.createNewEvent();
+	public static final Event NEXT_TICK = Event.createNewEvent("Next_tick");
 
 	public static final Logger logger = Logger.getLogger("Ticker");
 
 	private static final Ticker tickerInstance = new Ticker();
 	private static final int EVENTBUS_UNIT = EventBus.addUnit("Ticker");
-	
+
 	private static boolean lastSendOver = true;
 	private static long lastTicks;
 	private static int ticks;
@@ -21,7 +21,9 @@ public final class Ticker implements EventBusListener {
 
 	private static final Timer tick_sender = new Timer(40, (e) -> {
 		if (lastSendOver == true) {
-			EventBus.awaitPostEvent(NEXT_TICK, tickerInstance, 2, TimeUnit.SECONDS, EVENTBUS_UNIT);
+			// The timeout check will use 40ms--1 tick
+			// Actually, this is the tick length
+			EventBus.awaitPostEvent(NEXT_TICK, tickerInstance, 1960, TimeUnit.MILLISECONDS, EVENTBUS_UNIT);
 			lastSendOver = false;
 		}
 	});
@@ -39,14 +41,15 @@ public final class Ticker implements EventBusListener {
 	public void listen(Event e) {
 		if (e.equals(EventBus.AWAIT_EVENT_RUN_OVER)) {
 		} else if (e.equals(EventBus.AWAIT_EVENT_ERROR)) {
-			logger.warn("Tick update error!");
+			logger.warn("Tick update error!", (Throwable) e.getExtra(0));
 		} else if (e.equals(EventBus.AWAIT_EVENT_TIMEOUT)) {
-			logger.warn("Tick lost!");
+			logger.warn("A tick update used too long!");
 		}
-		//Sync
+		// Sync
 		try {
 			Thread.sleep(1);
-		} catch (InterruptedException e1) {}
+		} catch (InterruptedException e1) {
+		}
 		lastSendOver = true;
 		updateTick();
 	}
@@ -58,14 +61,14 @@ public final class Ticker implements EventBusListener {
 	public static int getTicks() {
 		return printTicks;
 	}
-	
-	public static void stopTick(){
+
+	public static void stopTick() {
 		tick_sender.stop();
 		lastSendOver = false;
 		printTicks = 0;
 	}
-	
-	public static void startTick(){
+
+	public static void startTick() {
 		lastSendOver = true;
 		tick_sender.start();
 	}
