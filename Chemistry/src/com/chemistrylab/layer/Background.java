@@ -64,7 +64,7 @@ public class Background extends Layer {
 				CommonRender.drawRightFont("CPU:" + info[0].getVendor() + " " + info[0].getModel(), WIDTH, next * 3, 16,
 						Color.white, true);
 			} catch (SigarException e) {
-				CommonRender.drawRightFont("CPU:Cannot get information about CPU", WIDTH, next * 3, 16, Color.white,
+				CommonRender.drawRightFont("CPU:Cannot get information about CPU", WIDTH, next * 3, 16, Color.red,
 						true);
 			}
 			CommonRender.drawRightFont("==Environment Infos==", WIDTH, next * 4, 16, Color.white, true);

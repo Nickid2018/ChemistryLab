@@ -20,7 +20,7 @@ public class I18NLayer extends Layer {
 		langs.addEffect(new LineBorderEffect(3, Color.white));
 		flush();
 		comps.add(langs);
-		comps.add(new TextComponent(100, 48, 200, 96, this, I18N.getString("i18n.change.title"), ()->{}, 48, Color.white,true).setAlignCenter());
+		comps.add(new TextComponent(100, 48, 250, 96, this, I18N.getString("i18n.change.title"), ()->{}, 48, Color.white,true).setAlignCenter());
 		TextComponent cancel=new TextComponent(100, 120, 250, 168, this, I18N.getString("program.cancel"), ()->{
 			if (Mouse.isButtonDown(0))
 				LayerRender.addEndEvent(() -> {
