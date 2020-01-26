@@ -25,9 +25,9 @@ public class ChemistryLab {
 	public static final DisplayMode fullScreen = Display.getDesktopDisplayMode();
 	public static final String DEFAULT_LOG_FILE = "logs";
 
-	public static final Event DEBUG_ON = Event.createNewEvent();
-	public static final Event DEBUG_OFF = Event.createNewEvent();
-	public static final Event THREAD_FATAL = Event.createNewEvent();
+	public static final Event DEBUG_ON = Event.createNewEvent("Debug_on");
+	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_off");
+	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal Error");
 
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
@@ -52,7 +52,7 @@ public class ChemistryLab {
 			logger.info("Chemistry Lab v1.0_INDEV");
 			logger.info("Made by Nickid2018.Address https://github.com/Nickid2018/");
 			logger.info("LWJGL Version:" + Sys.getVersion());
-
+			
 			// Initialize basic settings
 			Sigar.load();
 			LayerRender.logger.info("Creating window...");
@@ -422,10 +422,16 @@ public class ChemistryLab {
 	static {
 		PropertyConfigurator.configure(ChemistryLab.class.getResource("/assets/log4j.properties"));
 		EventBus.registerListener((e) -> {
-			if (e.equals(I18N.I18N_RELOADED))
-				i18n_reload = true;
-			if (e.equals(THREAD_FATAL))
-				error = (Throwable) e.getExtra(0);
+			try {
+				if (e.equals(I18N.I18N_RELOADED))
+					i18n_reload = true;
+				if (e.equals(THREAD_FATAL))
+					error = (Throwable) e.getExtra(0);
+			} catch (Throwable e1) {
+				Event ev = THREAD_FATAL.clone();
+				ev.putExtra(0, e1);
+				EventBus.postEvent(ev);
+			}
 		});
 	}
 }
