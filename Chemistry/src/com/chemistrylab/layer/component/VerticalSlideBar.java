@@ -7,7 +7,6 @@ import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class VerticalSlideBar extends Component {
@@ -20,7 +19,7 @@ public class VerticalSlideBar extends Component {
 	// Warning:This is a percent.
 	private float postion = 0;
 
-	public VerticalSlideBar(int x0, int y0, int x1, int y1, Layer l, ArrayList<Slidable> cons, int vertsize,
+	public VerticalSlideBar(float x0, float y0, float x1, float y1, Layer l, ArrayList<Slidable> cons, int vertsize,
 			int barheight) {
 		super(x0, y0, x1, y1, l);
 		this.cons = cons;
@@ -48,10 +47,10 @@ public class VerticalSlideBar extends Component {
 			// Bar
 			barcolor.bind();
 			glBegin(GL_QUADS);
-			glVertex2f(range.x1 - barheight, drawup);
-			glVertex2f(range.x1 - barheight, drawdown);
-			glVertex2f(range.x1, drawdown);
-			glVertex2f(range.x1, drawup);
+				glVertex2f(range.x1 - barheight, drawup);
+				glVertex2f(range.x1 - barheight, drawdown);
+				glVertex2f(range.x1, drawdown);
+				glVertex2f(range.x1, drawup);
 			glEnd();
 			// Inside
 			int canDraws = MathHelper.fastFloor(mysize / vertsize);
@@ -90,10 +89,10 @@ public class VerticalSlideBar extends Component {
 			// Bar
 			barcolor.bind();
 			glBegin(GL_QUADS);
-			glVertex2f(range.x1 - barheight, drawup);
-			glVertex2f(range.x1 - barheight, drawdown);
-			glVertex2f(range.x1, drawdown);
-			glVertex2f(range.x1, drawup);
+				glVertex2f(range.x1 - barheight, drawup);
+				glVertex2f(range.x1 - barheight, drawdown);
+				glVertex2f(range.x1, drawdown);
+				glVertex2f(range.x1, drawup);
 			glEnd();
 			// Inside
 			int canDraws = MathHelper.fastFloor(mysize / vertsize);

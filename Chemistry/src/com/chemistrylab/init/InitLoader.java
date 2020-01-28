@@ -2,6 +2,7 @@ package com.chemistrylab.init;
 
 import com.cj.jmcl.*;
 import org.apache.log4j.*;
+import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
@@ -13,7 +14,7 @@ public class InitLoader {
 	public static final Logger logger = Logger.getLogger("Initialize Manager");
 
 	private static final String[] STATUS_MAP = { "Preparing to load", "Preparing Font Texture", "Preparing GUI Texture",
-			"Loading Chemicals", "Loading Containers", "Loading Reactions"};
+			"Loading Chemicals", "Loading Containers", "Loading Reactions" };
 	private static ProgressBar all_progress = new ProgressBar(3, 20);
 
 	private static TextureLoader textureloader;
@@ -44,7 +45,7 @@ public class InitLoader {
 
 	public static void showAllProgress(int status) {
 		all_progress.setNow(status);
-		all_progress.render(100, 400, 800);
+		all_progress.render(100, 400, ChemistryLab.nowWidth - 200);
 		CommonRender.drawAsciiFont(STATUS_MAP[status], 100, 383, 16, Color.black);
 		TextureLoader.drawLogo();
 	}
@@ -52,7 +53,7 @@ public class InitLoader {
 	public static TextureLoader getTextureLoader() {
 		return textureloader;
 	}
-	
+
 	public static ContainerLoader getContainerLoader() {
 		return containerloader;
 	}

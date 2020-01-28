@@ -26,7 +26,7 @@ public class Background extends Layer {
 	public static final Texture table = ChemistryLab.getTextures().get("texture.background.table");
 
 	public Background() {
-		super(0, 0, WIDTH, HEIGHT);
+		super(0, 0, nowWidth, nowHeight);
 	}
 
 	private int count = 1;
@@ -34,7 +34,7 @@ public class Background extends Layer {
 	@Override
 	public void render() {
 		// Background Picture
-		CommonRender.drawTexture(table, 0, 0, WIDTH, HEIGHT, 0, 0, 1, 1);
+		CommonRender.drawTexture(table, 0, 0, nowWidth, nowHeight, 0, 0, 1, 1);
 
 		// Debug Render Layer
 		if (f3) {
@@ -55,27 +55,32 @@ public class Background extends Layer {
 			CommonRender.drawRightFont(
 					"Memory Used:" + (CommonRender.RUNTIME.totalMemory() - CommonRender.RUNTIME.freeMemory()) / 1048576
 							+ "/" + CommonRender.RUNTIME.maxMemory() / 1048576 + "MB",
-					WIDTH, 0, 16, Color.white, true);
-			CommonRender.drawRightFont("LWJGL version " + Sys.getVersion(), WIDTH, next, 16, Color.white, true);
-			CommonRender.drawRightFont("OpenGL version " + glGetString(GL11.GL_VERSION), WIDTH, next * 2, 16,
+					nowWidth, 0, 16, Color.white, true);
+			CommonRender.drawRightFont("LWJGL version " + Sys.getVersion(), nowWidth, next, 16, Color.white, true);
+			CommonRender.drawRightFont("OpenGL version " + glGetString(GL11.GL_VERSION), nowWidth, next * 2, 16,
 					Color.white, true);
 			try {
 				CpuInfo[] info = sigar.getCpuInfoList();
-				CommonRender.drawRightFont("CPU:" + info[0].getVendor() + " " + info[0].getModel(), WIDTH, next * 3, 16,
-						Color.white, true);
+				CommonRender.drawRightFont("CPU:" + info[0].getVendor() + " " + info[0].getModel(), nowWidth, next * 3,
+						16, Color.white, true);
 			} catch (SigarException e) {
-				CommonRender.drawRightFont("CPU:Cannot get information about CPU", WIDTH, next * 3, 16, Color.red,
+				CommonRender.drawRightFont("CPU:Cannot get information about CPU", nowWidth, next * 3, 16, Color.red,
 						true);
 			}
-			CommonRender.drawRightFont("==Environment Infos==", WIDTH, next * 4, 16, Color.white, true);
-			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", WIDTH, next * 5, 16,
+			CommonRender.drawRightFont(
+					"Now Resolution: " + Display.getWidth() + " x " + Display.getHeight() + " x "
+							+ DISPLAY_MODE.getBitsPerPixel() + " @ " + DISPLAY_MODE.getFrequency() + " Hz",
+					nowWidth, next * 4, 16, Color.white, true);
+			CommonRender.drawRightFont("==Environment Infos==", nowWidth, next * 5, 16, Color.white, true);
+			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", nowWidth, next * 6, 16,
 					Color.white, true);
-			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", WIDTH, next * 6, 16,
+			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", nowWidth, next * 7, 16,
 					Color.white, true);
-			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", WIDTH, next * 7,
+			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", nowWidth, next * 8,
 					16, Color.white, true);
 			if (!last_ret.isEmpty())
-				CommonRender.drawRightFont(last_ret, WIDTH, next * 8, 16, last_failed ? Color.red : Color.yellow, true);
+				CommonRender.drawRightFont(last_ret, nowWidth, next * 9, 16, last_failed ? Color.red : Color.yellow,
+						true);
 
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
@@ -141,13 +146,13 @@ public class Background extends Layer {
 	public void onKeyActive() {
 		super.onKeyActive();
 		if (!onCommand && Keyboard.isKeyDown(Keyboard.KEY_C)) {
-			TextField f = new TextField(0, HEIGHT - 16, WIDTH, HEIGHT, this, 16);
+			TextField f = new TextField(0, nowHeight - 16, nowWidth, nowHeight, this, 16);
 			f.addEffect(new BackgroundEffect(new Color(150, 150, 150, 75)));
 			f.setEnterEvent(s -> {
 				comps.clear();
 				onCommand = false;
 				focus = null;
-				if(s.isEmpty())
+				if (s.isEmpty())
 					return;
 				try {
 					last_ret = CommandController.runCommand(s);

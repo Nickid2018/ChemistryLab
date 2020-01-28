@@ -12,7 +12,7 @@ import static com.chemistrylab.ChemistryLab.*;
 public class SideBar extends Layer {
 
 	public SideBar() {
-		super(0, 0, 200, HEIGHT);
+		super(0, 0, 200, nowHeight);
 		comps.add(new TextComponent(12, 0, 200, 64, this, I18N.getString("sidebar.language.settings"), ()->{
 			if(Mouse.isButtonDown(0))
 				LayerRender.addEndEvent(()->{
@@ -40,8 +40,8 @@ public class SideBar extends Layer {
 		new Color(150,150,150,75).bind();
 		glBegin(GL_QUADS);
 			glVertex2f(0,0);
-			glVertex2f(0,HEIGHT);
-			glVertex2f(200,HEIGHT);
+			glVertex2f(0,nowHeight);
+			glVertex2f(200,nowHeight);
 			glVertex2f(200,0);
 		glEnd();
 		new Color(0,200,0,150).bind();
@@ -63,6 +63,11 @@ public class SideBar extends Layer {
 			glVertex2f(10,196);
 			glVertex2f(10,132);
 		glEnd();
+	}
+	
+	@Override
+	public void onContainerResized() {
+		range.y1 = nowHeight;
 	}
 	
 	@Override

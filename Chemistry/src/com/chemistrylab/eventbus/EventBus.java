@@ -55,6 +55,11 @@ public class EventBus {
 	public static final Event AWAIT_EVENT_ERROR = Event.createNewEvent("Await_event_error");
 
 	/**
+	 * EventBus has been shutdowned.
+	 */
+	public static final Event EVENTBUS_CLOSED = Event.createNewEvent("EventBus_closed");
+
+	/**
 	 * Register an event.
 	 * 
 	 * @param e
@@ -230,7 +235,9 @@ public class EventBus {
 		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
-				nonwaitBusSender.execute(() -> linss.listen(e));
+				nonwaitBusSender.execute(() -> {
+					linss.listen(e);
+				});
 			}
 		}
 		sendLock.unlock();
@@ -381,9 +388,6 @@ public class EventBus {
 	 *            an event
 	 * @see #awaitPostEvent(Event, EventBusListener, int, TimeUnit, int)
 	 */
-	/**
-	 * @param e
-	 */
 	@Deprecated
 	public static final void completelyAwait(Event e) {
 		sendLock.lock();
@@ -393,6 +397,25 @@ public class EventBus {
 			}
 		}
 		sendLock.unlock();
+	}
+
+	/**
+	 * Release all resource EventBus owned and shutdown all Bus.
+	 */
+	public static final void releaseEventBus() {
+		postEvent(EVENTBUS_CLOSED);
+		// Warning: Must stop ticking before pop the Non-wait EventBus
+		Ticker.stopTick();
+		nonwaitBusSender.shutdown();
+		// Wait AWAIT EVENT OVER
+		try {
+			nonwaitBusSender.awaitTermination(10, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
+		for (ExecutorService es : awaitBusSenderUnits) {
+			es.shutdownNow();
+		}
+		awaitBusSenderListener.shutdownNow();
 	}
 
 	public static final int getNonawaitSize() {

@@ -13,11 +13,11 @@ public class TextComponent extends Component {
 	protected boolean unifont;
 	protected boolean aligncenter = false;
 
-	public TextComponent(int x0, int y0, int x1, int y1, Layer l, String s, Runnable r, int size, Color c) {
+	public TextComponent(float x0, float y0, float x1, float y1, Layer l, String s, Runnable r, int size, Color c) {
 		this(x0, y0, x1, y1, l, s, r, size, c, false);
 	}
 
-	public TextComponent(int x0, int y0, int x1, int y1, Layer l, String s, Runnable r, int size, Color c,
+	public TextComponent(float x0, float y0, float x1, float y1, Layer l, String s, Runnable r, int size, Color c,
 			boolean unif) {
 		super(x0, y0, x1, y1, l);
 		act = r;

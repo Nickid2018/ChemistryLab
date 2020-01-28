@@ -9,6 +9,7 @@ program.writing=写入中
 #Side Bar Items
 sidebar.language.settings=语言设置
 sidebar.log.clear=清空日志
+sidebar.log.success=成功清空日志
 sidebar.reaction.add=添加反应
 
 #Title
@@ -25,6 +26,7 @@ addreact.deltaS=熵变
 addreact.reversible=可逆
 addreact.nonreversible=非可逆
 addreact.title=添加化学反应
+addreact.success=添加成功
 
 #Atoms
 chemicals.atoms.H=氢原子

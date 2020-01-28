@@ -9,6 +9,7 @@ program.writing=Writing
 #Side Bar Items
 sidebar.language.settings=Language
 sidebar.log.clear=Clear logs
+sidebar.log.success=Cleared logs
 sidebar.reaction.add=Add Reaction
 
 #Title
@@ -25,6 +26,7 @@ addreact.deltaS=Entropy Change
 addreact.reversible=Reversible
 addreact.nonreversible=Nonreversible
 addreact.title=Add Reaction
+addreact.success=Success
 
 #Atoms
 chemicals.atoms.H=Hydrogen

@@ -3,7 +3,7 @@ package com.chemistrylab.eventbus;
 import java.util.*;
 import com.chemistrylab.init.*;
 
-public abstract class Event implements Cloneable {
+public abstract class Event implements Cloneable ,Comparable<Event>{
 
 	protected final String name;
 	protected boolean canceled = false;
@@ -92,6 +92,24 @@ public abstract class Event implements Cloneable {
 		if (!(obj instanceof Event))
 			return false;
 		return eventId.equals(((Event) obj).eventId);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(getName());
+		if (!extras.isEmpty()) {
+			sb.append("[");
+			for (Map.Entry<Integer, Object> en : extras.entrySet()) {
+				sb.append(en.getKey() + ":" + en.getValue() + ",");
+			}
+			sb.replace(sb.length() - 1, sb.length(), "]");
+		}
+		return sb.toString();
+	}
+	
+	@Override
+	public int compareTo(Event o) {
+		return name.compareTo(o.name);
 	}
 
 	/**

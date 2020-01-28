@@ -54,7 +54,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(1);
 				load_details.setNow(counter);
-				load_details.render(100, 520, 800);
+				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading type class:" + ns, 100, 503, 16, Color.black);
 				Display.update();
 				lastTime = ChemistryLab.getTime();
@@ -87,7 +87,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(2);
 				load_details.setNow(counter);
-				load_details.render(100, 520, 800);
+				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Atom[" + actualpath + "]", 100, 503, 16, Color.black);
 				Display.update();
 				lastTime = ChemistryLab.getTime();
@@ -109,7 +109,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(3);
 				load_details.setNow(counter);
-				load_details.render(100, 520, 800);
+				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Ion[" + actualpath + "]", 100, 503, 16, Color.black);
 				Display.update();
 				lastTime = ChemistryLab.getTime();
@@ -143,7 +143,7 @@ public class ChemicalsLoader {
 
 	private static final void renderChemicalStatus(int i) {
 		load_chemical_status.setNow(i);
-		load_chemical_status.render(100, 460, 800);
+		load_chemical_status.render(100, 460, ChemistryLab.nowWidth - 200);
 		CommonRender.drawAsciiFont(CHEMICAL_LOAD_STATUS[i - 1], 100, 443, 16, Color.black);
 	}
 

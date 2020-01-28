@@ -20,7 +20,7 @@ public class HorizonSlideBar extends Component {
 	private Range slibar = new Range();
 	private Color barcolor = Color.darkGray;
 
-	public HorizonSlideBar(int x0, int y0, int x1, int y1, Layer l, ArrayList<Slidable> cons, int honzsize,
+	public HorizonSlideBar(float x0, float y0, float x1, float y1, Layer l, ArrayList<Slidable> cons, int honzsize,
 			int barheight) {
 		super(x0, y0, x1, y1, l);
 		this.cons = cons;

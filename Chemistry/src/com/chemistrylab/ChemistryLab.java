@@ -19,10 +19,13 @@ import com.chemistrylab.eventbus.*;
 public class ChemistryLab {
 
 	public static final Logger logger = Logger.getLogger("Main Looper");
-	public static final int WIDTH = 1050;
-	public static final int HEIGHT = 600;
-	public static final DisplayMode defaultMode = new DisplayMode(WIDTH, HEIGHT);
-	public static final DisplayMode fullScreen = Display.getDesktopDisplayMode();
+	public static final float DREAM_WIDTH = 1280;
+	public static final float DREAM_HEIGHT = 720;
+	public static float nowWidth = 1280;
+	public static float nowHeight = 720;
+	public static float oldWidth = 1280;
+	public static float oldHeight = 720;
+	public static DisplayMode DISPLAY_MODE;
 	public static final String DEFAULT_LOG_FILE = "logs";
 
 	public static final Event DEBUG_ON = Event.createNewEvent("Debug_on");
@@ -37,7 +40,6 @@ public class ChemistryLab {
 
 	private static boolean f11ed = false;
 
-	private static DisplayMode storedDisplayMode;
 	private static long lastFPS;
 	private static int fps;
 	private static int printFPS;
@@ -52,12 +54,25 @@ public class ChemistryLab {
 			logger.info("Chemistry Lab v1.0_INDEV");
 			logger.info("Made by Nickid2018.Address https://github.com/Nickid2018/");
 			logger.info("LWJGL Version:" + Sys.getVersion());
-			
+
+			// Switch a DisplayMode
+			DisplayMode[] alls = Display.getAvailableDisplayModes();
+			for (DisplayMode dm : alls) {
+				if (dm.getWidth() == nowWidth && dm.getHeight() == nowHeight && dm.getBitsPerPixel() == 32) {
+					DISPLAY_MODE = dm;
+				}
+			}
+			// If not have any, create a non-fullscreen mode
+			if (DISPLAY_MODE == null) {
+				DISPLAY_MODE = new DisplayMode(1280, 720);
+				LayerRender.logger.warn("Can't find an adaptable resolution ( 1280 x 600 x 32 )");
+			}
+
 			// Initialize basic settings
 			Sigar.load();
 			LayerRender.logger.info("Creating window...");
 			Display.setTitle("Chemistry Lab");
-			Display.setDisplayMode(defaultMode);
+			Display.setDisplayMode(DISPLAY_MODE);
 			Display.setInitialBackground(1, 1, 1);
 			Display.setVSyncEnabled(true);
 			Display.setResizable(true);
@@ -67,9 +82,9 @@ public class ChemistryLab {
 			LayerRender.logger.info("Initializing OpenGL...");
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
-			GL11.glOrtho(0, WIDTH, HEIGHT, 0, 1, -1);
+			GL11.glOrtho(0, nowWidth, nowHeight, 0, 1, -1);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			GL11.glViewport(0, 0, WIDTH, HEIGHT);
+			GL11.glViewport(0, 0, (int) nowWidth, (int) nowHeight);
 
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -98,16 +113,14 @@ public class ChemistryLab {
 				f11ed = true;
 				if (f11)
 					try {
-						storedDisplayMode = Display.getDisplayMode();
-						Display.setDisplayModeAndFullscreen(fullScreen);
-						GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+						Display.setFullscreen(true);
 					} catch (LWJGLException e) {
 						e.printStackTrace();
 					}
 				else
 					try {
-						Display.setDisplayMode(storedDisplayMode);
-						GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+						Display.setFullscreen(false);
+						Display.setResizable(true);
 					} catch (LWJGLException e) {
 						e.printStackTrace();
 					}
@@ -156,6 +169,9 @@ public class ChemistryLab {
 			logger.fatal("qwq, this program crashed!", e);
 			LayerRender.popLayers();
 
+			if(errorthread == null)
+				errorthread = Thread.currentThread();
+			
 			Date date = new Date();
 
 			String crash = "crash-report_"
@@ -174,7 +190,13 @@ public class ChemistryLab {
 				IOUtils.write("Program had crashed.This report is the detail of this error." + l, w);
 				IOUtils.write("Time " + String.format("%tc", date) + l, w);
 				IOUtils.write("=== S T A C K T R A C E ===" + l, w);
+				IOUtils.write("Thread \"" + errorthread.getName() + "\"" + l, w);
 				IOUtils.write(stack + l, w);
+				IOUtils.write("=== T H R E A D S ===" + l, w);
+				for(Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()){
+					IOUtils.write("Thread \"" + en.getKey().getName() + "\" State:" + en.getKey().getState() + l, w);
+					IOUtils.write(asStack(en.getValue()) + l, w);
+				}
 				IOUtils.write("=== S Y S T E M ===" + l, w);
 				IOUtils.write("Operating System:" + System.getProperty("os.name") + " "
 						+ System.getProperty("os.version") + " " + System.getProperty("os.arch") + l, w);
@@ -184,6 +206,7 @@ public class ChemistryLab {
 				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
 				IOUtils.write("LWJGL Version:" + Sys.getVersion() + l, w);
 				IOUtils.write("OpenGL Version:" + GL11.glGetString(GL11.GL_VERSION) + l, w);
+				w.flush();
 				w.close();
 			} catch (IOException e2) {
 				logger.error("Write crash-report error.", e2);
@@ -201,17 +224,17 @@ public class ChemistryLab {
 						f11ed = true;
 						if (f11)
 							try {
-								storedDisplayMode = Display.getDisplayMode();
-								Display.setDisplayModeAndFullscreen(fullScreen);
-								GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+								Display.setFullscreen(true);
+								// GL11.glViewport(0, 0, Display.getWidth(),
+								// Display.getHeight());
 							} catch (LWJGLException e1) {
 								e.printStackTrace();
 							}
 						else
 							try {
-								Display.setDisplayMode(storedDisplayMode);
-								GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-								Display.setResizable(true);
+								Display.setFullscreen(false);
+								// GL11.glViewport(0, 0, Display.getWidth(),
+								// Display.getHeight());
 							} catch (LWJGLException e1) {
 								e.printStackTrace();
 							}
@@ -219,7 +242,7 @@ public class ChemistryLab {
 				}
 
 				CommonRender.drawFont("Program Crashed!",
-						WIDTH / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
+						nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
 				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
 						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
 				CommonRender.drawItaticFont("Please report this crash report to https://github.com/Nickid2018/", 20,
@@ -321,15 +344,24 @@ public class ChemistryLab {
 	public static void checkResize() {
 		if (Display.wasResized() || f11ed) {
 			f11ed = false;
+			GL11.glMatrixMode(GL11.GL_PROJECTION);
+			GL11.glLoadIdentity();
+			GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+			oldWidth = nowWidth;
+			oldHeight = nowHeight;
+			nowWidth = Display.getWidth();
+			nowHeight = Display.getHeight();
+			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			LayerRender.windowResize();
 		}
 	}
 
 	private static Throwable error;
+	private static Thread errorthread;
 
 	private static void checkErrors() throws Throwable {
-		if(error != null)
+		if (error != null)
 			throw error;
 	}
 
@@ -352,16 +384,18 @@ public class ChemistryLab {
 		if (getTextures() != null)
 			getTextures().releaseAll();
 		Display.destroy();
+		EventBus.releaseEventBus();
 		logger.info("Program stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");
 		System.exit(0);
 	}
 
 	private static long clearingLogTime = getTime();
-
+	private static PleaseWaitLayer layer = null;
 	public static void clearLog() {
 		if (getTime() - clearingLogTime < 1000)
 			return;
-		LayerRender.pushLayer(new PleaseWaitLayer(I18N.getString("dealing.log.clear"), () -> {
+		LayerRender.pushLayer(layer = new PleaseWaitLayer(I18N.getString("dealing.log.clear"), () -> {
+			layer.isClickLegal(1);
 			File dir = new File(DEFAULT_LOG_FILE);
 			File[] todels = dir.listFiles((FilenameFilter) (dir1, name) -> !name.equals("ChemistryLab-Log"));
 			for (File del : todels) {
@@ -369,6 +403,8 @@ public class ChemistryLab {
 			}
 			clearingLogTime = getTime();
 			logger.info("Cleared Log.");
+			layer.setSuccess(I18N.getString("sidebar.log.success"));
+			throw new RuntimeException("hh");
 		}).start());
 	}
 
@@ -418,6 +454,15 @@ public class ChemistryLab {
 		}
 		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
+	
+	public static String asStack(StackTraceElement[] es) {
+		String l = System.getProperty("line.separator");
+		StringBuilder sb = new StringBuilder();
+		for (StackTraceElement ste : es) {
+			sb.append("\tat " + ste + l);
+		}
+		return sb.toString();
+	}
 
 	static {
 		PropertyConfigurator.configure(ChemistryLab.class.getResource("/assets/log4j.properties"));
@@ -425,8 +470,10 @@ public class ChemistryLab {
 			try {
 				if (e.equals(I18N.I18N_RELOADED))
 					i18n_reload = true;
-				if (e.equals(THREAD_FATAL))
+				if (e.equals(THREAD_FATAL)){
 					error = (Throwable) e.getExtra(0);
+					errorthread = (Thread) e.getExtra(1);
+				}
 			} catch (Throwable e1) {
 				Event ev = THREAD_FATAL.clone();
 				ev.putExtra(0, e1);

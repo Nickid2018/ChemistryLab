@@ -84,27 +84,27 @@ public final class ProgressBar {
 		this.mask = mask;
 	}
 
-	public void render(int x, int y, int size) {
+	public void render(float x, float y, float f) {
 		glLineWidth(1);
 		edgecolor.bind();
 		glBegin(GL_LINE_LOOP);
 			glVertex2f(x, y);
-			glVertex2f(x + size, y);
-			glVertex2f(x + size, y + height);
+			glVertex2f(x + f, y);
+			glVertex2f(x + f, y + height);
 			glVertex2f(x, y + height);
 		glEnd();
 		fillcolor.bind();
 		glBegin(GL_QUADS);
 			glVertex2f(x, y);
-			glVertex2f(x + (float) size * (float) now / (float) max, y);
-			glVertex2f(x + (float) size * (float) now / (float) max, y + height - 1);
+			glVertex2f(x + (float) f * (float) now / (float) max, y);
+			glVertex2f(x + (float) f * (float) now / (float) max, y + height - 1);
 			glVertex2f(x, y + height - 1);
 		glEnd();
 		if (maskenabled) {
 			maskcolor.bind();
 			glBegin(GL_LINE_STRIP);
-				glVertex2f(x + (float) size * (float) mask / (float) max, y);
-				glVertex2f(x + (float) size * (float) mask / (float) max, y + height - 1);
+				glVertex2f(x + (float) f * (float) mask / (float) max, y);
+				glVertex2f(x + (float) f * (float) mask / (float) max, y + height - 1);
 			glEnd();
 		}
 	}

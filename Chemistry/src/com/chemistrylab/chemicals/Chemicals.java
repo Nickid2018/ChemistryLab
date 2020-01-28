@@ -40,7 +40,7 @@ public class Chemicals extends HashMap<String, ChemicalResource> {
 	public ChemicalResource get(String key) {
 		ChemicalResource ret = super.get(key);
 		if (ret == null)
-			throw new IllegalArgumentException("Can't find chemical " + key);
+			throw new IllegalArgumentException("Can't find chemical \'" + key + "\'");
 		return ret;
 	}
 }

@@ -4,6 +4,7 @@ import javax.swing.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 
 public final class Ticker implements EventBusListener {
 
@@ -14,17 +15,20 @@ public final class Ticker implements EventBusListener {
 	private static final Ticker tickerInstance = new Ticker();
 	private static final int EVENTBUS_UNIT = EventBus.addUnit("Ticker");
 
-	private static boolean lastSendOver = true;
+	// Atomic Operation
+	private static AtomicBoolean lastSendOver = new AtomicBoolean(true);
+	private static AtomicBoolean stopped = new AtomicBoolean();
+
 	private static long lastTicks;
 	private static int ticks;
 	private static int printTicks;
 
 	private static final Timer tick_sender = new Timer(40, (e) -> {
-		if (lastSendOver == true) {
+		if (lastSendOver.get()) {
 			// The timeout check will use 40ms--1 tick
 			// Actually, this is the tick length
 			EventBus.awaitPostEvent(NEXT_TICK, tickerInstance, 1960, TimeUnit.MILLISECONDS, EVENTBUS_UNIT);
-			lastSendOver = false;
+			lastSendOver.set(false);
 		}
 	});
 
@@ -44,13 +48,17 @@ public final class Ticker implements EventBusListener {
 			logger.warn("Tick update error!", (Throwable) e.getExtra(0));
 		} else if (e.equals(EventBus.AWAIT_EVENT_TIMEOUT)) {
 			logger.warn("A tick update used too long!");
+		} else {
+			stopped.lazySet(true);
+			tick_sender.stop();
+			return;
 		}
 		// Sync
 		try {
 			Thread.sleep(1);
 		} catch (InterruptedException e1) {
 		}
-		lastSendOver = true;
+		lastSendOver.set(true && !stopped.get());
 		updateTick();
 	}
 
@@ -64,12 +72,14 @@ public final class Ticker implements EventBusListener {
 
 	public static void stopTick() {
 		tick_sender.stop();
-		lastSendOver = false;
+		lastSendOver.set(false);
+		stopped.set(true);
 		printTicks = 0;
 	}
 
 	public static void startTick() {
-		lastSendOver = true;
+		lastSendOver.set(true);
+		stopped.set(false);
 		tick_sender.start();
 	}
 

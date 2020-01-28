@@ -25,8 +25,8 @@ public class SideBarClose extends Animation {
 		new Color(150,150,150,75).bind();
 		glBegin(GL_QUADS);
 			glVertex2f(0,0);
-			glVertex2f(0,HEIGHT);
-			glVertex2f(-fp*20+200,HEIGHT);
+			glVertex2f(0,nowHeight);
+			glVertex2f(-fp*20+200,nowHeight);
 			glVertex2f(-fp*20+200,0);
 		glEnd();
 	}

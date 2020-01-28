@@ -44,7 +44,7 @@ public class ContainerLoader {
 				ChemistryLab.clearFace();
 				ChemistryLab.updateFPS();
 				load_con.setNow(i + 1);
-				load_con.render(100, 460, 800);
+				load_con.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
 				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);

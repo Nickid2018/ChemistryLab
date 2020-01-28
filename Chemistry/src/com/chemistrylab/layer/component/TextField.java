@@ -27,12 +27,12 @@ public class TextField extends Component {
 
 	private static final Clipboard CLIP = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-	public TextField(int x0, int y0, int x1, int y1, Layer l, int size) {
-		this(x0, y0, x1, y1, l, size, "");
+	public TextField(float x0, float x1, float y0, float y1, Layer l, int size) {
+		this(x0, x1, y0, y1, l, size, "");
 	}
 
-	public TextField(int x0, int y0, int x1, int y1, Layer l, int size, String s) {
-		super(x0, y0, x1, y1, l);
+	public TextField(float x0, float x1, float y0, float y1, Layer l, int size, String s) {
+		super(x0, x1, y0, y1, l);
 		pa = s;
 		this.size = size;
 		startpaint = 0;
@@ -234,7 +234,7 @@ public class TextField extends Component {
 				try {
 					text = (String) trans.getTransferData(DataFlavor.stringFlavor);
 				} catch (UnsupportedFlavorException | IOException e) {
-					throw new RuntimeException("Error in pasting text.");
+					throw new RuntimeException("Error in pasting text.Info:" + e);
 				}
 				if (selpostionstart != selpostionend) {
 					pa = pa.substring(0, selpostionstart) + text + pa.substring(selpostionend);
