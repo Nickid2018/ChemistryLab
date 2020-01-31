@@ -10,9 +10,9 @@ public class Oxide extends Chemical {
 
 	protected Map<ChemicalResource, Integer> relas = new HashMap<>();
 	protected double mess;
-	
-	public Oxide(JSONObject o) {
-		super(o);
+
+	public Oxide(JSONObject o, ChemicalResource r) {
+		super(o, r);
 		JSONArray rels = o.getJSONArray("relativeAtom");
 		for (Object ob : rels) {
 			String s = (String) ob;

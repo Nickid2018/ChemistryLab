@@ -21,6 +21,13 @@ public class EventBusComand extends Command {
 				sb.append("\n" + e.getName() + ":" + e.getEventId());
 			}
 			return sb.toString();
+		case "now-events":
+			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
+			StringBuilder bu = new StringBuilder("Now Events:\n");
+			for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
+				bu.append(en.getKey() + " " + en.getValue() + "\n");
+			}
+			return bu.toString();
 		}
 		String[] sps = info.split(" ", 3);
 		switch (sps[0]) {

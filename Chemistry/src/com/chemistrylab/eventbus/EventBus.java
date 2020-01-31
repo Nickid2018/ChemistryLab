@@ -28,6 +28,7 @@ public class EventBus {
 	private static final ReentrantLock unitLock = new ReentrantLock();
 	private static final ReentrantLock sendLock = new ReentrantLock();
 	private static final Map<UUID, Event> regedEvents = new TreeMap<>();
+	private static final Map<Future<?>, Event> nonwaitEvents = new HashMap<>();
 
 	/**
 	 * An await progress will reply this when the event has been sent
@@ -150,8 +151,7 @@ public class EventBus {
 	public static final void removeUnit(int unit) {
 		unitLock.lock();
 		ExecutorService es = awaitBusSenderUnits.get(unit);
-		awaitBusSenderUnits.remove(unit);
-		awaitBusSenderUnits.add(unit, null);
+		awaitBusSenderUnits.set(unit, null);
 		unitLock.unlock();
 		es.shutdownNow();
 	}
@@ -176,8 +176,7 @@ public class EventBus {
 	public static final void awaitRemoveUnit(int unit, long awmax, TimeUnit u) throws Exception {
 		unitLock.lock();
 		ExecutorService es = awaitBusSenderUnits.get(unit);
-		awaitBusSenderUnits.remove(unit);
-		awaitBusSenderUnits.add(unit, null);
+		awaitBusSenderUnits.set(unit, null);
 		unitLock.unlock();
 		es.shutdown();
 		es.awaitTermination(awmax, u);
@@ -235,9 +234,7 @@ public class EventBus {
 		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
-				nonwaitBusSender.execute(() -> {
-					linss.listen(e);
-				});
+				nonwaitEvents.put(nonwaitBusSender.submit(() -> linss.listen(e)), e);
 			}
 		}
 		sendLock.unlock();
@@ -256,7 +253,7 @@ public class EventBus {
 		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
-				nonwaitBusSender.execute(() -> linss.listen(e));
+				nonwaitEvents.put(nonwaitBusSender.submit(() -> linss.listen(e)), e);
 			}
 		}
 		sendLock.unlock();
@@ -344,7 +341,7 @@ public class EventBus {
 		}
 		sendLock.unlock();
 		if (listens == 0) {
-			nonwaitBusSender.execute(() -> source.listen(AWAIT_EVENT_RUN_OVER));
+			nonwaitEvents.put(nonwaitBusSender.submit(() -> source.listen(AWAIT_EVENT_RUN_OVER)), AWAIT_EVENT_RUN_OVER);
 		} else
 			awaitBusSenderListener.execute(() -> {
 				List<Future<Object>> os;
@@ -399,6 +396,21 @@ public class EventBus {
 		sendLock.unlock();
 	}
 
+	public static final Map<Event.CompleteComparedEvent, Integer> getNowActiveEvents() {
+		Map<Event.CompleteComparedEvent, Integer> ret = new TreeMap<>();
+		for (Map.Entry<Future<?>, Event> en : nonwaitEvents.entrySet()) {
+			if (en.getKey().isDone())
+				continue;
+			Event.CompleteComparedEvent e = new Event.CompleteComparedEvent(en.getValue());
+			if (ret.containsKey(e)) {
+				ret.replace(e, ret.get(e) + 1);
+			} else {
+				ret.put(e, 1);
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Release all resource EventBus owned and shutdown all Bus.
 	 */
@@ -443,5 +455,52 @@ public class EventBus {
 			return new Thread(r, name);
 		}
 
+	}
+
+	private static final class RecordCleaner implements EventBusListener {
+
+		@Override
+		public boolean receiveEvents(Event e) {
+			return e.equals(Ticker.NEXT_TICK);
+		}
+
+		@Override
+		public void listen(Event e) {
+			if (((ThreadPoolExecutor) nonwaitBusSender).getActiveCount() == 0)
+				nonwaitEvents.clear();
+		}
+	}
+
+	static {
+		registerListener(new RecordCleaner());
+		//Test Codes
+//		registerListener(new EventBusListener() {
+//
+//			@Override
+//			public boolean receiveEvents(Event e) {
+//				return e.equals(Ticker.NEXT_TICK);
+//			}
+//			
+//			@Override
+//			public void listen(Event e) {
+//				Event hh = Event.NULL_EVENT.clone();
+//				hh.putExtra((int) (Math.random()*Integer.MAX_VALUE), null);
+//				EventBus.postEvent(hh);
+//			}
+//		});
+//		registerListener(new EventBusListener() {
+//
+//			@Override
+//			public boolean receiveEvents(Event e) {
+//				return e.equals(Event.NULL_EVENT);
+//			}
+//			
+//			@Override
+//			public void listen(Event e) {
+//				try {
+//					Thread.sleep(50);
+//				} catch (InterruptedException e1) {}
+//			}
+//		});
 	}
 }

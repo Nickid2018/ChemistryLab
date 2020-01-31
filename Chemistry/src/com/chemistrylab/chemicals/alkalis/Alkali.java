@@ -9,8 +9,8 @@ public class Alkali extends Chemical {
 	protected Map<ChemicalResource, Integer> relas = new HashMap<>();
 	protected double mess;
 
-	public Alkali(JSONObject o) {
-		super(o);
+	public Alkali(JSONObject o, ChemicalResource r) {
+		super(o, r);
 		JSONArray rels = o.getJSONArray("relativeIon");
 		for (Object ob : rels) {
 			String s = (String) ob;

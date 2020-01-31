@@ -9,9 +9,9 @@ import com.cj.rdt.versions.*;
 import com.chemistrylab.chemicals.*;
 
 public class ReactionEntry extends RDTTagBase {
-	
+
 	public static final byte REACTION_ENTRY = 0x10;
-	public static final ReactionEntry INSTANCE =new ReactionEntry();
+	public static final ReactionEntry INSTANCE = new ReactionEntry();
 
 	private Reaction toWrite;
 
@@ -50,21 +50,33 @@ public class ReactionEntry extends RDTTagBase {
 		if (sign == 1) {
 			String K = inp.readUTF();
 			ReversibleReaction re;
+			ReversibleReaction res;
 			try {
 				re = new ReversibleReaction(react, get, dH, dS, K);
+				res = re.reserve();
 			} catch (MathException e) {
 				throw new IOException(e);
+			}
+			for (ChemicalResource r : react.keySet()) {
+				r.addReaction(re);
+			}
+			for (ChemicalResource r : get.keySet()) {
+				r.addReaction(res);
 			}
 			os.put(re.computeSign(), re);
 		} else {
 			NonReversibleReaction re = new NonReversibleReaction(react, get, dH, dS);
+			for (ChemicalResource r : react.keySet()) {
+				r.addReaction(re);
+			}
 			os.put(re.computeSign(), re);
 		}
 		return RDTWarn.NO_WARN;
 	}
 
 	@Override
-	public void writeTag(DataOutput oup, RDTObject<?> o) throws IOException {//Sign write
+	public void writeTag(DataOutput oup, RDTObject<?> o) throws IOException {
+		// Sign write
 		oup.writeByte(REACTION_ENTRY);
 		if (toWrite instanceof ReversibleReaction) {
 			oup.writeByte(1);
@@ -72,25 +84,25 @@ public class ReactionEntry extends RDTTagBase {
 			oup.writeByte(0);
 		}
 		TagArray<TagPair> react = new TagArray<>();
-		for(Map.Entry<ChemicalResource, Integer> en:toWrite.getReacts().entrySet()){
+		for (Map.Entry<ChemicalResource, Integer> en : toWrite.getReacts().entrySet()) {
 			TagString key = new TagString(en.getKey().getFinalName());
 			TagInt value = new TagInt(en.getValue());
-			TagPair pair = new TagPair(key,value);
+			TagPair pair = new TagPair(key, value);
 			react.addTag(pair);
 		}
 		react.writeTag(oup, o);
 		TagArray<TagPair> get = new TagArray<>();
-		for(Map.Entry<ChemicalResource, Integer> en:toWrite.getGets().entrySet()){
+		for (Map.Entry<ChemicalResource, Integer> en : toWrite.getGets().entrySet()) {
 			TagString key = new TagString(en.getKey().getFinalName());
 			TagInt value = new TagInt(en.getValue());
-			TagPair pair = new TagPair(key,value);
+			TagPair pair = new TagPair(key, value);
 			get.addTag(pair);
 		}
 		get.writeTag(oup, o);
 		oup.writeDouble(toWrite.getdH());
 		oup.writeDouble(toWrite.getdS());
 		if (toWrite instanceof ReversibleReaction) {
-			oup.writeUTF(((ReversibleReaction)toWrite).getStrK());
+			oup.writeUTF(((ReversibleReaction) toWrite).getStrK());
 		}
 	}
 

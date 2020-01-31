@@ -13,6 +13,7 @@ import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
 import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
+import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
 
 @KeepApplication
@@ -28,9 +29,9 @@ public class ChemistryLab {
 	public static DisplayMode DISPLAY_MODE;
 	public static final String DEFAULT_LOG_FILE = "logs";
 
-	public static final Event DEBUG_ON = Event.createNewEvent("Debug_on");
-	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_off");
-	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal Error");
+	public static final Event DEBUG_ON = Event.createNewEvent("Debug_On");
+	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_Off");
+	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal_Error");
 
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
@@ -65,7 +66,7 @@ public class ChemistryLab {
 			// If not have any, create a non-fullscreen mode
 			if (DISPLAY_MODE == null) {
 				DISPLAY_MODE = new DisplayMode(1280, 720);
-				LayerRender.logger.warn("Can't find an adaptable resolution ( 1280 x 600 x 32 )");
+				LayerRender.logger.warn("Can't find an adaptable resolution ( 1280 x 720 x 32 )");
 			}
 
 			// Initialize basic settings
@@ -167,11 +168,12 @@ public class ChemistryLab {
 			}
 		} catch (Throwable e) {
 			logger.fatal("qwq, this program crashed!", e);
+			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
 			LayerRender.popLayers();
 
-			if(errorthread == null)
+			if (errorthread == null)
 				errorthread = Thread.currentThread();
-			
+
 			Date date = new Date();
 
 			String crash = "crash-report_"
@@ -193,9 +195,14 @@ public class ChemistryLab {
 				IOUtils.write("Thread \"" + errorthread.getName() + "\"" + l, w);
 				IOUtils.write(stack + l, w);
 				IOUtils.write("=== T H R E A D S ===" + l, w);
-				for(Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()){
+				for (Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()) {
 					IOUtils.write("Thread \"" + en.getKey().getName() + "\" State:" + en.getKey().getState() + l, w);
 					IOUtils.write(asStack(en.getValue()) + l, w);
+				}
+				IOUtils.write("=== E V E N T B U S ===" + l, w);
+				IOUtils.write("Active Events:" + l, w);
+				for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
+					IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
 				}
 				IOUtils.write("=== S Y S T E M ===" + l, w);
 				IOUtils.write("Operating System:" + System.getProperty("os.name") + " "
@@ -225,16 +232,13 @@ public class ChemistryLab {
 						if (f11)
 							try {
 								Display.setFullscreen(true);
-								// GL11.glViewport(0, 0, Display.getWidth(),
-								// Display.getHeight());
 							} catch (LWJGLException e1) {
 								e.printStackTrace();
 							}
 						else
 							try {
 								Display.setFullscreen(false);
-								// GL11.glViewport(0, 0, Display.getWidth(),
-								// Display.getHeight());
+								Display.setResizable(true);
 							} catch (LWJGLException e1) {
 								e.printStackTrace();
 							}
@@ -379,6 +383,11 @@ public class ChemistryLab {
 
 	public static void release() {
 		logger.info("Stopping!");
+		try {
+			Environment.saveSettings();
+		} catch (Exception e) {
+			logger.warn("Can't save the settings of Environment!", e);
+		}
 		long tt = getTime();
 		logger.info("Releasing resources.");
 		if (getTextures() != null)
@@ -391,6 +400,7 @@ public class ChemistryLab {
 
 	private static long clearingLogTime = getTime();
 	private static PleaseWaitLayer layer = null;
+
 	public static void clearLog() {
 		if (getTime() - clearingLogTime < 1000)
 			return;
@@ -404,13 +414,12 @@ public class ChemistryLab {
 			clearingLogTime = getTime();
 			logger.info("Cleared Log.");
 			layer.setSuccess(I18N.getString("sidebar.log.success"));
-			throw new RuntimeException("hh");
 		}).start());
 	}
 
 	public static String asStack(Throwable e) {
 		String l = System.getProperty("line.separator");
-		StringBuilder sb = new StringBuilder(e + l);
+		StringBuilder sb = new StringBuilder(e.toString().replace("\n", l) + l);
 		StackTraceElement[] sks = e.getStackTrace();
 		for (StackTraceElement ste : sks) {
 			sb.append("\tat " + ste + l);
@@ -454,7 +463,7 @@ public class ChemistryLab {
 		}
 		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
-	
+
 	public static String asStack(StackTraceElement[] es) {
 		String l = System.getProperty("line.separator");
 		StringBuilder sb = new StringBuilder();
@@ -464,13 +473,36 @@ public class ChemistryLab {
 		return sb.toString();
 	}
 
+	public static final Class<?> getCallerClass() {
+		// Warning
+		// Reflect Class Operation
+		// Destination: sun.reflect.Reflection
+		// Function to Reflect: getCallerClass(I)Ljava.lang.Class;
+		// Function Warning: Deprecated at defined class
+		try {
+			Class<?> reflc = Class.forName("sun.reflect.Reflection");
+			// Invoke Function Stack:
+			// 3: Invoke Stack Want to know
+			// 2: Invoke Stack
+			// 1: This Function Stack
+			// 0: java.lang.Method.invoke
+			// Top: sun.reflect.Reflection.getCallerClass Function Stack (Native
+			// Method Stack)
+			return (Class<?>) (reflc.getMethod("getCallerClass", int.class)).invoke(reflc, 3);
+		} catch (Throwable e) {
+			// Actually, this function won't throw any error. (Except
+			// OutOfMemoryError or StackOverflowError)
+			return null;
+		}
+	}
+
 	static {
 		PropertyConfigurator.configure(ChemistryLab.class.getResource("/assets/log4j.properties"));
 		EventBus.registerListener((e) -> {
 			try {
 				if (e.equals(I18N.I18N_RELOADED))
 					i18n_reload = true;
-				if (e.equals(THREAD_FATAL)){
+				if (e.equals(THREAD_FATAL)) {
 					error = (Throwable) e.getExtra(0);
 					errorthread = (Thread) e.getExtra(1);
 				}

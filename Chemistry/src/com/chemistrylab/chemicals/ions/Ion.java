@@ -5,14 +5,14 @@ import com.alibaba.fastjson.*;
 import com.chemistrylab.chemicals.*;
 
 public class Ion extends Chemical {
-	
+
 	protected Set<ChemicalResource> relas = new HashSet<>();
 	protected double mess;
 
-	public Ion(JSONObject o) {
-		super(o);
+	public Ion(JSONObject o, ChemicalResource r) {
+		super(o, r);
 		JSONArray rels = o.getJSONArray("relativeAtom");
-		for(Object ob : rels){
+		for (Object ob : rels) {
 			String s = (String) ob;
 			ChemicalResource atom = ChemicalsLoader.chemicals.get(s);
 			relas.add(atom);
@@ -24,8 +24,8 @@ public class Ion extends Chemical {
 	public double getMess() {
 		return mess;
 	}
-	
-	public boolean isActualMess(){
+
+	public boolean isActualMess() {
 		return true;
 	}
 }

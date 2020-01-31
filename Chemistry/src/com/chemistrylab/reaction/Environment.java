@@ -10,27 +10,29 @@ import com.chemistrylab.properties.*;
 public final class Environment {
 
 	public static final Event ENVIRONMENT_CHANGED = Event.createNewEvent("Environment_Changed");
-	
+
 	public static final int ENVIRONMENT_CHANGE_ITEM = 0;
 	public static final int ENVIRONMENT_OLD_VALUE = 1;
-	
-	private static Map<String,Property<?>> settings;
-	
-	public static final void init() throws Exception{
-		Properties pro=new Properties();
-		InputStream is=Environment.class.getResourceAsStream("/assets/models/environment.properties");
+
+	private static Map<String, Property<?>> settings;
+
+	public static final void init() throws Exception {
+		Properties pro = new Properties();
+		InputStream is = Environment.class.getResourceAsStream("/assets/models/environment.properties");
 		pro.load(is);
 		JMCLRegister.registerVariable("T");
 		JMCLRegister.registerVariable("P");
-		settings=Property.getProperties(pro, (PropertyReader)name->{
+		settings = Property.getProperties(pro, (PropertyReader) name -> {
 			switch (name) {
 			case "temperature":
 			case "pressure":
 				return new DoubleProperty();
 			case "gasmolv":
-				return new MathStatementProperty("T","P");
+				return new MathStatementProperty("T", "P");
+			case "speed":
+				return new DoubleProperty();
 			default:
-				throw new RuntimeException("Unrecognize tag for "+name);
+				throw new RuntimeException("Unrecognize tag for " + name);
 			}
 		});
 		MathStatementProperty p = (MathStatementProperty) settings.get("gasmolv");
@@ -38,22 +40,26 @@ public final class Environment {
 		p.setValue("P", getPressure());
 		p.calc();
 	}
-	
-	public static final double getTemperature(){
+
+	public static final double getTemperature() {
 		return (double) settings.get("temperature").getValue();
 	}
-	
-	public static final double getPressure(){
+
+	public static final double getPressure() {
 		return (double) settings.get("pressure").getValue();
 	}
-	
-	public static final double getGasMolV(){
+
+	public static final double getGasMolV() {
 		MathStatementProperty p = (MathStatementProperty) settings.get("gasmolv");
 		return MathHelper.eplison(p.getValue());
 	}
-	
-	public static final void setTemperature(double t){
-		DoubleProperty p=new DoubleProperty();
+
+	public static final double getSpeed() {
+		return (double) settings.get("speed").getValue();
+	}
+
+	public static final void setTemperature(double t) {
+		DoubleProperty p = new DoubleProperty();
 		p.setValue(t);
 		Event ev = ENVIRONMENT_CHANGED.clone();
 		ev.putExtra(ENVIRONMENT_CHANGE_ITEM, "temperature");
@@ -68,9 +74,9 @@ public final class Environment {
 		mp.calc();
 		EventBus.postEvent(ev2);
 	}
-	
-	public static final void setPressure(double t){
-		DoubleProperty p=new DoubleProperty();
+
+	public static final void setPressure(double t) {
+		DoubleProperty p = new DoubleProperty();
 		p.setValue(t);
 		Event ev = ENVIRONMENT_CHANGED.clone();
 		ev.putExtra(ENVIRONMENT_CHANGE_ITEM, "pressure");
@@ -85,8 +91,24 @@ public final class Environment {
 		mp.calc();
 		EventBus.postEvent(ev2);
 	}
-	
-	static{
-		EventBus.registerEvent(ENVIRONMENT_CHANGED);
+
+	public static final void setSpeed(double speed) {
+		DoubleProperty p = new DoubleProperty();
+		p.setValue(speed);
+		Event ev = ENVIRONMENT_CHANGED.clone();
+		ev.putExtra(ENVIRONMENT_CHANGE_ITEM, "speed");
+		ev.putExtra(ENVIRONMENT_OLD_VALUE, settings.replace("speed", p));
+		EventBus.postEvent(ev);
+	}
+
+	public static final void saveSettings() throws IOException {
+		Properties pro = new Properties();
+		pro.put("temperature", getTemperature() + "");
+		pro.put("pressure", getPressure() + "");
+		pro.put("gasmolv", settings.get("gasmolv").toString());
+		pro.put("speed", getSpeed() + "");
+		Writer w = new OutputStreamWriter(
+				new FileOutputStream(Environment.class.getResource("/assets/models/environment.properties").getFile()));
+		pro.store(w, "Environment Settings");
 	}
 }

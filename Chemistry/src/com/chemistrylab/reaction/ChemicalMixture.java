@@ -5,8 +5,8 @@ import java.util.concurrent.locks.*;
 import com.chemistrylab.eventbus.*;
 import com.chemistrylab.chemicals.*;
 
-public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
-	
+public class ChemicalMixture extends HashMap<ChemicalResource, Unit> {
+
 	public static final Event CHEMICAL_CHANGED = Event.createNewEvent("Chemical changed");
 	public static final int CHEMICAL_ADDED = 0x0;
 	public static final int CHEMICAL_CHANGE = 0x1;
@@ -15,7 +15,7 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	 * 
 	 */
 	private static final long serialVersionUID = -8142851189900240337L;
-	
+
 	private boolean shadow;
 	private ReactionController contr;
 	private ReentrantLock lock = new ReentrantLock();
@@ -23,34 +23,36 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	public ChemicalMixture() {
 		this(false);
 	}
-	
-	ChemicalMixture(boolean shadow){
+
+	ChemicalMixture(boolean shadow) {
 		this.shadow = shadow;
-		if(!shadow){
+		if (!shadow) {
 			contr = new ReactionController(this);
 		}
 	}
-	
-	public void copy(ChemicalMixture mix){
+
+	public void copy(ChemicalMixture mix) {
 		lock.lock();
 		clear();
 		putAll(mix);
 		lock.unlock();
 	}
-	
+
 	@Override
 	public Unit put(ChemicalResource key, Unit value) {
 		checkNonListen(value);
 		lock.lock();
 		if (containsKey(key)) {
-			Unit ret = replace(key, value.add(get(key)));
+			Unit ret = replace(key, get(key).add(value));
 			lock.unlock();
 			Event post = CHEMICAL_CHANGED.clone();
 			post.putExtra(CHEMICAL_CHANGE, null);
 			EventBus.postEvent(post);
 			return ret;
 		} else {
-			Unit u = super.put(key, value);
+			//Set listen environment change
+			Unit u = new Unit(value.getChemical(), value.getUnit(), value.getNum());
+			super.put(key, u);
 			lock.unlock();
 			Event post = CHEMICAL_CHANGED.clone();
 			post.putExtra(CHEMICAL_ADDED, key);
@@ -60,13 +62,13 @@ public class ChemicalMixture extends HashMap<ChemicalResource,Unit>{
 	}
 
 	public ReactionController getController() {
-		if(shadow)
+		if (shadow)
 			throw new RuntimeException("Shadow Mixture");
 		return contr;
 	}
-	
-	static void checkNonListen(Unit u){
-		if(EventBus.haveListener(u))
+
+	static void checkNonListen(Unit u) {
+		if (EventBus.haveListener(u))
 			throw new IllegalArgumentException("This unit isn't a non-listen unit.");
 	}
 }

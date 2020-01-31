@@ -5,10 +5,17 @@ import proguard.annotation.*;
 
 @KeepImplementations
 public abstract class Chemical {
+	
+	protected ChemicalResource resource;
 
-	public Chemical(JSONObject o) {
+	public Chemical(JSONObject o, ChemicalResource res) {
+		resource = res;
 	}
 	
+	public ChemicalResource getResource() {
+		return resource;
+	}
+
 	public abstract double getMess();
 	
 	public boolean isActualMess(){

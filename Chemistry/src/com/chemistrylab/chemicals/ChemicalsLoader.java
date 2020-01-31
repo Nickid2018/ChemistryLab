@@ -41,7 +41,7 @@ public class ChemicalsLoader {
 			String ns = (String) n;
 			try {
 				Class<?> cls = Class.forName((String) c);
-				Constructor<?> con = cls.getConstructor(JSONObject.class);
+				Constructor<?> con = cls.getConstructor(JSONObject.class, ChemicalResource.class);
 				mapping.put(ns, con);
 			} catch (Exception e) {
 				logger.warn("Failed to load TYPE CLASS:" + ns + "(Class name:" + c + ").");

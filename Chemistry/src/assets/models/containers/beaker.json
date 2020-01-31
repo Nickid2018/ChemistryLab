@@ -1,5 +1,8 @@
 {
 	"class":"com.chemistrylab.layer.container.ContainerBeaker",
+	"layers":[
+		
+	],
 	"sizes":[
 		{
 			"name":"mini-s",

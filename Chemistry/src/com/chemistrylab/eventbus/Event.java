@@ -5,6 +5,8 @@ import com.chemistrylab.init.*;
 
 public abstract class Event implements Cloneable ,Comparable<Event>{
 
+	public static final Event NULL_EVENT = Event.createNewEvent("Null");
+	
 	protected final String name;
 	protected boolean canceled = false;
 	protected UUID eventId = MathHelper.getRandomUUID();
@@ -93,6 +95,10 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 			return false;
 		return eventId.equals(((Event) obj).eventId);
 	}
+	
+	public boolean strictEquals(Object obj){
+		return super.equals(obj);
+	}
 
 	@Override
 	public String toString() {
@@ -118,6 +124,36 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 	 * @return A new copy with the same UUID
 	 */
 	public abstract Event clone();
+	
+	public static class CompleteComparedEvent extends Event{
+		
+		private Event ev;
+		
+		public CompleteComparedEvent(Event e){
+			super(e.name);
+			ev = e;
+		}
+		
+		@Override
+		public int compareTo(Event o) {
+			return super.compareTo(o) + extras.hashCode() - o.extras.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			return ev.strictEquals(obj);
+		}
+
+		@Override
+		public Event clone() {
+			return null;
+		}
+		
+		@Override
+		public String toString() {
+			return ev.toString();
+		}
+	}
 
 	private static class DefaultEvent extends Event {
 

@@ -1,7 +1,7 @@
 #Atoms
 atom/nonmetal=com.chemistrylab.chemicals.atoms.NonMentalAtom
 atom/metal=com.chemistrylab.chemicals.atoms.MentalAtom
-simple=com.chemistrylab.chemicals.atoms.SimpleSubstance
+simple=com.chemistrylab.chemicals.atoms.SimpleSubstanceA
 
 #Ions
 ion/H=com.chemistrylab.chemicals.ions.IonH

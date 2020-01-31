@@ -64,6 +64,9 @@ public final class Ticker implements EventBusListener {
 
 	public static void init() {
 		lastTicks = ChemistryLab.getTime();
+		EventBus.registerListener(tickerInstance);
+		tick_sender.start();
+		logger.info("Ticker initialized.");
 	}
 
 	public static int getTicks() {
@@ -90,11 +93,5 @@ public final class Ticker implements EventBusListener {
 			lastTicks = ChemistryLab.getTime();
 		}
 		ticks++;
-	}
-
-	static {
-		EventBus.registerListener(tickerInstance);
-		tick_sender.start();
-		logger.info("Ticker initialized.");
 	}
 }

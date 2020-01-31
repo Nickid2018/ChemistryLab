@@ -5,7 +5,7 @@ import com.alibaba.fastjson.*;
 import proguard.annotation.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
-//import com.chemistrylab.render.*;
+import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
@@ -29,13 +29,11 @@ public abstract class AbstractContainer extends Layer {
 	@Override
 	public void render() {
 		// Back of container
-		// CommonRender.drawTexture(layer_0, range.x0, range.y0, range.x1,
-		// range.y1, 0, 0, 1, 1);
+		CommonRender.drawTexture(layer_0, range.x0, range.y0, range.x1, range.y1, 0, 0, 1, 1);
 		// Mixture
 
 		// Front of container
-		// CommonRender.drawTexture(layer_1, range.x0, range.y0, range.x1,
-		// range.y1, 0, 0, 1, 1);
+		CommonRender.drawTexture(layer_1, range.x0, range.y0, range.x1, range.y1, 0, 0, 1, 1);
 	}
 
 	public UUID getUUID() {

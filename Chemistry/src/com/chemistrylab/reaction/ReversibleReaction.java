@@ -25,4 +25,8 @@ public class ReversibleReaction extends Reaction {
 
 	}
 
+	public ReversibleReaction reserve() throws MathException {
+		String strk = "1/(" + strK + ")";
+		return new ReversibleReaction(gets, reacts, -dH, -dS, strk);
+	}
 }
