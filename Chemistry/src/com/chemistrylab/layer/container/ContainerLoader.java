@@ -8,7 +8,7 @@ import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
-import org.newdawn.slick.util.*;
+import com.chemistrylab.util.*;
 import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
@@ -23,16 +23,16 @@ public class ContainerLoader {
 
 	private final Map<String, Constructor<? extends AbstractContainer>> mapping = new HashMap<>();
 	private final Map<String, TreeMap<String, Size>> sizes = new TreeMap<>();
-	private final Map<Class<?>, Texture[]> tex_layers = new HashMap<>();
+	private final Map<Class<?>, RangeTexture[]> tex_layers = new HashMap<>();
 	private ProgressBar load_con = new ProgressBar(containers.size(), 20);
 
 	public void loadContainer() {
 		long lastTime = ChemistryLab.getTime();
 		int fails = 0;
 		for (int i = 0; i < containers.size(); i++) {
-			String res = "/assets/models/containers/" + containers.get(i) + ".json";
+			String res = "assets/models/containers/" + containers.get(i) + ".json";
 			try {
-				String all = IOUtils.toString(ContainerLoader.class.getResourceAsStream(res), "GB2312");
+				String all = IOUtils.toString(ResourceManager.getResourceAsStream(res), "GB2312");
 				JSONObject obj = JSON.parseObject(all);
 				Class<?> cls = Class.forName(obj.getString("class"));
 				@SuppressWarnings("unchecked")
@@ -40,10 +40,16 @@ public class ContainerLoader {
 						.getConstructor(int.class, int.class, Size.class);
 				mapping.put("container." + containers.get(i) + ".model", con);
 				JSONArray layer_arr = obj.getJSONArray("layers");
-				Texture[] layers = new Texture[layer_arr.size()];
+				RangeTexture[] layers = new RangeTexture[layer_arr.size()];
 				for (int j = 0; j < layer_arr.size(); j++) {
 					String rp = layer_arr.getString(j);
-					layers[j] = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(rp), GL_LINEAR);
+					String[] layer_info = rp.split(",");
+					float x0 = Float.parseFloat(layer_info[1]);
+					float y0 = Float.parseFloat(layer_info[2]);
+					float x1 = Float.parseFloat(layer_info[3]);
+					float y1 = Float.parseFloat(layer_info[4]);
+					layers[j] = new RangeTexture(TextureLoader.getTexture("PNG",
+							ResourceManager.getResourceAsStream(layer_info[0]), GL_LINEAR), x0, y0, x1, y1);
 				}
 				tex_layers.put(cls, layers);
 				JSONArray array = obj.getJSONArray("sizes");
@@ -90,7 +96,7 @@ public class ContainerLoader {
 		return sizes.get(model);
 	}
 
-	public Texture[] getLayers() {
+	public RangeTexture[] getLayers() {
 		Class<?> cls = ChemistryLab.getCallerClass();
 		return tex_layers.get(cls);
 	}

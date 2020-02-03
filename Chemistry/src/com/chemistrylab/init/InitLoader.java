@@ -4,6 +4,7 @@ import com.cj.jmcl.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.chemicals.*;

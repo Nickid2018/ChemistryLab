@@ -7,7 +7,7 @@ import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
-import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.debug.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;

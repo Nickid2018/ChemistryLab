@@ -2,7 +2,7 @@ package com.chemistrylab.layer;
 
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
-import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.animation.*;
 import com.chemistrylab.layer.component.*;
 
@@ -20,11 +20,11 @@ public class SideBar extends Layer {
 					LayerRender.popLayer(CloseBar.class);
 					LayerRender.pushLayer(new SideBarClose(true));
 				});
-		}, 48, Color.white,true));
+		}, 32, Color.white,true));
 		comps.add(new TextComponent(12, 66, 200, 130, this, I18N.getString("sidebar.log.clear"), ()->{
 			if(Mouse.isButtonDown(0))
 				clearLog();
-		}, 48, Color.white,true));
+		}, 32, Color.white,true));
 		comps.add(new TextComponent(12, 132, 200, 196, this, I18N.getString("sidebar.reaction.add"), ()->{
 			if(Mouse.isButtonDown(0))
 				LayerRender.addEndEvent(()->{
@@ -32,7 +32,7 @@ public class SideBar extends Layer {
 					LayerRender.popLayer(CloseBar.class);
 					LayerRender.pushLayer(new SideBarClose(true));
 				});
-		}, 48, Color.white,true));
+		}, 32, Color.white,true));
 	}
 
 	@Override

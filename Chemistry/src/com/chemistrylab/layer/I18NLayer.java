@@ -3,7 +3,7 @@ package com.chemistrylab.layer;
 import java.util.*;
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
-import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.layer.effect.*;
 import com.chemistrylab.layer.component.*;
@@ -19,14 +19,14 @@ public class I18NLayer extends Layer {
 		super(0, 0, nowWidth, nowHeight);
 		langs = new VerticalSlideBar(CommonRender.toRatioXPos(DREAM_WIDTH / 2 - 100), CommonRender.toRatioYPos(48),
 				CommonRender.toRatioXPos(DREAM_WIDTH / 2 + 300), CommonRender.toRatioYPos(DREAM_HEIGHT - 100), this,
-				null, 48, 20);
+				null, CommonRender.getFontHeightUNI("English", 32), 20);
 		langs.addEffect(new LineBorderEffect(3, Color.white));
 		flush();
 		comps.add(langs);
 		comps.add(new TextComponent(CommonRender.toRatioXPos(100), CommonRender.toRatioYPos(48),
 				CommonRender.toRatioXPos(250), CommonRender.toRatioYPos(96), this, I18N.getString("i18n.change.title"),
 				() -> {
-				}, 48, Color.white, true).setAlignCenter());
+				}, 32, Color.white, true).setAlignCenter());
 		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(100), CommonRender.toRatioYPos(120),
 				CommonRender.toRatioXPos(250), CommonRender.toRatioYPos(168), this, I18N.getString("program.cancel"),
 				() -> {
@@ -35,7 +35,7 @@ public class I18NLayer extends Layer {
 							LayerRender.popLayer(I18NLayer.this);
 							LayerRender.pushLayer(new ExpandBar());
 						});
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		cancel.addEffect(new LineBorderEffect(3, Color.white));
 		comps.add(cancel);
 	}
@@ -58,7 +58,7 @@ public class I18NLayer extends Layer {
 					});
 					LayerRender.pushLayer(new ExpandBar());
 				}
-			}, 48, Color.white, true);
+			}, 32, Color.white, true);
 			if (I18N.getSurporttedLanguageName(lang).equalsIgnoreCase(I18N.getNowLanguage()))
 				c.addEffect(new LineBorderEffect(1, Color.yellow));
 			s.add(c);

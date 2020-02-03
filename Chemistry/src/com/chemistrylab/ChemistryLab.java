@@ -10,6 +10,7 @@ import org.apache.log4j.*;
 import org.newdawn.slick.*;
 import proguard.annotation.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
@@ -40,6 +41,8 @@ public class ChemistryLab {
 	public static int maxFPS = 60;
 
 	private static boolean f11ed = false;
+
+	private static boolean inited = false;
 
 	private static long lastFPS;
 	private static int fps;
@@ -131,6 +134,8 @@ public class ChemistryLab {
 
 			// Init program
 			InitLoader.logger.info("Start load resources.");
+			ResourceManager.loadPacks();
+			ResourceManager.logger.info("Loaded Resource Packs.");
 			InitLoader.init();
 
 			Display.setTitle(I18N.getString("window.title"));
@@ -141,6 +146,12 @@ public class ChemistryLab {
 
 			// Ticker start
 			Ticker.init();
+
+			inited = true;
+
+			// Test Start Please From This(For Resource Needing)
+
+			// Test End
 
 			// Main loop of program
 			while (!Display.isCloseRequested()) {
@@ -200,9 +211,13 @@ public class ChemistryLab {
 					IOUtils.write(asStack(en.getValue()) + l, w);
 				}
 				IOUtils.write("=== E V E N T B U S ===" + l, w);
-				IOUtils.write("Active Events:" + l, w);
-				for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
-					IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
+				if (inited) {
+					IOUtils.write("Active Events:" + l, w);
+					for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
+						IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
+					}
+				} else {
+					IOUtils.write("EventBus hasn't been initialized." + l, w);
 				}
 				IOUtils.write("=== S Y S T E M ===" + l, w);
 				IOUtils.write("Operating System:" + System.getProperty("os.name") + " "
@@ -388,6 +403,11 @@ public class ChemistryLab {
 		} catch (Exception e) {
 			logger.warn("Can't save the settings of Environment!", e);
 		}
+		try {
+			ResourceManager.flushStream();
+		} catch (IOException e) {
+			logger.warn("Can't flush the resources of program!", e);
+		}
 		long tt = getTime();
 		logger.info("Releasing resources.");
 		if (getTextures() != null)
@@ -509,6 +529,7 @@ public class ChemistryLab {
 			} catch (Throwable e1) {
 				Event ev = THREAD_FATAL.clone();
 				ev.putExtra(0, e1);
+				ev.putExtra(1, Thread.currentThread());
 				EventBus.postEvent(ev);
 			}
 		});

@@ -1,14 +1,14 @@
 {
 	"class":"com.chemistrylab.layer.container.ContainerReagent",
 	"layers":[
-		"assets/textures/container/reagent_bottle_layer_0.png",
-		"assets/textures/container/reagent_bottle_layer_1.png"
+		"assets/textures/container/reagent_bottle_layer_0.png,0,0,0.5,1",
+		"assets/textures/container/reagent_bottle_layer_1.png,0,0,0.5,1"
 	],
 	"sizes":[
 		{
 			"name":"normal",
 			"volume":250,
-			"diameter":78,
+			"diameter":50,
 			"height":97
 		}
 	]

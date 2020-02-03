@@ -39,6 +39,7 @@ public class ReactionController implements EventBusListener {
 				// Add Reactions
 				chem.foreach(r -> {
 					Set<ChemicalResource> reacts = r.reacts.keySet();
+					//Check Chemical
 					for (ChemicalResource c : reacts) {
 						if (c.equals(chem))
 							continue;

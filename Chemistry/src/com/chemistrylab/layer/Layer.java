@@ -58,10 +58,10 @@ public abstract class Layer {
 			render();
 		Color.red.bind();
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(range.x0, range.y0);
-		glVertex2f(range.x1, range.y0);
-		glVertex2f(range.x1, range.y1);
-		glVertex2f(range.x0, range.y1);
+			glVertex2f(range.x0, range.y0);
+			glVertex2f(range.x1, range.y0);
+			glVertex2f(range.x1, range.y1);
+			glVertex2f(range.x0, range.y1);
 		glEnd();
 		if (useComponent()) {
 			for (Component c : comps)

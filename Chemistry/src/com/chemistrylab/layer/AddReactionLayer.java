@@ -3,7 +3,7 @@ package com.chemistrylab.layer;
 import java.util.*;
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
-import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.chemicals.*;
@@ -25,27 +25,27 @@ public class AddReactionLayer extends Layer {
 		super(0, 0, nowWidth, nowHeight);
 		TextComponent title = new TextComponent(nowWidth / 2, CommonRender.toRatioYPos(50), nowWidth / 2,
 				CommonRender.toRatioYPos(98), this, I18N.getString("addreact.title"), () -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(title);
 		TextComponent labela = new TextComponent(CommonRender.toRatioXPos(50), CommonRender.toRatioYPos(120),
 				CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(168), this, I18N.getString("addreact.react"),
 				() -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(labela);
 		TextComponent labelb = new TextComponent(CommonRender.toRatioXPos(50), CommonRender.toRatioYPos(180),
 				CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(228), this, I18N.getString("addreact.get"),
 				() -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(labelb);
 		TextComponent labelc = new TextComponent(CommonRender.toRatioXPos(50), CommonRender.toRatioYPos(240),
 				CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(288), this, I18N.getString("addreact.deltaH"),
 				() -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(labelc);
 		TextComponent labeld = new TextComponent(CommonRender.toRatioXPos(50), CommonRender.toRatioYPos(300),
 				CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(348), this, I18N.getString("addreact.deltaS"),
 				() -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(labeld);
 		TextField reacts = new TextField(CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(128),
 				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(160), this, 32);
@@ -65,15 +65,15 @@ public class AddReactionLayer extends Layer {
 		comps.add(deltaSs);
 		TextComponent labele = new TextComponent(CommonRender.toRatioXPos(1000), CommonRender.toRatioYPos(240),
 				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(288), this, "kJ/mol", () -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(labele);
 		TextComponent labelf = new TextComponent(CommonRender.toRatioXPos(1000), CommonRender.toRatioYPos(300),
 				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(348), this, "J/(mol¡¤K)", () -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		comps.add(labelf);
 		kl = new TextComponent(CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(360),
 				CommonRender.toRatioXPos(400), CommonRender.toRatioYPos(408), this, "K=", () -> {
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		ks = new TextField(CommonRender.toRatioXPos(400), CommonRender.toRatioYPos(368),
 				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(400), this, 32);
 		ks.addEffect(new LineBorderEffect(1, Color.white));
@@ -94,7 +94,7 @@ public class AddReactionLayer extends Layer {
 							}
 						});
 					}
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		rev.addEffect(new LineBorderEffect(3, Color.white));
 		comps.add(rev);
 		TextComponent ok = new TextComponent(CommonRender.toRatioXPos(DREAM_WIDTH / 5), CommonRender.toRatioYPos(500),
@@ -141,7 +141,7 @@ public class AddReactionLayer extends Layer {
 							}).start());
 						});
 					}
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		ok.addEffect(new LineBorderEffect(3, Color.white));
 		comps.add(ok);
 		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 3),
@@ -152,7 +152,7 @@ public class AddReactionLayer extends Layer {
 							LayerRender.popLayer(AddReactionLayer.this);
 							LayerRender.pushLayer(new ExpandBar());
 						});
-				}, 48, Color.white, true).setAlignCenter();
+				}, 32, Color.white, true).setAlignCenter();
 		cancel.addEffect(new LineBorderEffect(3, Color.white));
 		comps.add(cancel);
 	}

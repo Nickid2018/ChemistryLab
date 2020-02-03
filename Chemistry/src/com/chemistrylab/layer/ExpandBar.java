@@ -2,11 +2,10 @@ package com.chemistrylab.layer;
 
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
-
 import com.chemistrylab.layer.animation.*;
 
-import static com.chemistrylab.ChemistryLab.*;
 import static org.lwjgl.opengl.GL11.*;
+import static com.chemistrylab.ChemistryLab.*;
 
 public class ExpandBar extends Layer {
 

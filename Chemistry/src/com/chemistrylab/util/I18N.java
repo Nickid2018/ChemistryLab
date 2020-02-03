@@ -1,4 +1,4 @@
-package com.chemistrylab.init;
+package com.chemistrylab.util;
 
 import java.io.*;
 import java.util.*;
@@ -17,11 +17,11 @@ public class I18N {
 
 	public static void load() throws Exception {
 		String lang = NOW.toString();
-		String file_name = "/assets/lang/" + lang + ".lang";
-		InputStream stream = I18N.class.getResourceAsStream(file_name);
+		String file_name = "assets/lang/" + lang + ".lang";
+		InputStream stream = ResourceManager.getResourceAsStream(file_name, true);
 		langStrings.load(new InputStreamReader(stream, "GB2312"));
-		String disp_name = "/assets/lang/display_names.settings";
-		InputStream dispstream = I18N.class.getResourceAsStream(disp_name);
+		String disp_name = "assets/lang/display_names.settings";
+		InputStream dispstream = ResourceManager.getResourceAsStream(disp_name, true);
 		langNameStrings.load(new InputStreamReader(dispstream, "GB2312"));
 		logger.info("Successfully loaded Language " + I18N.getNowLanguage() + ".");
 	}
@@ -34,8 +34,8 @@ public class I18N {
 		NOW = loc;
 		langStrings.clear();
 		String lang = NOW.toString();
-		String file_name = "/assets/lang/" + lang + ".lang";
-		InputStream stream = I18N.class.getResourceAsStream(file_name);
+		String file_name = "assets/lang/" + lang + ".lang";
+		InputStream stream = ResourceManager.getResourceAsStream(file_name, true);
 		InputStreamReader ir;
 		try {
 			ir = new InputStreamReader(stream, "GB2312");

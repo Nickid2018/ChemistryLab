@@ -5,6 +5,7 @@ import java.util.*;
 import java.lang.reflect.*;
 import java.util.function.*;
 import com.alibaba.fastjson.*;
+import com.chemistrylab.util.*;
 import org.apache.commons.io.*;
 import com.chemistrylab.reaction.*;
 
@@ -24,7 +25,7 @@ public class ChemicalResource {
 	}
 
 	ChemicalResource preInit() throws Exception {
-		InputStream is = ChemicalResource.class.getResourceAsStream(resourcePath);
+		InputStream is = ResourceManager.getResourceAsStream(resourcePath);
 		String text = IOUtils.toString(is, "GB2312");
 		JSONObject object = JSON.parseObject(text);
 		name = object.getString("name");

@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import com.cj.jmcl.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.eventbus.*;
 import com.chemistrylab.properties.*;
 
@@ -18,7 +19,7 @@ public final class Environment {
 
 	public static final void init() throws Exception {
 		Properties pro = new Properties();
-		InputStream is = Environment.class.getResourceAsStream("/assets/models/environment.properties");
+		InputStream is = ResourceManager.getResourceAsStream("assets/models/environment.properties");
 		pro.load(is);
 		JMCLRegister.registerVariable("T");
 		JMCLRegister.registerVariable("P");
@@ -107,8 +108,7 @@ public final class Environment {
 		pro.put("pressure", getPressure() + "");
 		pro.put("gasmolv", settings.get("gasmolv").toString());
 		pro.put("speed", getSpeed() + "");
-		Writer w = new OutputStreamWriter(
-				new FileOutputStream(Environment.class.getResource("/assets/models/environment.properties").getFile()));
+		Writer w = new OutputStreamWriter(ResourceManager.getOutputStream("assets/models/environment.properties"));
 		pro.store(w, "Environment Settings");
 	}
 }

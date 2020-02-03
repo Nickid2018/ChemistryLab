@@ -5,7 +5,7 @@ import org.lwjgl.opengl.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
-import org.newdawn.slick.util.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
 
@@ -36,10 +36,10 @@ public class TextureLoader {
 
 		// Logo
 		Texture logo = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
-				ResourceLoader.getResourceAsStream("assets/textures/gui/chemistrylab_logo.png"), GL_LINEAR);
+				ResourceManager.getResourceAsStream("assets/textures/gui/chemistrylab_logo.png"), GL_LINEAR);
 		textureMap.put("logo.chemistry.lab", logo);
 		Texture indev = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
-				ResourceLoader.getResourceAsStream("assets/textures/gui/indev.png"), GL_LINEAR);
+				ResourceManager.getResourceAsStream("assets/textures/gui/indev.png"), GL_LINEAR);
 		textureMap.put("logo.chemistry.indev", indev);
 
 		// Loading
@@ -58,7 +58,7 @@ public class TextureLoader {
 			String resource_name = "font.unicode.page" + suffix;
 			try {
 				Texture t = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
-						ResourceLoader.getResourceAsStream(resource), GL_NEAREST);
+						ResourceManager.getResourceAsStream(resource), GL_NEAREST);
 				textureMap.put(resource_name, t);
 				fonts[i] = t;
 			} catch (Exception e) {
@@ -89,7 +89,7 @@ public class TextureLoader {
 			if (i < guitexts.size()) {
 				res = guitexts.get(i);
 				texture = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
-						ResourceLoader.getResourceAsStream("assets/textures/gui/" + res[0] + ".png"), GL11.GL_LINEAR);
+						ResourceManager.getResourceAsStream("assets/textures/gui/" + res[0] + ".png"), GL11.GL_LINEAR);
 				textureMap.put(res[1], texture);
 			} else {
 				res = guianitexts.get(i - guitexts.size());

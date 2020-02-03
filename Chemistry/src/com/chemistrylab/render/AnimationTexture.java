@@ -4,44 +4,44 @@ import java.io.*;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import com.alibaba.fastjson.*;
-import org.newdawn.slick.util.*;
+import com.chemistrylab.util.*;
 import org.newdawn.slick.opengl.*;
 
 public class AnimationTexture implements Texture {
-	
+
 	private String ref;
 	private int frames;
 	private Texture[] id;
 	private int[] delays;
-	private int loopTime=0;
-	private long startTime=Long.MAX_VALUE;
-	
-	public AnimationTexture(String ref) throws Exception{
-		this.ref=ref;
-		String descpf=ref+".png.json";
-		InputStream is=AnimationTexture.class.getResourceAsStream("/"+descpf);
-		InputStreamReader reader=new InputStreamReader(is,"GB2312");
-		char[] ch=new char[1];
-		String text="";
-		while((reader.read(ch))>-1){
-			text+=new String(ch);
+	private int loopTime = 0;
+	private long startTime = Long.MAX_VALUE;
+
+	public AnimationTexture(String ref) throws Exception {
+		this.ref = ref;
+		String descpf = ref + ".png.json";
+		InputStream is = ResourceManager.getResourceAsStream(descpf);
+		InputStreamReader reader = new InputStreamReader(is, "GB2312");
+		char[] ch = new char[1];
+		String text = "";
+		while ((reader.read(ch)) > -1) {
+			text += new String(ch);
 		}
 		text.trim();
-		JSONArray setts=JSON.parseArray(text);
-		frames=setts.size();
-		id=new Texture[frames];
-		delays=new int[frames];
-		for(int i=0;i<frames;i++){
+		JSONArray setts = JSON.parseArray(text);
+		frames = setts.size();
+		id = new Texture[frames];
+		delays = new int[frames];
+		for (int i = 0; i < frames; i++) {
 			Texture texture = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
-					ResourceLoader.getResourceAsStream(ref+"_"+i+".png"),GL11.GL_LINEAR);
-			id[i]=texture;
-			loopTime+=delays[i]=setts.getIntValue(i);
-			int error=GL11.glGetError();
-			if(error!=GL11.GL_NO_ERROR){
-				for(int j=0;j<=i;j++){
+					ResourceManager.getResourceAsStream(ref + "_" + i + ".png"), GL11.GL_LINEAR);
+			id[i] = texture;
+			loopTime += delays[i] = setts.getIntValue(i);
+			int error = GL11.glGetError();
+			if (error != GL11.GL_NO_ERROR) {
+				for (int j = 0; j <= i; j++) {
 					id[j].release();
 				}
-				throw new Exception("#GL ERROR#"+error);
+				throw new Exception("#GL ERROR#" + error);
 			}
 		}
 	}
@@ -50,7 +50,7 @@ public class AnimationTexture implements Texture {
 	public boolean hasAlpha() {
 		return hasAlpha(0);
 	}
-	
+
 	public boolean hasAlpha(int frame) {
 		return id[frame].hasAlpha();
 	}
@@ -59,22 +59,22 @@ public class AnimationTexture implements Texture {
 	public String getTextureRef() {
 		return ref;
 	}
-	
-	public Texture startToBind(){
-		startTime=ChemistryLab.getTime();
+
+	public Texture startToBind() {
+		startTime = ChemistryLab.getTime();
 		return this;
 	}
-	
-	public void endToBind(){
-		startTime=Long.MAX_VALUE;
+
+	public void endToBind() {
+		startTime = Long.MAX_VALUE;
 	}
 
 	@Override
 	public void bind() {
-		int rm=(int) ((ChemistryLab.getTime()-startTime)%loopTime);
-		for(int i=0;i<frames;i++){
-			rm-=delays[i];
-			if(rm<=0){
+		int rm = (int) ((ChemistryLab.getTime() - startTime) % loopTime);
+		for (int i = 0; i < frames; i++) {
+			rm -= delays[i];
+			if (rm <= 0) {
 				id[i].bind();
 				break;
 			}
@@ -89,7 +89,7 @@ public class AnimationTexture implements Texture {
 	public int getImageHeight() {
 		return getImageHeight(0);
 	}
-	
+
 	public int getImageHeight(int frame) {
 		return id[frame].getImageHeight();
 	}
@@ -98,7 +98,7 @@ public class AnimationTexture implements Texture {
 	public int getImageWidth() {
 		return getImageWidth(0);
 	}
-	
+
 	public int getImageWidth(int frame) {
 		return id[frame].getImageWidth();
 	}
@@ -107,7 +107,7 @@ public class AnimationTexture implements Texture {
 	public float getHeight() {
 		return getHeight(0);
 	}
-	
+
 	public float getHeight(int frame) {
 		return id[frame].getHeight();
 	}
@@ -116,7 +116,7 @@ public class AnimationTexture implements Texture {
 	public float getWidth() {
 		return getWidth(0);
 	}
-	
+
 	public float getWidth(int frame) {
 		return id[frame].getWidth();
 	}
@@ -125,7 +125,7 @@ public class AnimationTexture implements Texture {
 	public int getTextureHeight() {
 		return getTextureHeight(0);
 	}
-	
+
 	public int getTextureHeight(int frame) {
 		return id[frame].getTextureHeight();
 	}
@@ -134,14 +134,14 @@ public class AnimationTexture implements Texture {
 	public int getTextureWidth() {
 		return getTextureWidth(0);
 	}
-	
+
 	public int getTextureWidth(int frame) {
 		return id[frame].getTextureWidth();
 	}
 
 	@Override
 	public void release() {
-		for(int i=0;i<frames;i++){
+		for (int i = 0; i < frames; i++) {
 			id[i].release();
 		}
 	}
@@ -150,7 +150,7 @@ public class AnimationTexture implements Texture {
 	public int getTextureID() {
 		return getTextureID(0);
 	}
-	
+
 	public int getTextureID(int frame) {
 		return id[frame].getTextureID();
 	}
@@ -159,17 +159,17 @@ public class AnimationTexture implements Texture {
 	public byte[] getTextureData() {
 		return getTextureData(0);
 	}
-	
-	public byte[] getTextureData(int frame){
-    	return id[frame].getTextureData();
-	}
-	
-	@Override
-	public void setTextureFilter(int textureFilter) {
-		setTextureFilter(textureFilter,0);
+
+	public byte[] getTextureData(int frame) {
+		return id[frame].getTextureData();
 	}
 
-	public void setTextureFilter(int textureFilter,int frame) {
+	@Override
+	public void setTextureFilter(int textureFilter) {
+		setTextureFilter(textureFilter, 0);
+	}
+
+	public void setTextureFilter(int textureFilter, int frame) {
 		id[frame].setTextureFilter(textureFilter);
 	}
 

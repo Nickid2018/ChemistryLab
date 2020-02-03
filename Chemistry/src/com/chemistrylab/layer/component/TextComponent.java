@@ -25,7 +25,7 @@ public class TextComponent extends Component {
 		this.size = size;
 		t = c;
 		unifont = unif;
-		CommonRender.loadFontUNI(s);
+		CommonRender.loadFontUNI(s, size);
 	}
 
 	public TextComponent setAlignCenter() {
@@ -40,10 +40,9 @@ public class TextComponent extends Component {
 	public void setText(String s) {
 		this.s = s;
 	}
-
+	
 	@Override
 	public void onContainerResized() {
-
 	}
 
 	@Override
@@ -58,9 +57,9 @@ public class TextComponent extends Component {
 		} else {
 			float start = range.x0;
 			if (aligncenter) {
-				start = (range.x1 + range.x0) / 2 - CommonRender.FONT.getWidth(s) / 2.0f;
+				start = (range.x1 + range.x0) / 2 - CommonRender.getFontLengthUNI(s, size) / 2.0f;
 			}
-			CommonRender.drawFontUNI(s, start, range.y0 / 2 + range.y1 / 2 - size / 2, t);
+			CommonRender.drawFontUNI(s, start, range.y0 / 2 + range.y1 / 2 - CommonRender.getFontHeightUNI(s, size) / 2.0f - 5, t, size);
 		}
 	}
 

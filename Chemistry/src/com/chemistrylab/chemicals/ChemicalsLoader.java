@@ -9,6 +9,7 @@ import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
 
 public class ChemicalsLoader {
@@ -34,7 +35,7 @@ public class ChemicalsLoader {
 
 	public static final void loadChemicals() throws Exception {
 		Properties pro = new Properties();
-		InputStream is = ChemicalsLoader.class.getResourceAsStream("/assets/models/chemicals/class.map");
+		InputStream is =ResourceManager.getResourceAsStream("assets/models/chemicals/class.map");
 		pro.load(is);
 		load_details.setMax(pro.size());
 		pro.forEach((n, c) -> {
@@ -78,7 +79,7 @@ public class ChemicalsLoader {
 		counter = 0;
 		load_details.setMax(atoms.size());
 		for (String path : atoms) {
-			String actualpath = "/assets/models/chemicals/atoms/" + path + ".json";
+			String actualpath = "assets/models/chemicals/atoms/" + path + ".json";
 			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
@@ -100,7 +101,7 @@ public class ChemicalsLoader {
 		counter = 0;
 		load_details.setMax(ions.size());
 		for (String path : ions) {
-			String actualpath = "/assets/models/chemicals/ions/" + path + ".json";
+			String actualpath = "assets/models/chemicals/ions/" + path + ".json";
 			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
@@ -123,7 +124,7 @@ public class ChemicalsLoader {
 		load_details.setMax(chemical.size());
 		for (String path : chemical) {
 			String[] sps = path.split("/");
-			String actualpath = "/assets/models/chemicals/" + path + ".json";
+			String actualpath = "assets/models/chemicals/" + path + ".json";
 			chemicals.put(sps[sps.length - 1], new ChemicalResource(actualpath, sps[sps.length - 1]).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {

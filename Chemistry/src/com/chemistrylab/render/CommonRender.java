@@ -1,11 +1,12 @@
 package com.chemistrylab.render;
 
+import java.util.*;
 import java.awt.Toolkit;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
-import org.newdawn.slick.util.*;
+import com.chemistrylab.util.*;
 import org.newdawn.slick.opengl.*;
 import org.newdawn.slick.font.effects.*;
 
@@ -17,7 +18,8 @@ public class CommonRender {
 	public static final int WINDOW_HEIGHT = TOOLKIT.getScreenSize().height;
 	public static final int WINDOW_WIDTH = TOOLKIT.getScreenSize().width;
 	public static final Runtime RUNTIME = Runtime.getRuntime();
-	public static final UnicodeFont FONT = new UnicodeFont(new java.awt.Font("Î¢ÈíÑÅºÚ", java.awt.Font.PLAIN, 32));
+	public static final Map<Integer, UnicodeFont> LOAD_FONTS = new HashMap<>();
+	public static final String FONT_NAME = "Î¢ÈíÑÅºÚ";
 
 	private static Texture[] fonts;
 	private static Texture asciifont;
@@ -31,20 +33,39 @@ public class CommonRender {
 		CommonRender.fonts = fonts;
 		font_loaded = true;
 	}
+	
+	public static void preLoadFontUNI(int size){
+		if (!LOAD_FONTS.containsKey(size)){
+			LOAD_FONTS.put(size, new UnicodeFont(new java.awt.Font(FONT_NAME, java.awt.Font.PLAIN, size)));
+			LOAD_FONTS.get(size).setPaddingAdvanceY(0);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
-	public static void loadFontUNI(String s) {
-		CommonRender.FONT.getEffects().add(new ColorEffect());
-		CommonRender.FONT.addGlyphs(s);
+	public static void loadFontUNI(String s, int size) {
+		if (!LOAD_FONTS.containsKey(size)){
+			LOAD_FONTS.put(size, new UnicodeFont(new java.awt.Font(FONT_NAME, java.awt.Font.PLAIN, size)));
+			LOAD_FONTS.get(size).setPaddingAdvanceY(0);
+		}
+		LOAD_FONTS.get(size).getEffects().add(new ColorEffect());
+		LOAD_FONTS.get(size).addGlyphs(s);
 		try {
-			CommonRender.FONT.loadGlyphs();
+			LOAD_FONTS.get(size).loadGlyphs();
 		} catch (SlickException e) {
 		}
 	}
 
-	public static void drawFontUNI(String s, float start, float f, Color text) {
-		FONT.drawString(start, f, s, text);
+	public static void drawFontUNI(String s, float start, float f, Color text, int size) {
+		LOAD_FONTS.get(size).drawString(start, f, s, text);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
+	}
+
+	public static int getFontLengthUNI(String s, int size) {
+		return LOAD_FONTS.get(size).getWidth(s);
+	}
+
+	public static int getFontHeightUNI(String s, int size) {
+		return LOAD_FONTS.get(size).getHeight(s);
 	}
 
 	public static float drawFont(String s, float x, float f, int size, Color text) {
@@ -403,12 +424,12 @@ public class CommonRender {
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	public static void drawTexture(Texture t, float f, float g, float h, float i, float sx, float sy, float sx0,
+	public static void drawTexture(Texture t, float x0, float y0, float x1, float y1, float sx, float sy, float sx0,
 			float sy0) {
-		drawTexture(t, f, g, h, i, sx, sy, sx0, sy0, Color.white);
+		drawTexture(t, x0, y0, x1, y1, sx, sy, sx0, sy0, Color.white);
 	}
 
-	public static void drawTexture(Texture t, float f, float g, float h, float i, float sx, float sy, float sx0,
+	public static void drawTexture(Texture t, float x0, float y0, float x1, float y1, float sx, float sy, float sx0,
 			float sy0, Color c) {
 		glEnable(GL_TEXTURE_2D);
 
@@ -417,13 +438,13 @@ public class CommonRender {
 
 		glBegin(GL_QUADS);
 			glTexCoord2f(sx, sy);
-			glVertex2f(f, g);
+			glVertex2f(x0, y0);
 			glTexCoord2f(sx0, sy);
-			glVertex2f(h, g);
+			glVertex2f(x1, y0);
 			glTexCoord2f(sx0, sy0);
-			glVertex2f(h, i);
+			glVertex2f(x1, y1);
 			glTexCoord2f(sx, sy0);
-			glVertex2f(f, i);
+			glVertex2f(x0, y1);
 		glEnd();
 
 		glDisable(GL_TEXTURE_2D);
@@ -516,12 +537,12 @@ public class CommonRender {
 	public static float formatSize(float size) {
 		return size;
 	}
-	
-	public static float toRatioXPos(float x){
+
+	public static float toRatioXPos(float x) {
 		return x / ChemistryLab.DISPLAY_MODE.getWidth() * Display.getWidth();
 	}
-	
-	public static float toRatioYPos(float y){
+
+	public static float toRatioYPos(float y) {
 		return y / ChemistryLab.DISPLAY_MODE.getHeight() * Display.getHeight();
 	}
 
@@ -545,7 +566,7 @@ public class CommonRender {
 	static {
 		try {
 			asciifont = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
-					ResourceLoader.getResourceAsStream("assets/textures/font/ascii.png"), GL_NEAREST);
+					ResourceManager.getResourceAsStream("assets/textures/font/ascii.png"), GL_NEAREST);
 			InitLoader.getTextureLoader().getTextures().put("font.ascii.page", asciifont);
 		} catch (Exception e) {
 			ChemistryLab.logger.fatal("Can't load ASCII Font", e);

@@ -3,7 +3,8 @@ package com.chemistrylab.reaction;
 import java.io.*;
 import java.util.*;
 import com.cj.rdt.*;
-import com.chemistrylab.reaction.Reactions.ReactionsEntry;
+import com.chemistrylab.util.*;
+import com.chemistrylab.reaction.Reactions.*;
 
 public class Reactions extends HashMap<Integer,ReactionsEntry>{
 
@@ -19,7 +20,7 @@ public class Reactions extends HashMap<Integer,ReactionsEntry>{
 	private int size = 0;
 	
 	public void writeToFile() throws IOException{
-		RDTFile file = new RDTFile(Reaction.class.getResource("/assets/models/reaction/reactions.rdt").getFile());
+		RDTFile file = new RDTFile(ResourceManager.getResource("/assets/models/reaction/reactions.rdt").getFile());
 		for(ReactionsEntry ree:values()){
 			for(Reaction r:ree){
 				ReactionEntry re = new ReactionEntry();

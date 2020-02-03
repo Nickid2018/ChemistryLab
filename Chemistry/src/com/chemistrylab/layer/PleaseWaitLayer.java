@@ -23,7 +23,7 @@ public final class PleaseWaitLayer extends Layer {
 		super(0, 0, nowWidth, nowHeight);
 		this.info = info;
 		whattodo = wtd;
-		CommonRender.loadFontUNI(info);
+		CommonRender.loadFontUNI(info, 32);
 		dealing.startToBind();
 	}
 
@@ -63,12 +63,12 @@ public final class PleaseWaitLayer extends Layer {
 			glVertex2f(center_x - 300, center_y + 100);
 		glEnd();
 		if (error != null) {
-			CommonRender.drawFontUNI(error, center_x - 170, center_y - 24, Color.red);
+			CommonRender.drawFontUNI(error, center_x - 170, center_y - 24, Color.red, 32);
 		} else if (success != null) {
-			CommonRender.drawFontUNI(success, center_x - 170, center_y - 24, Color.green);
+			CommonRender.drawFontUNI(success, center_x - 170, center_y - 24, Color.green, 32);
 		} else {
 			CommonRender.drawTexture(dealing, center_x - 224, center_y - 24, center_x - 176, center_y + 24, 0, 0, 1, 1);
-			CommonRender.drawFontUNI(info, center_x - 170, center_y - 24, Color.black);
+			CommonRender.drawFontUNI(info, center_x - 170, center_y - 24, Color.black, 32);
 		}
 	}
 
@@ -88,13 +88,13 @@ public final class PleaseWaitLayer extends Layer {
 
 	public void setError(String info) {
 		error = info;
-		LayerRender.addEndEvent(() -> CommonRender.loadFontUNI(error));
+		LayerRender.addEndEvent(() -> CommonRender.loadFontUNI(error, 32));
 		isClickLegal(1);
 	}
 
 	public void setSuccess(String info) {
 		success = info;
-		LayerRender.addEndEvent(() -> CommonRender.loadFontUNI(success));
+		LayerRender.addEndEvent(() -> CommonRender.loadFontUNI(success, 32));
 		isClickLegal(1);
 	}
 }
