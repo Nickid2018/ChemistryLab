@@ -8,7 +8,6 @@ import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import org.apache.log4j.*;
 import org.newdawn.slick.*;
-import proguard.annotation.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
@@ -17,7 +16,6 @@ import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
 
-@KeepApplication
 public class ChemistryLab {
 
 	public static final Logger logger = Logger.getLogger("Main Looper");

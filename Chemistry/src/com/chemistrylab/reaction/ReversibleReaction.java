@@ -25,6 +25,10 @@ public class ReversibleReaction extends Reaction {
 
 	}
 
+	public MathStatement getMathStatement() {
+		return K;
+	}
+
 	public ReversibleReaction reserve() throws MathException {
 		String strk = "1/(" + strK + ")";
 		return new ReversibleReaction(gets, reacts, -dH, -dS, strk);

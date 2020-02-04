@@ -1,9 +1,7 @@
 package com.chemistrylab.chemicals;
 
 import com.alibaba.fastjson.*;
-import proguard.annotation.*;
 
-@KeepImplementations
 public abstract class Chemical {
 	
 	protected ChemicalResource resource;

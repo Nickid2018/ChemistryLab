@@ -11,7 +11,6 @@ import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
 import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
-import org.newdawn.slick.opengl.*;
 import org.newdawn.slick.opengl.TextureLoader;
 
 import static org.lwjgl.opengl.GL11.*;

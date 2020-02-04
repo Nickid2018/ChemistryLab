@@ -2,14 +2,12 @@ package com.chemistrylab.layer.container;
 
 import java.util.*;
 import com.alibaba.fastjson.*;
-import proguard.annotation.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.layer.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
 
-@KeepImplementations
 public abstract class AbstractContainer extends Layer {
 
 	protected ChemicalMixture mix;
