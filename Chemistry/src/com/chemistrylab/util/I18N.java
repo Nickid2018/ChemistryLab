@@ -16,9 +16,15 @@ public class I18N {
 	private static Locale NOW = SYSTEM_DEFAULT;
 
 	public static void load() throws Exception {
-		String lang = NOW.toString();
+		String lang = NOW.toString().toLowerCase();
 		String file_name = "assets/lang/" + lang + ".lang";
-		InputStream stream = ResourceManager.getResourceAsStream(file_name, true);
+		InputStream stream;
+		try {
+			stream = ResourceManager.getResourceAsStream(file_name, true);
+		} catch (Exception e) {
+			stream = ResourceManager.getResourceAsStream("assets/lang/en_us.lang", true);
+			NOW = new Locale("en_us");
+		}
 		langStrings.load(new InputStreamReader(stream, "GB2312"));
 		String disp_name = "assets/lang/display_names.settings";
 		InputStream dispstream = ResourceManager.getResourceAsStream(disp_name, true);
@@ -33,7 +39,7 @@ public class I18N {
 			throw new Exception("The locale is null");
 		NOW = loc;
 		langStrings.clear();
-		String lang = NOW.toString();
+		String lang = NOW.toString().toLowerCase();
 		String file_name = "assets/lang/" + lang + ".lang";
 		InputStream stream = ResourceManager.getResourceAsStream(file_name, true);
 		InputStreamReader ir;

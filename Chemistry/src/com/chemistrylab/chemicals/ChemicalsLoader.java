@@ -35,7 +35,7 @@ public class ChemicalsLoader {
 
 	public static final void loadChemicals() throws Exception {
 		Properties pro = new Properties();
-		InputStream is =ResourceManager.getResourceAsStream("assets/models/chemicals/class.map");
+		InputStream is = ResourceManager.getResourceAsStream("assets/models/chemicals/class.map", true);
 		pro.load(is);
 		load_details.setMax(pro.size());
 		pro.forEach((n, c) -> {

@@ -19,7 +19,7 @@ public final class Environment {
 
 	public static final void init() throws Exception {
 		Properties pro = new Properties();
-		InputStream is = ResourceManager.getResourceAsStream("assets/models/environment.properties");
+		InputStream is = ResourceManager.getResourceAsStream("config/environment.properties");
 		pro.load(is);
 		JMCLRegister.registerVariable("T");
 		JMCLRegister.registerVariable("P");
@@ -108,7 +108,7 @@ public final class Environment {
 		pro.put("pressure", getPressure() + "");
 		pro.put("gasmolv", settings.get("gasmolv").toString());
 		pro.put("speed", getSpeed() + "");
-		Writer w = new OutputStreamWriter(ResourceManager.getOutputStream("assets/models/environment.properties"));
+		Writer w = new OutputStreamWriter(ResourceManager.getOutputStream("config/environment.properties"));
 		pro.store(w, "Environment Settings");
 	}
 }

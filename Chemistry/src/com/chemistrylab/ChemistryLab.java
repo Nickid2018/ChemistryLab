@@ -53,6 +53,9 @@ public class ChemistryLab {
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("Render Thread");
+		
+		System.setProperty("org.lwjgl.librarypath", ".");
+		
 		try {
 			// Basic output
 			logger.info("Chemistry Lab v1.0_INDEV");
@@ -398,11 +401,12 @@ public class ChemistryLab {
 
 	public static void release() {
 		logger.info("Stopping!");
-		try {
-			Environment.saveSettings();
-		} catch (Exception e) {
-			logger.warn("Can't save the settings of Environment!", e);
-		}
+		if(inited)
+			try {
+				Environment.saveSettings();
+			} catch (Exception e) {
+				logger.warn("Can't save the settings of Environment!", e);
+			}
 		try {
 			ResourceManager.flushStream();
 		} catch (IOException e) {

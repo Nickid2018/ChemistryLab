@@ -125,15 +125,14 @@ public class AddReactionLayer extends Layer {
 									}
 									double dH = Double.parseDouble(deltaHs.getString());
 									double dS = Double.parseDouble(deltaSs.getString());
+									Reaction r;
 									if (isReversible) {
 										String strK = ks.getString();
-										ReversibleReaction r = new ReversibleReaction(react, get, dH, dS, strK);
-										ReactionLoader.reactions.put(r.computeSign(), r);
+										r = new ReversibleReaction(react, get, dH, dS, strK);
 									} else {
-										NonReversibleReaction r = new NonReversibleReaction(react, get, dH, dS);
-										ReactionLoader.reactions.put(r.computeSign(), r);
+										r = new NonReversibleReaction(react, get, dH, dS);
 									}
-									ReactionLoader.reactions.writeToFile();
+									ReactionLoader.reactions.addNewReaction(r);
 									pw.setSuccess(I18N.getString("addreact.success"));
 								} catch (Exception e) {
 									pw.setError(e.getMessage());
@@ -171,7 +170,7 @@ public class AddReactionLayer extends Layer {
 	@Override
 	public void onContainerResized() {
 		super.onContainerResized();
-		if (!isReversible){
+		if (!isReversible) {
 			doDefaultResize(ks);
 			doDefaultResize(kl);
 		}
