@@ -39,6 +39,35 @@ public class CommandController {
 		}
 	}
 
+	public static String[] split(String in) {
+		ArrayList<String> al = new ArrayList<>();
+		boolean isStr = false;
+		boolean isRound = false;
+		int begin = 0;
+		for (int i = 0; i < in.length(); i++) {
+			char at = in.charAt(i);
+			// "
+			if (at == '"' && !isRound)
+				isStr = !isStr;
+			// {
+			if (at == '{' && !isStr)
+				isRound = true;
+			// }
+			if (at == '}' && !isStr)
+				isRound = false;
+			if (at == ' ' && !isStr && !isRound) {
+				al.add(in.substring(begin, i).trim());
+				begin = i;
+			}
+		}
+		if (begin != in.length())
+			al.add(in.substring(begin).trim());
+		// To array
+		Object[] o = al.toArray();
+		String[] over = Arrays.copyOf(o, o.length, String[].class);
+		return over;
+	}
+
 	static {
 		addCommandDecomper("tick", new TickerCommand());
 		addCommandDecomper("eventbus", new EventBusComand());

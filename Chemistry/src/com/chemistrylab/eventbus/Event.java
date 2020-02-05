@@ -132,6 +132,9 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 		public CompleteComparedEvent(Event e){
 			super(e.name);
 			ev = e;
+			canceled = e.canceled;
+			eventId = e.eventId;
+			extras = e.extras;
 		}
 		
 		@Override

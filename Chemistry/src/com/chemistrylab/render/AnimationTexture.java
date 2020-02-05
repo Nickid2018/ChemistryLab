@@ -1,11 +1,13 @@
 package com.chemistrylab.render;
 
 import java.io.*;
+import java.util.*;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import com.alibaba.fastjson.*;
 import com.chemistrylab.util.*;
 import org.newdawn.slick.opengl.*;
+import java.util.concurrent.atomic.*;
 
 public class AnimationTexture implements Texture {
 
@@ -14,7 +16,8 @@ public class AnimationTexture implements Texture {
 	private Texture[] id;
 	private int[] delays;
 	private int loopTime = 0;
-	private long startTime = Long.MAX_VALUE;
+	private Map<Object, Long> startTimes = new HashMap<>();
+	private AtomicReference<Object> nowObj = new AtomicReference<>();
 
 	public AnimationTexture(String ref) throws Exception {
 		this.ref = ref;
@@ -60,18 +63,22 @@ public class AnimationTexture implements Texture {
 		return ref;
 	}
 
-	public Texture startToBind() {
-		startTime = ChemistryLab.getTime();
+	public Texture startToBind(Object o) {
+		startTimes.put(o, ChemistryLab.getTime());
 		return this;
 	}
 
-	public void endToBind() {
-		startTime = Long.MAX_VALUE;
+	public void endToBind(Object o) {
+		startTimes.remove(o);
+	}
+
+	public void preBind(Object o) {
+		nowObj.set(o);
 	}
 
 	@Override
 	public void bind() {
-		int rm = (int) ((ChemistryLab.getTime() - startTime) % loopTime);
+		int rm = (int) ((ChemistryLab.getTime() - startTimes.get(nowObj.get())) % loopTime);
 		for (int i = 0; i < frames; i++) {
 			rm -= delays[i];
 			if (rm <= 0) {

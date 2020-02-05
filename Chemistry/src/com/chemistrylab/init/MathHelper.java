@@ -33,7 +33,7 @@ public class MathHelper {
 
 	public static double eplison(double value, int bits) {
 		int pow = (int) Math.pow(10, bits);
-		return ((int) (value * pow)) / (double)pow;
+		return (MathHelper.fastFloor((value * pow)) / (double) pow);
 	}
 
 	/**

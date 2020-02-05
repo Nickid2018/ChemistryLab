@@ -3,19 +3,19 @@ package com.chemistrylab.layer.animation;
 import com.chemistrylab.layer.*;
 
 public abstract class Animation extends Layer {
-	
+
 	protected final int fp;
-	private int counter=0;
+	private int counter = 0;
 
 	public Animation(int fp) {
-		super(0,0,0,0);
-		this.fp=fp;
+		super(0, 0, 0, 0);
+		this.fp = fp;
 	}
 
 	@Override
 	public final void render() {
-		if(counter==fp){
-			LayerRender.addEndEvent(()->LayerRender.popLayer(this));
+		if (counter == fp) {
+			LayerRender.popLayer(this);
 			onEnd();
 			return;
 		}
@@ -23,5 +23,7 @@ public abstract class Animation extends Layer {
 	}
 
 	public abstract void render(int fp);
-	public void onEnd(){}
+
+	public void onEnd() {
+	}
 }

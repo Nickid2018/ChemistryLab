@@ -1,6 +1,5 @@
 package com.chemistrylab.debug;
 
-import java.util.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.chemicals.*;
 import com.chemistrylab.layer.container.*;
@@ -9,7 +8,7 @@ public class ChemicalCommand extends Command {
 
 	@Override
 	public String invokeCommand(String info) throws CommandException {
-		String[] split = split(info);
+		String[] split = CommandController.split(info);
 		try {
 			switch (split[0]) {
 			case "add":
@@ -27,34 +26,5 @@ public class ChemicalCommand extends Command {
 			throw new CommandException(e.getMessage());
 		}
 		return null;
-	}
-
-	public String[] split(String in) {
-		ArrayList<String> al = new ArrayList<>();
-		boolean isStr = false;
-		boolean isRound = false;
-		int begin = 0;
-		for (int i = 0; i < in.length(); i++) {
-			char at = in.charAt(i);
-			// "
-			if (at == '"' && !isRound)
-				isStr = !isStr;
-			// {
-			if (at == '{' && !isStr)
-				isRound = true;
-			// }
-			if (at == '}' && !isStr)
-				isRound = false;
-			if (at == ' ' && !isStr && !isRound) {
-				al.add(in.substring(begin, i).trim());
-				begin = i;
-			}
-		}
-		if (begin != in.length())
-			al.add(in.substring(begin).trim());
-		// To array
-		Object[] o = al.toArray();
-		String[] over = Arrays.copyOf(o, o.length, String[].class);
-		return over;
 	}
 }

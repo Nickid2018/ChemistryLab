@@ -20,14 +20,12 @@ public class ClasspathLocation implements ResourceLocation {
 		return ClasspathLocation.class.getClassLoader().getResourceAsStream(cpRef);	
 	}
 
+	/*
+	 * Can't get output stream in class path
+	 */
 	@Override
 	public OutputStream getOutputStream(String ref) {
-		URL res = getResource(ref);
-		try {
-			return new FileOutputStream(res.getFile());
-		} catch (Exception e) {
-			return null;
-		}
+		return null;
 	}
 
 }

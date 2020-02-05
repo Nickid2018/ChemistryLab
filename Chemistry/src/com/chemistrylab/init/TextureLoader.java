@@ -43,7 +43,7 @@ public class TextureLoader {
 		textureMap.put("logo.chemistry.indev", indev);
 
 		// Loading
-		Texture loading = new AnimationTexture("assets/textures/gui/loading").startToBind();
+		Texture loading = new AnimationTexture("assets/textures/gui/loading").startToBind(null);
 		textureMap.put("texture.guianimation.loading", loading);
 
 		// Load font textures

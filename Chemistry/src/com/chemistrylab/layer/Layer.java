@@ -1,6 +1,8 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
+
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
@@ -15,15 +17,16 @@ public abstract class Layer {
 
 	protected final Range range;
 	protected Set<Component> comps = new HashSet<>();
+	private final Queue<Runnable> sr = new LinkedBlockingDeque<>();
 	protected long lastClick = -1;
 	protected Component focus = null;
 
-	public Layer(float f, float y0, float g, float h) {
+	public Layer(float x0, float y0, float x1, float y1) {
 		range = new Range();
-		range.x0 = f;
+		range.x0 = x0;
 		range.y0 = y0;
-		range.x1 = g;
-		range.y1 = h;
+		range.x1 = x1;
+		range.y1 = y1;
 	}
 
 	public static final boolean checkRange(Range range, int x, int y) {
@@ -37,8 +40,8 @@ public abstract class Layer {
 				&& CommonRender.othToWinHeight(range.y0) < Display.getHeight() - y
 				&& CommonRender.othToWinHeight(range.y1) > Display.getHeight() - y;
 	}
-	
-	protected static final void doDefaultResize(Layer l){
+
+	protected static final void doDefaultResize(Layer l) {
 		float ratioX = nowWidth / oldWidth;
 		float ratioY = nowHeight / oldHeight;
 		l.range.x0 *= ratioX;
@@ -67,12 +70,18 @@ public abstract class Layer {
 			for (Component c : comps)
 				c.debugRender();
 		}
+		while (!sr.isEmpty()) {
+			sr.poll().run();
+		}
 	}
 
 	public final void compoRender() {
 		render();
 		for (Component c : comps) {
 			c.render();
+		}
+		while (!sr.isEmpty()) {
+			sr.poll().run();
 		}
 	}
 
@@ -85,6 +94,25 @@ public abstract class Layer {
 
 	public final boolean isFocus(Component c) {
 		return c.equals(focus);
+	}
+
+	public final void addComponent(Component c) {
+		sr.offer(() -> comps.add(c));
+	}
+
+	public final void removeComponent(Component c) {
+		sr.offer(() -> comps.remove(c));
+	}
+
+	public final void removeAllComponent() {
+		sr.offer(() -> comps.clear());
+	}
+
+	public final void render_layer() {
+		render();
+		while (!sr.isEmpty()) {
+			sr.poll().run();
+		}
 	}
 
 	public abstract void render();
@@ -117,7 +145,7 @@ public abstract class Layer {
 	}
 
 	protected void resizeComponents(float ratioX, float ratioY) {
-		for(Component c:comps){
+		for (Component c : comps) {
 			c.range.x0 *= ratioX;
 			c.range.x1 *= ratioX;
 			c.range.y0 *= ratioY;

@@ -14,20 +14,18 @@ public class SideBarExpand extends Animation {
 
 	@Override
 	public void render(int fp) {
-		new Color(150,150,150,75).bind();
+		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
-			glVertex2f(0,0);
-			glVertex2f(0,nowHeight);
-			glVertex2f(fp*20+20,nowHeight);
-			glVertex2f(fp*20+20,0);
+			glVertex2f(0, 0);
+			glVertex2f(0, nowHeight);
+			glVertex2f(fp * 20 + 20, nowHeight);
+			glVertex2f(fp * 20 + 20, 0);
 		glEnd();
 	}
-	
+
 	@Override
 	public void onEnd() {
-		LayerRender.addEndEvent(()->{
-			LayerRender.pushLayer(new CloseBar());
-			LayerRender.pushLayer(new SideBar());
-		});
+		LayerRender.pushLayer(new CloseBar());
+		LayerRender.pushLayer(new SideBar());
 	}
 }

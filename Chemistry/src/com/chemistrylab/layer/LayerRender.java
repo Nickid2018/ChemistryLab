@@ -4,34 +4,45 @@ import java.util.*;
 import org.lwjgl.input.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
+import java.util.concurrent.*;
 import com.chemistrylab.layer.animation.*;
 
 public class LayerRender {
 
 	public static final Logger logger = Logger.getLogger("Render Manager");
 	private static final Stack<Layer> layers = new Stack<>();
-	private static final Set<Runnable> sr = new HashSet<>();
+	private static final Queue<Runnable> sr = new LinkedBlockingDeque<>();
 	private static Layer focus = null;
 
+	public static void addRunInRender(Runnable r) {
+		sr.offer(r);
+	}
+
 	public static void pushLayer(Layer layer) {
-		layers.push(layer);
+		sr.offer(() -> layers.push(layer));
 	}
 
-	public static boolean popLayer(Layer layer) {
-		return layers.remove(layer);
+	public static void popLayer(Layer layer) {
+		sr.offer(() -> {
+			layers.remove(layer);
+			layer.onPop();
+		});
 	}
 
-	public static boolean popLayer(Class<?> clazz) {
-		Layer find = null;
-		for (Layer l : layers) {
-			if (l.getClass().equals(clazz)) {
-				find = l;
-				break;
+	public static void popLayer(Class<?> clazz) {
+		sr.offer(() -> {
+			Layer find = null;
+			for (Layer l : layers) {
+				if (l.getClass().equals(clazz)) {
+					find = l;
+					break;
+				}
 			}
-		}
-		boolean ret = find != null && layers.remove(find);
-		find.onPop();
-		return ret;
+			if (find == null)
+				return;
+			layers.remove(find);
+			find.onPop();
+		});
 	}
 
 	public static void popLayers() {
@@ -79,29 +90,11 @@ public class LayerRender {
 			else if (l.useComponent())
 				l.compoRender();
 			else
-				l.render();
+				l.render_layer();
 		}
-		for (Runnable r : sr) {
-			r.run();
+		while (!sr.isEmpty()) {
+			sr.poll().run();
 		}
-		sr.clear();
-	}
-
-	/**
-	 * <p>
-	 * Ensure not an {@linkplain java.util.ConcurrentModificationException}
-	 * happens.
-	 * </p>
-	 * <p>
-	 * Info:The event will be run in Render Thread(Have OpenGL), if you want to
-	 * do something using too much time, please use EventBus.
-	 * </p>
-	 * 
-	 * @param r
-	 *            an event
-	 */
-	public static void addEndEvent(Runnable r) {
-		sr.add(r);
 	}
 
 	public static int getLayerAmount() {

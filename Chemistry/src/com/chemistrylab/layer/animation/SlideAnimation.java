@@ -92,7 +92,6 @@ public class SlideAnimation extends Animation {
 
 	@Override
 	public void onEnd() {
-		LayerRender.addEndEvent(() -> {
 			switch (onend) {
 			case ON_END_PUSH:
 				LayerRender.pushLayer(layer);
@@ -108,7 +107,6 @@ public class SlideAnimation extends Animation {
 			if (onend_event != null) {
 				onend_event.run();
 			}
-		});
 	}
 
 }

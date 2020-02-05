@@ -100,7 +100,7 @@ public class EventBus {
 	 *             when the event of the UUID have not been registered.
 	 */
 	public static final Event getEvent(UUID uuid) {
-		return Objects.requireNonNull(regedEvents.get(uuid), "Unregistered event " + uuid);
+		return Objects.requireNonNull(regedEvents.get(uuid), "Unregistered event " + uuid).clone();
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class EventBus {
 		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
-				nonwaitEvents.put(nonwaitBusSender.submit(() -> linss.listen(e)), e);
+				nonwaitEvents.put(nonwaitBusSender.submit(() -> linss.listen(e.clone())), e.clone());
 			}
 		}
 		sendLock.unlock();
@@ -473,34 +473,34 @@ public class EventBus {
 
 	static {
 		registerListener(new RecordCleaner());
-		//Test Codes
-//		registerListener(new EventBusListener() {
-//
-//			@Override
-//			public boolean receiveEvents(Event e) {
-//				return e.equals(Ticker.NEXT_TICK);
-//			}
-//			
-//			@Override
-//			public void listen(Event e) {
-//				Event hh = Event.NULL_EVENT.clone();
-//				hh.putExtra((int) (Math.random()*Integer.MAX_VALUE), null);
-//				EventBus.postEvent(hh);
-//			}
-//		});
-//		registerListener(new EventBusListener() {
-//
-//			@Override
-//			public boolean receiveEvents(Event e) {
-//				return e.equals(Event.NULL_EVENT);
-//			}
-//			
-//			@Override
-//			public void listen(Event e) {
-//				try {
-//					Thread.sleep(50);
-//				} catch (InterruptedException e1) {}
-//			}
-//		});
+		// Test Codes
+		// registerListener(new EventBusListener() {
+		//
+		// @Override
+		// public boolean receiveEvents(Event e) {
+		// return e.equals(Ticker.NEXT_TICK);
+		// }
+		//
+		// @Override
+		// public void listen(Event e) {
+		// Event hh = Event.NULL_EVENT.clone();
+		// hh.putExtra((int) (Math.random()*Integer.MAX_VALUE), null);
+		// EventBus.postEvent(hh);
+		// }
+		// });
+		// registerListener(new EventBusListener() {
+		//
+		// @Override
+		// public boolean receiveEvents(Event e) {
+		// return e.equals(Event.NULL_EVENT);
+		// }
+		//
+		// @Override
+		// public void listen(Event e) {
+		// try {
+		// Thread.sleep(50);
+		// } catch (InterruptedException e1) {}
+		// }
+		// });
 	}
 }

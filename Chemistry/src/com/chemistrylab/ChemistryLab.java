@@ -51,9 +51,9 @@ public class ChemistryLab {
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("Render Thread");
-		
+
 		System.setProperty("org.lwjgl.librarypath", ".");
-		
+
 		try {
 			// Basic output
 			logger.info("Chemistry Lab v1.0_INDEV");
@@ -399,7 +399,7 @@ public class ChemistryLab {
 
 	public static void release() {
 		logger.info("Stopping!");
-		if(inited)
+		if (inited)
 			try {
 				Environment.saveSettings();
 			} catch (Exception e) {
@@ -495,12 +495,18 @@ public class ChemistryLab {
 		return sb.toString();
 	}
 
+	/**
+	 * Get the class of caller.
+	 * 
+	 * @return The class of caller
+	 */
 	public static final Class<?> getCallerClass() {
 		// Warning
 		// Reflect Class Operation
 		// Destination: sun.reflect.Reflection
 		// Function to Reflect: getCallerClass(I)Ljava.lang.Class;
 		// Function Warning: Deprecated at defined class
+		// Version can work: Java 8
 		try {
 			Class<?> reflc = Class.forName("sun.reflect.Reflection");
 			// Invoke Function Stack:

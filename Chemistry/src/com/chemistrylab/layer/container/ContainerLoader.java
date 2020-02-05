@@ -103,5 +103,6 @@ public class ContainerLoader {
 	static {
 		containers.add("beaker");
 		containers.add("reagent_bottle");
+		containers.add("conical_flask");
 	}
 }

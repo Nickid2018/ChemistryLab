@@ -71,15 +71,21 @@ public class Background extends Layer {
 					"Now Resolution: " + Display.getWidth() + " x " + Display.getHeight() + " x "
 							+ DISPLAY_MODE.getBitsPerPixel() + " @ " + DISPLAY_MODE.getFrequency() + " Hz",
 					nowWidth, next * 4, 16, Color.white, true);
-			CommonRender.drawRightFont("==Environment Infos==", nowWidth, next * 5, 16, Color.white, true);
-			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", nowWidth, next * 6, 16,
+			StringBuilder sb = new StringBuilder("Active Resource Packs: ");
+			for(String s : ResourceManager.getResourcePacks()){
+				sb.append(s + ",");
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			CommonRender.drawRightFont(sb.toString(), nowWidth, next * 5, 16, Color.white, true);
+			CommonRender.drawRightFont("==Environment Infos==", nowWidth, next * 6, 16, Color.white, true);
+			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", nowWidth, next * 7, 16,
 					Color.white, true);
-			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", nowWidth, next * 7, 16,
+			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", nowWidth, next * 8, 16,
 					Color.white, true);
-			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", nowWidth, next * 8,
+			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", nowWidth, next * 9,
 					16, Color.white, true);
 			if (!last_ret.isEmpty())
-				CommonRender.drawRightFont(last_ret, nowWidth, next * 9, 16, last_failed ? Color.red : Color.yellow,
+				CommonRender.drawRightFont(last_ret, nowWidth, next * 10, 16, last_failed ? Color.red : Color.yellow,
 						true);
 
 			// With SHIFT---A mem & fps version
@@ -149,7 +155,7 @@ public class Background extends Layer {
 			TextField f = new TextField(0, nowHeight - 16, nowWidth, nowHeight, this, 16);
 			f.addEffect(new BackgroundEffect(new Color(150, 150, 150, 75)));
 			f.setEnterEvent(s -> {
-				comps.clear();
+				removeAllComponent();
 				onCommand = false;
 				focus = null;
 				if (s.isEmpty())
@@ -162,7 +168,7 @@ public class Background extends Layer {
 					last_failed = true;
 				}
 			});
-			comps.add(f);
+			addComponent(f);
 			focus = f;
 			onCommand = true;
 		}

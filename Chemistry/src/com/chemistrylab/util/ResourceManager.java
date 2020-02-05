@@ -20,6 +20,7 @@ public class ResourceManager {
 
 	/** The list of locations to be searched */
 	private static ArrayList<ResourceLocation> locations = new ArrayList<>();
+	private static ArrayList<String> respacks = new ArrayList<>();
 	private static boolean canFuzzy = false;
 
 	private static final ReentrantLock reloadLock = new ReentrantLock();
@@ -55,6 +56,7 @@ public class ResourceManager {
 	public static void removeAllResourceLocations() {
 		reloadLock.lock();
 		locations.clear();
+		respacks.clear();
 		reloadLock.unlock();
 	}
 
@@ -166,6 +168,10 @@ public class ResourceManager {
 		return canFuzzy;
 	}
 
+	public static ArrayList<String> getResourcePacks() {
+		return respacks;
+	}
+
 	public static void flushStream() throws IOException {
 		for (ResourceLocation location : locations) {
 			if (!(location instanceof ZipFileLocation))
@@ -184,6 +190,7 @@ public class ResourceManager {
 				String namespace = f.getName().split("\\.")[0];
 				try {
 					locations.add(new ZipFileLocation(namespace));
+					respacks.add(namespace);
 				} catch (IOException e) {
 					ResourceManager.logger.warn("Failed to load resource package " + namespace + ":" + e.getMessage());
 				}
@@ -203,6 +210,7 @@ public class ResourceManager {
 				String namespace = f.getName().split("\\.")[0];
 				try {
 					locations.add(new ZipFileLocation(namespace));
+					respacks.add(namespace);
 				} catch (IOException e) {
 					ResourceManager.logger.warn("Failed to load resource package " + namespace + ":" + e.getMessage());
 				}
