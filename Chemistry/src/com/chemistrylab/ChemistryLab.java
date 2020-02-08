@@ -151,7 +151,7 @@ public class ChemistryLab {
 			inited = true;
 
 			// Test Start Please From This(For Resource Needing)
-
+			
 			// Test End
 
 			// Main loop of program
@@ -414,6 +414,8 @@ public class ChemistryLab {
 		logger.info("Releasing resources.");
 		if (getTextures() != null)
 			getTextures().releaseAll();
+		VertexDataManager.MANAGER.releaseResource();
+		ShaderManager.MANAGER.releaseResource();
 		Display.destroy();
 		EventBus.releaseEventBus();
 		logger.info("Program stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");

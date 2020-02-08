@@ -24,6 +24,7 @@ public class Background extends Layer {
 
 	public static final Sigar sigar = new Sigar();
 	public static final Texture table = ChemistryLab.getTextures().get("texture.background.table");
+	public static final FastTexture tex = new FastTexture(0, 0, nowWidth, nowHeight, 0, 0, 1, 1, table);
 
 	public Background() {
 		super(0, 0, nowWidth, nowHeight);
@@ -34,8 +35,9 @@ public class Background extends Layer {
 	@Override
 	public void render() {
 		// Background Picture
-		CommonRender.drawTexture(table, 0, 0, nowWidth, nowHeight, 0, 0, 1, 1);
-
+//		CommonRender.drawTexture(table, 0, 0, nowWidth, nowHeight, 0, 0, 1, 1);
+		tex.render();
+		
 		// Debug Render Layer
 		if (f3) {
 			float next = CommonRender.winToOthHeight(CommonRender.formatSize(16));
@@ -72,7 +74,7 @@ public class Background extends Layer {
 							+ DISPLAY_MODE.getBitsPerPixel() + " @ " + DISPLAY_MODE.getFrequency() + " Hz",
 					nowWidth, next * 4, 16, Color.white, true);
 			StringBuilder sb = new StringBuilder("Active Resource Packs: ");
-			for(String s : ResourceManager.getResourcePacks()){
+			for (String s : ResourceManager.getResourcePacks()) {
 				sb.append(s + ",");
 			}
 			sb.deleteCharAt(sb.length() - 1);
@@ -93,21 +95,21 @@ public class Background extends Layer {
 				CommonRender.drawFont("FPS Infos:", 0, next * 6, 16, Color.white, true, new Color(255, 10, 10, 100));
 				Color.white.bind();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 7 + 155);
-					glVertex2f(161, next * 7 + 155);
+				glVertex2f(10, next * 7 + 155);
+				glVertex2f(161, next * 7 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 7 + 5);
-					glVertex2f(10, next * 7 + 155);
+				glVertex2f(10, next * 7 + 5);
+				glVertex2f(10, next * 7 + 155);
 				glEnd();
 				Queue<Integer> fpss = DebugSystem.getFPSs();
 				new Color(255, 10, 10, 150).bind();
 				fpss.forEach(i -> {
 					glBegin(GL_QUADS);
-						glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
-						glVertex2f(10 + count, next * 7 + 154);
-						glVertex2f(10 + count + 1, next * 7 + 154);
-						glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+					glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+					glVertex2f(10 + count, next * 7 + 154);
+					glVertex2f(10 + count + 1, next * 7 + 154);
+					glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
 					glEnd();
 					count++;
 				});
@@ -117,12 +119,12 @@ public class Background extends Layer {
 				Color.white.bind();
 				Queue<Long> mems = DebugSystem.getMems();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 8 + 160 + 155);
-					glVertex2f(160, next * 8 + 160 + 155);
+				glVertex2f(10, next * 8 + 160 + 155);
+				glVertex2f(160, next * 8 + 160 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(10, next * 8 + 160 + 5);
-					glVertex2f(10, next * 8 + 160 + 155);
+				glVertex2f(10, next * 8 + 160 + 5);
+				glVertex2f(10, next * 8 + 160 + 155);
 				glEnd();
 				new Color(255, 10, 10, 150).bind();
 				glBegin(GL_LINE_STRIP);
