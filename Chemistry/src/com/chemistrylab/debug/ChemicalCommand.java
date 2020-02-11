@@ -1,5 +1,6 @@
 package com.chemistrylab.debug;
 
+import com.chemistrylab.util.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.chemicals.*;
 import com.chemistrylab.layer.container.*;
@@ -7,7 +8,7 @@ import com.chemistrylab.layer.container.*;
 public class ChemicalCommand extends Command {
 
 	@Override
-	public String invokeCommand(String info) throws CommandException {
+	public Message[] invokeCommand(String info) throws CommandException {
 		String[] split = CommandController.split(info);
 		try {
 			switch (split[0]) {
@@ -20,7 +21,8 @@ public class ChemicalCommand extends Command {
 				double num = Double.parseDouble(count);
 				Unit add = new Unit(chem, unit, num).setNotListen();
 				con.addChemical(add);
-				return "Added " + add + " into container " + container;
+				return new Message[] { new Message()
+						.addMessageEntry(new MessageEntry("Added " + add + " into container " + container)) };
 			}
 		} catch (Exception e) {
 			throw new CommandException(e.getMessage());

@@ -1,6 +1,8 @@
 package com.chemistrylab.debug;
 
+import com.chemistrylab.util.*;
+
 public abstract class Command {
 
-	public abstract String invokeCommand(String info) throws CommandException;
+	public abstract Message[] invokeCommand(String info) throws CommandException;
 }

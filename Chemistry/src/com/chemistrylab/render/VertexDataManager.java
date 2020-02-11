@@ -1,6 +1,8 @@
 package com.chemistrylab.render;
 
+import java.nio.*;
 import java.util.*;
+import org.lwjgl.*;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -9,6 +11,15 @@ import static org.lwjgl.opengl.GL30.*;
 public final class VertexDataManager {
 
 	public static final VertexDataManager MANAGER = new VertexDataManager();
+
+	public static final byte[] indices = { 0, 1, 2, 2, 3, 0 };
+	public static final int indicesCount = indices.length;
+	public static final ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
+	
+	static {
+		indicesBuffer.put(indices);
+		indicesBuffer.flip();
+	}
 
 	private Map<Integer, Integer> vao_indexes = new HashMap<>();
 	private Map<Integer, Set<Integer>> saved_eles = new HashMap<>();

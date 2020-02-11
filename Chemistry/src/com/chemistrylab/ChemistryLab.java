@@ -2,16 +2,23 @@ package com.chemistrylab;
 
 import java.io.*;
 import java.util.*;
+import java.nio.*;
 import org.lwjgl.*;
+import javax.imageio.*;
 import org.lwjgl.input.*;
+
+import java.awt.Desktop;
+import java.awt.image.*;
 import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import org.apache.log4j.*;
 import org.newdawn.slick.*;
-import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
+import com.chemistrylab.init.*;
+import java.lang.management.*;
 import com.chemistrylab.layer.*;
 import org.apache.commons.io.*;
+import com.chemistrylab.sound.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
@@ -19,14 +26,20 @@ import com.chemistrylab.eventbus.*;
 public class ChemistryLab {
 
 	public static final Logger logger = Logger.getLogger("Main Looper");
+
 	public static final float DREAM_WIDTH = 1280;
 	public static final float DREAM_HEIGHT = 720;
 	public static float nowWidth = 1280;
 	public static float nowHeight = 720;
 	public static float oldWidth = 1280;
 	public static float oldHeight = 720;
+
 	public static DisplayMode DISPLAY_MODE;
+
 	public static final String DEFAULT_LOG_FILE = "logs";
+
+	public static final Runtime RUNTIME = Runtime.getRuntime();
+	public static final MemoryMXBean MEMORY = ManagementFactory.getMemoryMXBean();
 
 	public static final Event DEBUG_ON = Event.createNewEvent("Debug_On");
 	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_Off");
@@ -110,6 +123,51 @@ public class ChemistryLab {
 				f3_with_shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 				f3_with_ctrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
 			});
+			HotKeyMap.addHotKey(Keyboard.KEY_F5, () -> {
+				GL11.glReadBuffer(GL11.GL_FRONT);
+				int width = Display.getDisplayMode().getWidth();
+				int height = Display.getDisplayMode().getHeight();
+				int bpp = 4; // Assuming a 32-bit display with a byte each for
+								// red, green, blue, and alpha.
+				ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
+				GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+				// Run in Thread Manager
+				ThreadManger.invoke(() -> {
+					Date date = new Date();
+					File file = new File("screenshot/screenshot_"
+							+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date)
+							+ ".png"); // The file to save to.
+					String format = "PNG"; // Example: "PNG" or "JPG"
+					BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+					for (int x = 0; x < width; x++) {
+						for (int y = 0; y < height; y++) {
+							int i = (x + (width * y)) * bpp;
+							int r = buffer.get(i) & 0xFF;
+							int g = buffer.get(i + 1) & 0xFF;
+							int b = buffer.get(i + 2) & 0xFF;
+							image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+						}
+					}
+					try {
+						ImageIO.write(image, format, file);
+						Message m = new Message();
+						m.addMessageEntry(new MessageEntry("The screenshot has been saved in "));
+						m.addMessageEntry(
+								new MessageEntry(file.getAbsolutePath()).setUnderline(true).setClickEvent(() -> {
+									if (Mouse.isButtonDown(0))
+										if (Desktop.isDesktopSupported()) {
+											try {
+												Desktop.getDesktop().open(file);
+											} catch (Exception e) {
+											}
+										}
+								}));
+						MessageBoard.INSTANCE.addMessage(m);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
+			});
 			HotKeyMap.addHotKey(Keyboard.KEY_F11, () -> {
 				if (Keyboard.isRepeatEvent())
 					return;
@@ -125,6 +183,9 @@ public class ChemistryLab {
 				else
 					try {
 						Display.setFullscreen(false);
+						// Solved Bug Code: Cannot resize after full-screen
+						// exiting
+						Display.setResizable(false);
 						Display.setResizable(true);
 					} catch (LWJGLException e) {
 						e.printStackTrace();
@@ -141,17 +202,21 @@ public class ChemistryLab {
 
 			Display.setTitle(I18N.getString("window.title"));
 
-			// Add background layer & expand handle
-			LayerRender.pushLayer(new Background());
-			LayerRender.pushLayer(new ExpandBar());
+			// Sound System
+			SoundSystem.init();
 
 			// Ticker start
 			Ticker.init();
 
+			// Add background layer & expand handle
+			LayerRender.pushLayer(new Background());
+			LayerRender.pushLayer(new ExpandBar());
+			LayerRender.pushLayer(MessageBoard.INSTANCE);
+
 			inited = true;
 
 			// Test Start Please From This(For Resource Needing)
-			
+
 			// Test End
 
 			// Main loop of program
@@ -306,7 +371,7 @@ public class ChemistryLab {
 			lastFPS += 1000; // add one second
 		}
 		if (fps % 12 == 0)
-			DebugSystem.addMemInfo(CommonRender.RUNTIME.totalMemory() - CommonRender.RUNTIME.freeMemory());
+			DebugSystem.addMemInfo(ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory());
 		fps++;
 	}
 
@@ -417,6 +482,7 @@ public class ChemistryLab {
 		VertexDataManager.MANAGER.releaseResource();
 		ShaderManager.MANAGER.releaseResource();
 		Display.destroy();
+		SoundSystem.stopProgram();
 		EventBus.releaseEventBus();
 		logger.info("Program stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");
 		System.exit(0);
@@ -524,6 +590,10 @@ public class ChemistryLab {
 			// OutOfMemoryError or StackOverflowError)
 			return null;
 		}
+	}
+
+	public static final double getTotalMemory() {
+		return RUNTIME.maxMemory();
 	}
 
 	static {

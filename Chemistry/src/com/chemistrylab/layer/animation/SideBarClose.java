@@ -1,10 +1,7 @@
 package com.chemistrylab.layer.animation;
 
-import org.newdawn.slick.*;
 import com.chemistrylab.layer.*;
-
-import static org.lwjgl.opengl.GL11.*;
-import static com.chemistrylab.ChemistryLab.*;
+import com.chemistrylab.render.*;
 
 public class SideBarClose extends Animation {
 
@@ -22,13 +19,11 @@ public class SideBarClose extends Animation {
 
 	@Override
 	public void render(int fp) {
-		new Color(150, 150, 150, 75).bind();
-		glBegin(GL_QUADS);
-			glVertex2f(0, 0);
-			glVertex2f(0, nowHeight);
-			glVertex2f(-fp * 20 + 200, nowHeight);
-			glVertex2f(-fp * 20 + 200, 0);
-		glEnd();
+		SideBar.SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_DOWN, SideBar.SIDEBAR_QUAD
+				.getVertex(FastQuad.POSTION_RIGHT_DOWN).setXYZ(CommonRender.toGLX((10 - fp) * 20), -1, 0));
+		SideBar.SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_UP, SideBar.SIDEBAR_QUAD
+				.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(CommonRender.toGLX((10 - fp) * 20), 1, 0));
+		SideBar.SIDEBAR_QUAD.render();
 	}
 
 	@Override

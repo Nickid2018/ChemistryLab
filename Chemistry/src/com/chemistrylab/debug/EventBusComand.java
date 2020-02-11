@@ -1,33 +1,55 @@
 package com.chemistrylab.debug;
 
 import java.util.*;
+import java.awt.Toolkit;
+import org.lwjgl.input.*;
+import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
+import java.awt.datatransfer.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.eventbus.*;
 
 public class EventBusComand extends Command {
 
 	@Override
-	public String invokeCommand(String info) throws CommandException {
+	public Message[] invokeCommand(String info) throws CommandException {
 		switch (info) {
 		case "nonwait-size":
-			return "EventBus Nonwait Size:" + EventBus.getNonawaitSize();
+			return new Message[] { new Message()
+					.addMessageEntry(new MessageEntry("EventBus Nonwait Size:" + EventBus.getNonawaitSize())) };
 		case "nonwait-pass":
-			return "EventBus Nonwait Passed Size:" + EventBus.getPassedNonwaitEvents();
+			return new Message[] { new Message().addMessageEntry(
+					new MessageEntry("EventBus Nonwait Passed Size:" + EventBus.getPassedNonwaitEvents())) };
 		case "await-units":
-			return "EventBus Await Unit Size:" + EventBus.getAvailableAwaitUnits();
+			return new Message[] { new Message().addMessageEntry(
+					new MessageEntry("EventBus Await Unit Size:" + EventBus.getAvailableAwaitUnits())) };
 		case "reg-events":
-			StringBuilder sb = new StringBuilder("EventBus Registered Events:");
-			for (Event e : EventBus.getRegisteredEvents()) {
-				sb.append("\n" + e.getName() + ":" + e.getEventId());
+			Collection<Event> events = EventBus.getRegisteredEvents();
+			Message[] ms_r = new Message[events.size() + 2];
+			ms_r[0] = new Message()
+					.addMessageEntry(new MessageEntry("EventBus Registered Events:").setColor(Color.yellow));
+			int i0 = 1;
+			for (Event e : events) {
+				ms_r[i0++] = new Message().addMessageEntry(new MessageEntry(e.getName() + " : "))
+						.addMessageEntry(new MessageEntry(e.getEventId() + "").setClickEvent(() -> {
+							if(!Mouse.isButtonDown(0))
+								return;
+							Transferable trans = new StringSelection(e.getEventId().toString());
+							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+						}).setUnderline(true));
 			}
-			return sb.toString();
+			ms_r[i0] = new Message().addMessageEntry(new MessageEntry("---End---").setColor(Color.yellow));
+			return ms_r;
 		case "now-events":
 			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
-			StringBuilder bu = new StringBuilder("Now Events:\n");
+			Message[] ms = new Message[evsnap.size() + 2];
+			ms[0] = new Message().addMessageEntry(new MessageEntry("---Now Events---").setColor(Color.yellow));
+			int i = 1;
 			for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
-				bu.append(en.getKey() + " " + en.getValue() + "\n");
+				ms[i++] = new Message().addMessageEntry(new MessageEntry(en.getKey() + " : " + en.getValue()));
 			}
-			return bu.toString();
+			ms[i] = new Message().addMessageEntry(new MessageEntry("---End---").setColor(Color.yellow));
+			return ms;
 		}
 		String[] sps = info.split(" ", 3);
 		switch (sps[0]) {
@@ -46,7 +68,8 @@ public class EventBusComand extends Command {
 			} catch (Exception e1) {
 				throw new CommandException(e1.getMessage());
 			}
-			return "Event " + sps[1] + " has been posted.";
+			return new Message[] {
+					new Message().addMessageEntry(new MessageEntry("Event " + sps[1] + " has been posted.")) };
 		}
 		throw new CommandException("Unknown Command");
 	}

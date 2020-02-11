@@ -69,7 +69,8 @@ public class AnimationTexture implements Texture {
 	}
 
 	public void endToBind(Object o) {
-		startTimes.remove(o);
+		//Ensure no Null Pointers
+		startTimes.replace(o, 0L);
 	}
 
 	public void preBind(Object o) {

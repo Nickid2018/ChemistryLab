@@ -3,6 +3,7 @@ package com.chemistrylab.layer;
 import org.lwjgl.input.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.chemistrylab.render.*;
 import com.chemistrylab.layer.animation.*;
 import com.chemistrylab.layer.component.*;
 
@@ -10,6 +11,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static com.chemistrylab.ChemistryLab.*;
 
 public class SideBar extends Layer {
+
+	public static final FastQuad SIDEBAR_QUAD = new FastQuad(0, 0, 0, nowHeight, new Color(150, 150, 150, 75), true);
 
 	public SideBar() {
 		super(0, 0, 200, nowHeight);
@@ -35,13 +38,7 @@ public class SideBar extends Layer {
 
 	@Override
 	public void render() {
-		new Color(150, 150, 150, 75).bind();
-		glBegin(GL_QUADS);
-			glVertex2f(0, 0);
-			glVertex2f(0, nowHeight);
-			glVertex2f(200, nowHeight);
-			glVertex2f(200, 0);
-		glEnd();
+		SIDEBAR_QUAD.render();
 		new Color(0, 200, 0, 150).bind();
 		glBegin(GL_QUADS);
 			glVertex2f(0, 0);
@@ -66,6 +63,10 @@ public class SideBar extends Layer {
 	@Override
 	public void onContainerResized() {
 		range.y1 = nowHeight;
+		SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_DOWN,
+				SIDEBAR_QUAD.getVertex(FastQuad.POSTION_RIGHT_DOWN).setXYZ(CommonRender.toGLX(200), -1, 0));
+		SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_UP,
+				SIDEBAR_QUAD.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(CommonRender.toGLX(200), 1, 0));
 	}
 
 	@Override

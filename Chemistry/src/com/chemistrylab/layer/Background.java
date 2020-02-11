@@ -1,5 +1,8 @@
 package com.chemistrylab.layer;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.util.*;
 import org.lwjgl.*;
 import org.lwjgl.input.*;
@@ -8,6 +11,7 @@ import org.hyperic.sigar.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.chemistrylab.init.*;
 import com.chemistrylab.debug.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
@@ -35,9 +39,10 @@ public class Background extends Layer {
 	@Override
 	public void render() {
 		// Background Picture
-//		CommonRender.drawTexture(table, 0, 0, nowWidth, nowHeight, 0, 0, 1, 1);
+		// CommonRender.drawTexture(table, 0, 0, nowWidth, nowHeight, 0, 0, 1,
+		// 1);
 		tex.render();
-		
+
 		// Debug Render Layer
 		if (f3) {
 			float next = CommonRender.winToOthHeight(CommonRender.formatSize(16));
@@ -54,10 +59,15 @@ public class Background extends Layer {
 			CommonRender.drawFont("Tick per second:" + Ticker.getTicks() + "ct/s", 0, next * 5, 16, Color.white, true);
 
 			// Right part
-			CommonRender.drawRightFont(
-					"Memory Used:" + (CommonRender.RUNTIME.totalMemory() - CommonRender.RUNTIME.freeMemory()) / 1048576
-							+ "/" + CommonRender.RUNTIME.maxMemory() / 1048576 + "MB",
-					nowWidth, 0, 16, Color.white, true);
+			CommonRender
+					.drawRightFont(
+							"Memory Used:"
+									+ MathHelper.eplison(
+											(ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory())
+													/ 1048576.0,
+											1)
+									+ "/" + MathHelper.eplison(ChemistryLab.getTotalMemory() / 1048576, 1) + "MB",
+							nowWidth, 0, 16, Color.white, true);
 			CommonRender.drawRightFont("LWJGL version " + Sys.getVersion(), nowWidth, next, 16, Color.white, true);
 			CommonRender.drawRightFont("OpenGL version " + glGetString(GL11.GL_VERSION), nowWidth, next * 2, 16,
 					Color.white, true);
@@ -86,30 +96,27 @@ public class Background extends Layer {
 					Color.white, true);
 			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", nowWidth, next * 9,
 					16, Color.white, true);
-			if (!last_ret.isEmpty())
-				CommonRender.drawRightFont(last_ret, nowWidth, next * 10, 16, last_failed ? Color.red : Color.yellow,
-						true);
 
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
 				CommonRender.drawFont("FPS Infos:", 0, next * 6, 16, Color.white, true, new Color(255, 10, 10, 100));
 				Color.white.bind();
 				glBegin(GL_LINE_STRIP);
-				glVertex2f(10, next * 7 + 155);
-				glVertex2f(161, next * 7 + 155);
+					glVertex2f(10, next * 7 + 155);
+					glVertex2f(161, next * 7 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-				glVertex2f(10, next * 7 + 5);
-				glVertex2f(10, next * 7 + 155);
+					glVertex2f(10, next * 7 + 5);
+					glVertex2f(10, next * 7 + 155);
 				glEnd();
 				Queue<Integer> fpss = DebugSystem.getFPSs();
 				new Color(255, 10, 10, 150).bind();
 				fpss.forEach(i -> {
 					glBegin(GL_QUADS);
-					glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
-					glVertex2f(10 + count, next * 7 + 154);
-					glVertex2f(10 + count + 1, next * 7 + 154);
-					glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+						glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+						glVertex2f(10 + count, next * 7 + 154);
+						glVertex2f(10 + count + 1, next * 7 + 154);
+						glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
 					glEnd();
 					count++;
 				});
@@ -119,17 +126,17 @@ public class Background extends Layer {
 				Color.white.bind();
 				Queue<Long> mems = DebugSystem.getMems();
 				glBegin(GL_LINE_STRIP);
-				glVertex2f(10, next * 8 + 160 + 155);
-				glVertex2f(160, next * 8 + 160 + 155);
+					glVertex2f(10, next * 8 + 160 + 155);
+					glVertex2f(160, next * 8 + 160 + 155);
 				glEnd();
 				glBegin(GL_LINE_STRIP);
-				glVertex2f(10, next * 8 + 160 + 5);
-				glVertex2f(10, next * 8 + 160 + 155);
+					glVertex2f(10, next * 8 + 160 + 5);
+					glVertex2f(10, next * 8 + 160 + 155);
 				glEnd();
 				new Color(255, 10, 10, 150).bind();
 				glBegin(GL_LINE_STRIP);
 				mems.forEach(i -> {
-					glVertex2f(10 + count, next * 8 + 160 + 154 - 150.0f * i / CommonRender.RUNTIME.maxMemory());
+					glVertex2f(10 + count, next * 8 + 160 + 154 - 150.0f * i / ChemistryLab.RUNTIME.maxMemory());
 					count++;
 				});
 				count = 1;
@@ -147,15 +154,13 @@ public class Background extends Layer {
 	}
 
 	private boolean onCommand = false;
-	private String last_ret = "";
-	private boolean last_failed = false;
 
 	@Override
 	public void onKeyActive() {
 		super.onKeyActive();
 		if (!onCommand && Keyboard.isKeyDown(Keyboard.KEY_C)) {
 			TextField f = new TextField(0, nowHeight - 16, nowWidth, nowHeight, this, 16);
-			f.addEffect(new BackgroundEffect(new Color(150, 150, 150, 75)));
+			f.addEffect(new BackgroundEffect(new Color(150, 150, 150, 75), f));
 			f.setEnterEvent(s -> {
 				removeAllComponent();
 				onCommand = false;
@@ -163,11 +168,19 @@ public class Background extends Layer {
 				if (s.isEmpty())
 					return;
 				try {
-					last_ret = CommandController.runCommand(s);
-					last_failed = false;
+					Message[] m = CommandController.runCommand(s);
+					for (Message mess : m) {
+						MessageBoard.INSTANCE.addMessage(mess);
+					}
 				} catch (Exception e) {
-					last_ret = "Last Command Failed:" + e.getMessage();
-					last_failed = true;
+					Message m = new Message().addMessageEntry(new MessageEntry("Command Failed:" + e.getMessage())
+							.setColor(Color.red).setClickEvent(() -> {
+								if (!Mouse.isButtonDown(0))
+									return;
+								Transferable trans = new StringSelection(s);
+								Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+							}));
+					MessageBoard.INSTANCE.addMessage(m);
 				}
 			});
 			addComponent(f);

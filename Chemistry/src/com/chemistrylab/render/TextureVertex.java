@@ -30,24 +30,27 @@ public class TextureVertex {
 	public static final int stride = positionBytesCount + colorByteCount + textureByteCount;
 
 	// Setters
-	public void setXYZ(float x, float y, float z) {
-		this.setXYZW(x, y, z, 1f);
+	public TextureVertex setXYZ(float x, float y, float z) {
+		return setXYZW(x, y, z, 1f);
 	}
 
-	public void setRGB(float r, float g, float b) {
-		this.setRGBA(r, g, b, 1f);
+	public TextureVertex setRGB(float r, float g, float b) {
+		return setRGBA(r, g, b, 1f);
 	}
 
-	public void setST(float s, float t) {
-		this.st = new float[] { s, t };
+	public TextureVertex setST(float s, float t) {
+		st = new float[] { s, t };
+		return this;
 	}
 
-	public void setXYZW(float x, float y, float z, float w) {
-		this.xyzw = new float[] { x, y, z, w };
+	public TextureVertex setXYZW(float x, float y, float z, float w) {
+		xyzw = new float[] { x, y, z, w };
+		return this;
 	}
 
-	public void setRGBA(float r, float g, float b, float a) {
-		this.rgba = new float[] { r, g, b, 1f };
+	public TextureVertex setRGBA(float r, float g, float b, float a) {
+		rgba = new float[] { r, g, b, 1f };
+		return this;
 	}
 
 	// Getters

@@ -10,6 +10,8 @@ import com.chemistrylab.util.*;
 import org.newdawn.slick.opengl.*;
 import org.newdawn.slick.font.effects.*;
 
+import static com.chemistrylab.ChemistryLab.nowHeight;
+import static com.chemistrylab.ChemistryLab.nowWidth;
 import static org.lwjgl.opengl.GL11.*;
 
 public class CommonRender {
@@ -17,14 +19,14 @@ public class CommonRender {
 	public static final Toolkit TOOLKIT = Toolkit.getDefaultToolkit();
 	public static final int WINDOW_HEIGHT = TOOLKIT.getScreenSize().height;
 	public static final int WINDOW_WIDTH = TOOLKIT.getScreenSize().width;
-	public static final Runtime RUNTIME = Runtime.getRuntime();
 	public static final Map<Integer, UnicodeFont> LOAD_FONTS = new HashMap<>();
 	public static final String FONT_NAME = "Î¢ÈíÑÅºÚ";
+	public static final FastQuad TABLE  = new FastQuad(0, 0, nowWidth, nowHeight, new Color(150, 150, 150, 75));
 
 	private static Texture[] fonts;
 	private static Texture asciifont;
 	private static boolean font_loaded = false;
-	private static final ProgressBar memory = new ProgressBar(RUNTIME.maxMemory(), 20);
+	private static final ProgressBar memory = new ProgressBar(ChemistryLab.getTotalMemory(), 20);
 
 	public static void init() {
 	}
@@ -301,13 +303,13 @@ public class CommonRender {
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	public static void drawItaticFont(String s, int x, int y, float size, Color text, float shr) {
+	public static float drawItaticFont(String s, float x, float y, float size, Color text, float shr) {
 		size = formatSize(size);
 		float drawXS = winToOthWidth(size);
 		float drawYS = winToOthHeight(size);
 		if (!font_loaded) {
 			ChemistryLab.logger.error("Are you kidding me?I haven't load font!");
-			return;
+			return -1;
 		}
 		char[] all = s.toCharArray();
 		text.bind();
@@ -355,6 +357,7 @@ public class CommonRender {
 			}
 		}
 		glDisable(GL_TEXTURE_2D);
+		return lastx;
 	}
 
 	public static void drawAsciiFont(String s, int x, int y, int size, Color text) {
@@ -545,10 +548,20 @@ public class CommonRender {
 	public static float toRatioYPos(float y) {
 		return y / ChemistryLab.DISPLAY_MODE.getHeight() * Display.getHeight();
 	}
+	
+	public static float toGLX(float x){
+		float x_center = nowWidth / 2;
+		return  x / x_center - 1;
+	}
+	
+	public static float toGLY(float y){
+		float y_center = nowHeight / 2;
+		return -(y / y_center - 1);
+	}
 
 	public static void showMemoryUsed() {
-		long used = RUNTIME.totalMemory() - RUNTIME.freeMemory();
-		double percent = ((double) used) / RUNTIME.maxMemory();
+		long used = ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory();
+		double percent = ((double) used) / ChemistryLab.RUNTIME.maxMemory();
 		if (percent <= 0.7)
 			memory.setFillColor(Color.green);
 		else if (percent <= 0.85)
@@ -556,10 +569,11 @@ public class CommonRender {
 		else
 			memory.setFillColor(Color.red);
 		memory.setNow(used);
-		memory.setMask(RUNTIME.totalMemory());
+		memory.setMask(ChemistryLab.RUNTIME.totalMemory());
 		memory.render(100, 100, ChemistryLab.nowWidth - 200);
 		CommonRender.drawAsciiFont(
-				"Memory Used:" + used / (1024 * 1024) + "/" + RUNTIME.maxMemory() / (1024 * 1024) + "MB", 100, 83, 16,
+				"Memory Used:" + MathHelper.eplison(used / 1048576.0, 1) + "/"
+						+ MathHelper.eplison(ChemistryLab.getTotalMemory() / 1048576, 1) + "MB", 100, 83, 16,
 				Color.black);
 	}
 

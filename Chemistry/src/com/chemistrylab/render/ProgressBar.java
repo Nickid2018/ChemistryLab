@@ -6,33 +6,33 @@ import static org.lwjgl.opengl.GL11.*;
 
 public final class ProgressBar {
 
-	private long max = 0;
-	private long now = 0;
-	private long mask = 0;
+	private double max = 0;
+	private double now = 0;
+	private double mask = 0;
 	private int height;
 	private Color edgecolor = Color.darkGray;
 	private Color fillcolor = Color.green;
 	private Color maskcolor = Color.red;
 	private boolean maskenabled = false;
 
-	public ProgressBar(long max, int width) {
+	public ProgressBar(double max, int width) {
 		this.max = max;
 		this.height = width;
 	}
 
-	public long getMax() {
+	public double getMax() {
 		return max;
 	}
 
-	public void setMax(long max) {
+	public void setMax(double max) {
 		this.max = max;
 	}
 
-	public long getNow() {
+	public double getNow() {
 		return now;
 	}
 
-	public void setNow(long now) {
+	public void setNow(double now) {
 		this.now = now;
 	}
 
@@ -76,7 +76,7 @@ public final class ProgressBar {
 		this.maskenabled = maskenabled;
 	}
 
-	public long getMask() {
+	public double getMask() {
 		return mask;
 	}
 

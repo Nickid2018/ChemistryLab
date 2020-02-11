@@ -1,0 +1,93 @@
+package com.chemistrylab.util;
+
+import java.util.*;
+import org.lwjgl.input.*;
+import org.lwjgl.opengl.*;
+import com.chemistrylab.*;
+import org.newdawn.slick.*;
+import com.chemistrylab.render.*;
+
+public class Message implements Cloneable {
+
+	private final long spawnTime = ChemistryLab.getTime();
+	private final ArrayList<MessageEntry> entries;
+	private long surviveTime;
+
+	public Message() {
+		this(15000);
+	}
+
+	public Message(int surviveTime) {
+		this(surviveTime, new ArrayList<>());
+	}
+
+	public Message(long surviveTime, ArrayList<MessageEntry> en) {
+		this.surviveTime = surviveTime;
+		entries = en;
+	}
+
+	public Message addMessageEntry(MessageEntry en) {
+		entries.add(en);
+		return this;
+	}
+
+	public long getSpawnTime() {
+		return spawnTime;
+	}
+
+	public long getSurviveTime() {
+		return surviveTime;
+	}
+
+	public Message setSurviveTime(long surviveTime) {
+		this.surviveTime = surviveTime;
+		return this;
+	}
+
+	public boolean isValid() {
+		return ChemistryLab.getTime() - spawnTime < surviveTime;
+	}
+
+	public void onMouseEvent() {
+		int x = Mouse.getX();
+		int l = 0;
+		for (MessageEntry en : entries) {
+			l += CommonRender.calcTextWidth(en.getText(), 16);
+			if (l > x) {
+				en.getClickEvent().run();
+				break;
+			}
+		}
+	}
+
+	public void render(float y) {
+		float x = 0;
+		float lastx = 0;
+		float percent = 1 - (ChemistryLab.getTime() - (float) spawnTime) / surviveTime;
+		for (MessageEntry en : entries) {
+			Color nowa = en.getColor();
+			Color now = new Color(nowa.r, nowa.g, nowa.b, percent);
+			if (en.isItatic()) {
+				x = CommonRender.drawItaticFont(en.getText(), x, y, 16, now, en.getShear());
+			} else {
+				x = CommonRender.drawFont(en.getText(), x, y, 16, now);
+			}
+			if (en.isUnderline()) {
+				GL11.glBegin(GL11.GL_LINE_STRIP);
+				GL11.glVertex2f(lastx, y + 16);
+				GL11.glVertex2f(x, y + 16);
+				GL11.glEnd();
+			}
+			lastx = x;
+		}
+	}
+
+	@Override
+	public Message clone() {
+		try {
+			return (Message) super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
+}

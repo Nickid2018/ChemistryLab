@@ -2,8 +2,11 @@ package com.chemistrylab.debug;
 
 import java.util.*;
 import java.awt.*;
+import org.lwjgl.input.*;
 import java.awt.datatransfer.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
+import org.newdawn.slick.Color;
 import com.chemistrylab.layer.container.*;
 
 public class ContainerCommand extends Command {
@@ -11,7 +14,7 @@ public class ContainerCommand extends Command {
 	private static final ContainerLoader LOADER = InitLoader.getContainerLoader();
 
 	@Override
-	public String invokeCommand(String info) throws CommandException {
+	public Message[] invokeCommand(String info) throws CommandException {
 		String[] split = split(info);
 		try {
 			switch (split[0]) {
@@ -23,26 +26,34 @@ public class ContainerCommand extends Command {
 				int x0 = Integer.parseInt(split[3]);
 				int y0 = Integer.parseInt(split[4]);
 				AbstractContainer abc = LOADER.newContainer(model, x0, y0, s);
-				if(split.length == 6){
+				if (split.length == 6) {
 					String json = split[5];
 					abc.specials(json);
 				}
 				Containers.addContainer(abc);
-				Transferable trans = new StringSelection(abc.getUUID().toString());
-				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-				return "Container Added.UUID="+abc.getUUID();
+				return new Message[] { new Message()
+						.addMessageEntry(new MessageEntry("Container Added.UUID=" + abc.getUUID()).setClickEvent(() -> {
+							if (!Mouse.isButtonDown(0))
+								return;
+							Transferable trans = new StringSelection(abc.getUUID().toString());
+							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+						})) };
 			case "remove":
 				String uuid = split[1];
 				Containers.removeContainer(uuid);
-				return "Removed Container";
+				return new Message[] { new Message().addMessageEntry(new MessageEntry("Removed Container")) };
 			case "info-container":
 				String model0 = split[1];
 				Map<String, Size> sizes0 = LOADER.getSizes(model0);
-				StringBuilder ms = new StringBuilder("Container Model:"+model0);
-				for(Map.Entry<String, Size> en:sizes0.entrySet()){
-					ms.append("\n"+en.getValue());
+				Message[] ms_r = new Message[sizes0.size() + 2];
+				ms_r[0] = new Message()
+						.addMessageEntry(new MessageEntry("Container Model: " + split[1]).setColor(Color.yellow));
+				int i = 1;
+				for (Map.Entry<String, Size> en : sizes0.entrySet()) {
+					ms_r[i++] = new Message().addMessageEntry(new MessageEntry(en.getValue() + ""));
 				}
-				return ms.toString();
+				ms_r[i] = new Message().addMessageEntry(new MessageEntry("---End---").setColor(Color.yellow));
+				return ms_r;
 			}
 		} catch (Exception e) {
 			throw new CommandException(e.getMessage());
@@ -71,7 +82,7 @@ public class ContainerCommand extends Command {
 				begin = i;
 			}
 		}
-		if(begin != in.length())
+		if (begin != in.length())
 			al.add(in.substring(begin).trim());
 		// To array
 		Object[] o = al.toArray();

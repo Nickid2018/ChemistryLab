@@ -2,11 +2,13 @@ package com.chemistrylab.debug;
 
 import java.util.*;
 
+import com.chemistrylab.util.Message;
+
 public class CommandController {
 
 	private static final Map<String, Command> commap = new HashMap<>();
 
-	public static final String runCommand(String command) throws CommandException {
+	public static final Message[] runCommand(String command) throws CommandException {
 		if (command.equals("crash"))
 			throw new Error("Manually Crash");
 		String[] sa = command.split(" ", 2);
