@@ -173,13 +173,14 @@ public class Background extends Layer {
 						MessageBoard.INSTANCE.addMessage(mess);
 					}
 				} catch (Exception e) {
-					Message m = new Message().addMessageEntry(new MessageEntry("Command Failed:" + e.getMessage())
-							.setColor(Color.red).setClickEvent(() -> {
-								if (!Mouse.isButtonDown(0))
-									return;
-								Transferable trans = new StringSelection(s);
-								Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-							}));
+					Message m = new Message().addMessageEntry(
+							new MessageEntry(String.format(I18N.getString("command.failed"), e.getMessage()))
+									.setColor(Color.red).setClickEvent(() -> {
+										if (!Mouse.isButtonDown(0))
+											return;
+										Transferable trans = new StringSelection(s);
+										Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+									}));
 					MessageBoard.INSTANCE.addMessage(m);
 				}
 			});

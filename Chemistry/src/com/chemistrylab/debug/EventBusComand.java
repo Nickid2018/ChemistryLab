@@ -15,40 +15,43 @@ public class EventBusComand extends Command {
 	public Message[] invokeCommand(String info) throws CommandException {
 		switch (info) {
 		case "nonwait-size":
-			return new Message[] { new Message()
-					.addMessageEntry(new MessageEntry("EventBus Nonwait Size:" + EventBus.getNonawaitSize())) };
+			return new Message[] { new Message().addMessageEntry(new MessageEntry(
+					String.format(I18N.getString("command.eventbus.nonwaitsize"), EventBus.getNonawaitSize()))) };
 		case "nonwait-pass":
-			return new Message[] { new Message().addMessageEntry(
-					new MessageEntry("EventBus Nonwait Passed Size:" + EventBus.getPassedNonwaitEvents())) };
+			return new Message[] { new Message().addMessageEntry(new MessageEntry(String
+					.format(I18N.getString("command.eventbus.passednonwait"), EventBus.getPassedNonwaitEvents()))) };
 		case "await-units":
-			return new Message[] { new Message().addMessageEntry(
-					new MessageEntry("EventBus Await Unit Size:" + EventBus.getAvailableAwaitUnits())) };
+			return new Message[] { new Message().addMessageEntry(new MessageEntry(String
+					.format(I18N.getString("command.eventbus.awaitunitsize"), EventBus.getAvailableAwaitUnits()))) };
 		case "reg-events":
 			Collection<Event> events = EventBus.getRegisteredEvents();
 			Message[] ms_r = new Message[events.size() + 2];
-			ms_r[0] = new Message()
-					.addMessageEntry(new MessageEntry("EventBus Registered Events:").setColor(Color.yellow));
+			ms_r[0] = new Message().addMessageEntry(
+					new MessageEntry((I18N.getString("command.eventbus.regevents"))).setColor(Color.yellow));
 			int i0 = 1;
 			for (Event e : events) {
 				ms_r[i0++] = new Message().addMessageEntry(new MessageEntry(e.getName() + " : "))
 						.addMessageEntry(new MessageEntry(e.getEventId() + "").setClickEvent(() -> {
-							if(!Mouse.isButtonDown(0))
+							if (!Mouse.isButtonDown(0))
 								return;
 							Transferable trans = new StringSelection(e.getEventId().toString());
 							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
 						}).setUnderline(true));
 			}
-			ms_r[i0] = new Message().addMessageEntry(new MessageEntry("---End---").setColor(Color.yellow));
+			ms_r[i0] = new Message()
+					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 			return ms_r;
 		case "now-events":
 			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
 			Message[] ms = new Message[evsnap.size() + 2];
-			ms[0] = new Message().addMessageEntry(new MessageEntry("---Now Events---").setColor(Color.yellow));
+			ms[0] = new Message().addMessageEntry(
+					new MessageEntry(I18N.getString("command.eventbus.nowevents")).setColor(Color.yellow));
 			int i = 1;
 			for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
 				ms[i++] = new Message().addMessageEntry(new MessageEntry(en.getKey() + " : " + en.getValue()));
 			}
-			ms[i] = new Message().addMessageEntry(new MessageEntry("---End---").setColor(Color.yellow));
+			ms[i] = new Message()
+					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 			return ms;
 		}
 		String[] sps = info.split(" ", 3);
@@ -68,10 +71,10 @@ public class EventBusComand extends Command {
 			} catch (Exception e1) {
 				throw new CommandException(e1.getMessage());
 			}
-			return new Message[] {
-					new Message().addMessageEntry(new MessageEntry("Event " + sps[1] + " has been posted.")) };
+			return new Message[] { new Message().addMessageEntry(
+					new MessageEntry(String.format(I18N.getString("command.eventbus.post"), sps[1]))) };
 		}
-		throw new CommandException("Unknown Command");
+		throw new CommandException(I18N.getString("command.unknown"));
 	}
 
 }

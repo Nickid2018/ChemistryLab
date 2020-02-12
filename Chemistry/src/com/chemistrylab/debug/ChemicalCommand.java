@@ -21,8 +21,8 @@ public class ChemicalCommand extends Command {
 				double num = Double.parseDouble(count);
 				Unit add = new Unit(chem, unit, num).setNotListen();
 				con.addChemical(add);
-				return new Message[] { new Message()
-						.addMessageEntry(new MessageEntry("Added " + add + " into container " + container)) };
+				return new Message[] { new Message().addMessageEntry(
+						new MessageEntry(String.format(I18N.getString("command.chemical.add"), add, container))) };
 			}
 		} catch (Exception e) {
 			throw new CommandException(e.getMessage());

@@ -125,8 +125,8 @@ public class ChemistryLab {
 			});
 			HotKeyMap.addHotKey(Keyboard.KEY_F5, () -> {
 				GL11.glReadBuffer(GL11.GL_FRONT);
-				int width = Display.getDisplayMode().getWidth();
-				int height = Display.getDisplayMode().getHeight();
+				int width = (int) nowWidth;
+				int height = (int) nowHeight;
 				int bpp = 4; // Assuming a 32-bit display with a byte each for
 								// red, green, blue, and alpha.
 				ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
@@ -137,7 +137,7 @@ public class ChemistryLab {
 					File file = new File("screenshot/screenshot_"
 							+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date)
 							+ ".png"); // The file to save to.
-					String format = "PNG"; // Example: "PNG" or "JPG"
+					String format = "PNG"; 
 					BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 					for (int x = 0; x < width; x++) {
 						for (int y = 0; y < height; y++) {
@@ -164,7 +164,9 @@ public class ChemistryLab {
 								}));
 						MessageBoard.INSTANCE.addMessage(m);
 					} catch (IOException e) {
-						e.printStackTrace();
+						Message m = new Message();
+						m.addMessageEntry(new MessageEntry("").setColor(Color.red));
+						MessageBoard.INSTANCE.addMessage(m);
 					}
 				});
 			});

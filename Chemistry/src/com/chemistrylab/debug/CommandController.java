@@ -1,8 +1,7 @@
 package com.chemistrylab.debug;
 
 import java.util.*;
-
-import com.chemistrylab.util.Message;
+import com.chemistrylab.util.*;
 
 public class CommandController {
 
@@ -15,7 +14,7 @@ public class CommandController {
 		String head = sa[0];
 		Command c = commap.get(head);
 		if (c == null) {
-			throw new CommandException("Can't find command " + head);
+			throw new CommandException(I18N.getString("command.unknown"));
 		} else
 			return c.invokeCommand(sa[1]);
 	}

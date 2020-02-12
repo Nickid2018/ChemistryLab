@@ -32,33 +32,44 @@ public class ContainerCommand extends Command {
 				}
 				Containers.addContainer(abc);
 				return new Message[] { new Message()
-						.addMessageEntry(new MessageEntry("Container Added.UUID=" + abc.getUUID()).setClickEvent(() -> {
-							if (!Mouse.isButtonDown(0))
-								return;
-							Transferable trans = new StringSelection(abc.getUUID().toString());
-							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-						})) };
+						.addMessageEntry(new MessageEntry(I18N.getString("command.container.add"))).addMessageEntry(
+								new MessageEntry("UUID = " + abc.getUUID()).setUnderline(true).setClickEvent(() -> {
+									if (!Mouse.isButtonDown(0))
+										return;
+									Transferable trans = new StringSelection(abc.getUUID().toString());
+									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+								})) };
 			case "remove":
 				String uuid = split[1];
 				Containers.removeContainer(uuid);
-				return new Message[] { new Message().addMessageEntry(new MessageEntry("Removed Container")) };
+				return new Message[] {
+						new Message().addMessageEntry(new MessageEntry(I18N.getString("command.container.remove"))),
+						new Message().addMessageEntry(
+								new MessageEntry("UUID = " + uuid).setUnderline(true).setClickEvent(() -> {
+									if (!Mouse.isButtonDown(0))
+										return;
+									Transferable trans = new StringSelection(uuid.toString());
+									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+								})) };
 			case "info-container":
 				String model0 = split[1];
 				Map<String, Size> sizes0 = LOADER.getSizes(model0);
 				Message[] ms_r = new Message[sizes0.size() + 2];
-				ms_r[0] = new Message()
-						.addMessageEntry(new MessageEntry("Container Model: " + split[1]).setColor(Color.yellow));
+				ms_r[0] = new Message().addMessageEntry(
+						new MessageEntry(String.format(I18N.getString("command.container.model"), split[1]))
+								.setColor(Color.yellow));
 				int i = 1;
 				for (Map.Entry<String, Size> en : sizes0.entrySet()) {
 					ms_r[i++] = new Message().addMessageEntry(new MessageEntry(en.getValue() + ""));
 				}
-				ms_r[i] = new Message().addMessageEntry(new MessageEntry("---End---").setColor(Color.yellow));
+				ms_r[i] = new Message()
+						.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 				return ms_r;
 			}
 		} catch (Exception e) {
 			throw new CommandException(e.getMessage());
 		}
-		throw new CommandException("Unknown Command");
+		throw new CommandException(I18N.getString("command.unknown"));
 	}
 
 	public String[] split(String in) {

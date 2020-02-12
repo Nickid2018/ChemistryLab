@@ -11,14 +11,14 @@ public class EnvironmentCommand extends Command {
 		switch (div[0]) {
 		case "temperature":
 			Environment.setTemperature(Double.parseDouble(div[1]));
-			return new Message[] {
-					new Message().addMessageEntry(new MessageEntry("Changed temperature to " + div[1] + "K")) };
+			return new Message[] { new Message().addMessageEntry(
+					new MessageEntry(String.format(I18N.getString("command.environment.temp"), div[1]))) };
 		case "pressure":
 			Environment.setPressure(Double.parseDouble(div[1]));
-			return new Message[] {
-					new Message().addMessageEntry(new MessageEntry("Changed pressure to " + div[1] + "Pa")) };
+			return new Message[] { new Message().addMessageEntry(
+					new MessageEntry(String.format(I18N.getString("command.environment.press"), div[1]))) };
 		}
-		throw new CommandException("Unknown Command");
+		throw new CommandException(I18N.getString("command.unknown"));
 	}
 
 }

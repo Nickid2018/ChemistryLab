@@ -12,6 +12,7 @@ public class Message implements Cloneable {
 	private final long spawnTime = ChemistryLab.getTime();
 	private final ArrayList<MessageEntry> entries;
 	private long surviveTime;
+	private long disappearTime = 5000;
 
 	public Message() {
 		this(15000);
@@ -44,6 +45,15 @@ public class Message implements Cloneable {
 		return this;
 	}
 
+	public long getDisappearTime() {
+		return disappearTime;
+	}
+
+	public Message setDisappearTime(long disappearTime) {
+		this.disappearTime = disappearTime;
+		return this;
+	}
+
 	public boolean isValid() {
 		return ChemistryLab.getTime() - spawnTime < surviveTime;
 	}
@@ -63,10 +73,10 @@ public class Message implements Cloneable {
 	public void render(float y) {
 		float x = 0;
 		float lastx = 0;
-		float percent = 1 - (ChemistryLab.getTime() - (float) spawnTime) / surviveTime;
+		float percent = Math.min(-(ChemistryLab.getTime() - spawnTime - surviveTime) / (float) disappearTime, 1);
 		for (MessageEntry en : entries) {
 			Color nowa = en.getColor();
-			Color now = new Color(nowa.r, nowa.g, nowa.b, percent);
+			Color now = new Color(nowa.r, nowa.g, nowa.b, percent * nowa.a);
 			if (en.isItatic()) {
 				x = CommonRender.drawItaticFont(en.getText(), x, y, 16, now, en.getShear());
 			} else {
