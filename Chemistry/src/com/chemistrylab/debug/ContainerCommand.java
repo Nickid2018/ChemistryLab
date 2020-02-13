@@ -42,15 +42,14 @@ public class ContainerCommand extends Command {
 			case "remove":
 				String uuid = split[1];
 				Containers.removeContainer(uuid);
-				return new Message[] {
-						new Message().addMessageEntry(new MessageEntry(I18N.getString("command.container.remove"))),
-						new Message().addMessageEntry(
-								new MessageEntry("UUID = " + uuid).setUnderline(true).setClickEvent(() -> {
-									if (!Mouse.isButtonDown(0))
-										return;
-									Transferable trans = new StringSelection(uuid.toString());
-									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-								})) };
+				return new Message[] { new Message()
+						.addMessageEntry(new MessageEntry(I18N.getString("command.container.remove")))
+						.addMessageEntry(new MessageEntry("UUID = " + uuid).setUnderline(true).setClickEvent(() -> {
+							if (!Mouse.isButtonDown(0))
+								return;
+							Transferable trans = new StringSelection(uuid.toString());
+							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+						})) };
 			case "info-container":
 				String model0 = split[1];
 				Map<String, Size> sizes0 = LOADER.getSizes(model0);

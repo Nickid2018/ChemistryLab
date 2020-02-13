@@ -4,24 +4,26 @@ import java.io.*;
 import java.nio.*;
 import org.lwjgl.openal.*;
 import javax.sound.sampled.*;
+import com.chemistrylab.util.*;
 
-public final class WaveSound extends Sound{
+public class OggSound extends Sound {
 
-	private WaveData waveFile;
+	private OggData oggFile;
 
-	public WaveSound(String file) throws UnsupportedAudioFileException, IOException {
-		waveFile = WaveData.create(file);
+	public OggSound(String file) throws UnsupportedAudioFileException, IOException {
+		oggFile = OggData.getData(ResourceManager.getResourceAsStream(file));
 		index = SoundSystem.newSound();
-		address = SoundSystem.getBuffer(index);
-		source = SoundSystem.getSource(index);
-		sourcePos = SoundSystem.getSourcePositionBuffer();
-		sourceVel = SoundSystem.getSourceVelocityBuffer();
 		SoundSystem.addALFunction(this::initALSound);
 	}
 
 	private void initALSound() {
-		AL10.alBufferData(address, waveFile.format, waveFile.data, waveFile.samplerate);
-		waveFile.dispose();
+		address = SoundSystem.getBuffer(index);
+		source = SoundSystem.getSource(index);
+		sourcePos = SoundSystem.getSourcePositionBuffer();
+		sourceVel = SoundSystem.getSourceVelocityBuffer();
+		AL10.alBufferData(address, oggFile.channels > 1 ? AL10.AL_FORMAT_STEREO16 : AL10.AL_FORMAT_MONO16, oggFile.data,
+				oggFile.samplerate);
+		oggFile.dispose();
 		int bytes = AL10.alGetBufferi(address, AL10.AL_SIZE);
 		int bits = AL10.alGetBufferi(address, AL10.AL_BITS);
 		int channels = AL10.alGetBufferi(address, AL10.AL_CHANNELS);

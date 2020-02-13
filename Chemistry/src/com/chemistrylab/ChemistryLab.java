@@ -6,9 +6,8 @@ import java.nio.*;
 import org.lwjgl.*;
 import javax.imageio.*;
 import org.lwjgl.input.*;
-
-import java.awt.Desktop;
 import java.awt.image.*;
+import java.awt.Desktop;
 import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import org.apache.log4j.*;
@@ -58,6 +57,8 @@ public class ChemistryLab {
 	private static long lastFPS;
 	private static int fps;
 	private static int printFPS;
+
+	private static long lastClick = -1;
 
 	// Status
 	private static boolean i18n_reload = false;
@@ -137,7 +138,7 @@ public class ChemistryLab {
 					File file = new File("screenshot/screenshot_"
 							+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date)
 							+ ".png"); // The file to save to.
-					String format = "PNG"; 
+					String format = "PNG";
 					BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 					for (int x = 0; x < width; x++) {
 						for (int y = 0; y < height; y++) {
@@ -150,23 +151,21 @@ public class ChemistryLab {
 					}
 					try {
 						ImageIO.write(image, format, file);
-						Message m = new Message();
-						m.addMessageEntry(new MessageEntry("The screenshot has been saved in "));
-						m.addMessageEntry(
-								new MessageEntry(file.getAbsolutePath()).setUnderline(true).setClickEvent(() -> {
-									if (Mouse.isButtonDown(0))
-										if (Desktop.isDesktopSupported()) {
-											try {
-												Desktop.getDesktop().open(file);
-											} catch (Exception e) {
-											}
-										}
-								}));
-						MessageBoard.INSTANCE.addMessage(m);
-					} catch (IOException e) {
-						Message m = new Message();
-						m.addMessageEntry(new MessageEntry("").setColor(Color.red));
-						MessageBoard.INSTANCE.addMessage(m);
+						MessageBoard.INSTANCE.addMessage(
+								new Message().addMessageEntry(new MessageEntry(I18N.getString("screenshot.success")))
+										.addMessageEntry(new MessageEntry(file.getAbsolutePath()).setUnderline(true)
+												.setClickEvent(() -> {
+													if (Mouse.isButtonDown(0) && isSystemClickLegal(100))
+														if (Desktop.isDesktopSupported()) {
+															try {
+																Desktop.getDesktop().open(file);
+															} catch (Exception e) {
+															}
+														}
+												})));
+					} catch (Exception e) {
+						MessageBoard.INSTANCE.addMessage(new Message().addMessageEntry(
+								new MessageEntry(I18N.getString("screenshot.failed")).setColor(Color.red)));
 					}
 				});
 			});
@@ -212,8 +211,8 @@ public class ChemistryLab {
 
 			// Add background layer & expand handle
 			LayerRender.pushLayer(new Background());
-			LayerRender.pushLayer(new ExpandBar());
 			LayerRender.pushLayer(MessageBoard.INSTANCE);
+			LayerRender.pushLayer(new ExpandBar());
 
 			inited = true;
 
@@ -442,6 +441,13 @@ public class ChemistryLab {
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			LayerRender.windowResize();
 		}
+	}
+
+	public static boolean isSystemClickLegal(long del) {
+		boolean b = getTime() - lastClick > del;
+		if (b)
+			lastClick = getTime();
+		return b;
 	}
 
 	private static Throwable error;

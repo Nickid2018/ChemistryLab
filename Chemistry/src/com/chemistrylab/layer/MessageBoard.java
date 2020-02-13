@@ -27,6 +27,8 @@ public class MessageBoard extends Layer {
 	public void addMessage(Message m) {
 		toAdd.offer(m);
 		message_all.add(m.clone().setSurviveTime(Long.MAX_VALUE));
+		while (message_all.size() > 30)
+			message_all.remove(0);
 		while (message_list.size() > 30)
 			message_list.remove(0);
 	}
@@ -64,26 +66,67 @@ public class MessageBoard extends Layer {
 
 	@Override
 	public void debugRender() {
-		render();
+		while (!toAdd.isEmpty()) {
+			message_list.add(toAdd.poll());
+		}
+		while (message_list.size() > 30)
+			message_list.remove(0);
+		quad.render();
+		if (message_all.isEmpty())
+			return;
+		float nowY = range.y1 - 16;
+		for (int i = message_all.size() - 1; i >= 0; i--) {
+			Message m = message_all.get(i);
+			if (!m.isValid()) {
+				removes.add(m);
+				continue;
+			}
+			m.render(nowY);
+			nowY -= 16;
+		}
+		message_list.removeAll(removes);
+		removes.clear();
+		range.y0 = range.y1 - message_all.size() * 16;
+		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
+				CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
+		quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
+				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
+		quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
+				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
 	}
 
 	@Override
 	public void onContainerResized() {
 		doDefaultResize(this);
-		range.y0 = range.y1 - message_list.size() * 16;
-		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
-				CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
-		quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
-				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
-		quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
-				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+		if (ChemistryLab.f3) {
+			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
+					CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
+			quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
+					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
+			quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
+					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+		} else {
+			range.y0 = range.y1 - message_list.size() * 16;
+			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
+					CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
+			quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
+					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
+			quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
+					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+		}
 	}
 
 	@Override
 	public void onMouseEvent() {
 		int y = Mouse.getY();
 		int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);
-		message_list.get(message_list.size() - rep).onMouseEvent();
+		try {
+			if(ChemistryLab.f3)
+				message_all.get(message_all.size() - rep).onMouseEvent();
+			else
+				message_list.get(message_list.size() - rep).onMouseEvent();
+		} catch (Exception e) {
+		}
 	}
 
 }

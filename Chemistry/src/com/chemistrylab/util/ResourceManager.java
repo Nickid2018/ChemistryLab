@@ -182,6 +182,7 @@ public class ResourceManager {
 	
 	public static final void loadPacks(){
 		locations.add(new ClasspathLocation());
+		locations.add(new AbsoluteLocation());
 		locations.add(new FileSystemLocation(new File(".")));
 		File resources = new File("resource");
 		if (resources.isDirectory()) {
@@ -202,6 +203,7 @@ public class ResourceManager {
 		reloadLock.lock();
 		removeAllResourceLocations();
 		locations.add(new ClasspathLocation());
+		locations.add(new AbsoluteLocation());
 		locations.add(new FileSystemLocation(new File(".")));
 		File resources = new File("resource");
 		if (resources.isDirectory()) {

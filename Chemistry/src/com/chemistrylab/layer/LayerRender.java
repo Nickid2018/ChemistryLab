@@ -69,7 +69,8 @@ public class LayerRender {
 				l.onMouseEvent();
 				if (top && Mouse.isButtonDown(0)) {
 					top = false;
-					focus = l;
+					if (!l.equals(MessageBoard.INSTANCE))
+						focus = l;
 				}
 				if (l.isMouseEventStop())
 					break;

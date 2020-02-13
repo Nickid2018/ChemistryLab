@@ -1,15 +1,14 @@
 package com.chemistrylab.layer;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.util.*;
 import org.lwjgl.*;
+import java.awt.Toolkit;
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
+import java.awt.datatransfer.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.debug.*;

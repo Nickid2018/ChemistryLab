@@ -16,6 +16,8 @@ sidebar.reaction.add=Add Reaction
 window.title=Chemisty Lab
 
 #Operations
+screenshot.success=The screenshot has been saved in 
+screenshot.failed=Cannot save the screenshot.
 dealing.log.clear=Clearing system log...
 i18n.change.lang=Changing Language
 i18n.change.title=Language...

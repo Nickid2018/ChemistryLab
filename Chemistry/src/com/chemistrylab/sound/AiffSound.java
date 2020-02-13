@@ -5,12 +5,12 @@ import java.nio.*;
 import org.lwjgl.openal.*;
 import javax.sound.sampled.*;
 
-public final class WaveSound extends Sound{
+public final class AiffSound extends Sound{
 
-	private WaveData waveFile;
+	private AiffData aiffFile;
 
-	public WaveSound(String file) throws UnsupportedAudioFileException, IOException {
-		waveFile = WaveData.create(file);
+	public AiffSound(String file) throws UnsupportedAudioFileException, IOException {
+		aiffFile = AiffData.create(file);
 		index = SoundSystem.newSound();
 		address = SoundSystem.getBuffer(index);
 		source = SoundSystem.getSource(index);
@@ -20,8 +20,8 @@ public final class WaveSound extends Sound{
 	}
 
 	private void initALSound() {
-		AL10.alBufferData(address, waveFile.format, waveFile.data, waveFile.samplerate);
-		waveFile.dispose();
+		AL10.alBufferData(address, aiffFile.format, aiffFile.data, aiffFile.samplerate);
+		aiffFile.dispose();
 		int bytes = AL10.alGetBufferi(address, AL10.AL_SIZE);
 		int bits = AL10.alGetBufferi(address, AL10.AL_BITS);
 		int channels = AL10.alGetBufferi(address, AL10.AL_CHANNELS);

@@ -1,12 +1,11 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
-
 import org.lwjgl.input.*;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
+import java.util.concurrent.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.layer.component.*;
 

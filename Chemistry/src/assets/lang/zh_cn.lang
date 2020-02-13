@@ -16,6 +16,8 @@ sidebar.reaction.add=添加反应
 window.title=虚拟化学实验室
 
 #Operations
+screenshot.success=已将截图保存至
+screenshot.failed=无法保存截图
 dealing.log.clear=正在清除日志...
 i18n.change.lang=正在更改语言
 i18n.change.title=语言
