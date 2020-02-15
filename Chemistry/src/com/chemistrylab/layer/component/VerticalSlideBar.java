@@ -131,7 +131,7 @@ public class VerticalSlideBar extends Component {
 			float shouldDraw = cons.size() * vertsize;
 			float percent = mysize / shouldDraw;
 			float barlength = (percent > 1 ? 1 : percent) * mysize;
-			postion -= down / (mysize - barlength);
+			postion -= down / (mysize - barlength) / 7;
 			postion = postion > 1 ? 1 : postion;
 			postion = postion < 0 ? 0 : postion;
 		} else if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {

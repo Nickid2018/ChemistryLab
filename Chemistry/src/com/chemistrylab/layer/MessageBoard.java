@@ -18,7 +18,8 @@ public class MessageBoard extends Layer {
 	private ArrayList<Message> message_list = new ArrayList<>();
 	private ArrayList<Message> removes = new ArrayList<>();
 	private Queue<Message> toAdd = new LinkedBlockingQueue<>();
-	private FastQuad quad = new FastQuad(0, 640, 360, 640, new Color(150, 150, 150, 75), true);
+	private FastQuad quad = new FastQuad(0, 640, 360, 640, new Color(100, 100, 100, 75), true);
+	private int start = 0;
 
 	private MessageBoard() {
 		super(0, 640, 800, 640);
@@ -27,10 +28,9 @@ public class MessageBoard extends Layer {
 	public void addMessage(Message m) {
 		toAdd.offer(m);
 		message_all.add(m.clone().setSurviveTime(Long.MAX_VALUE));
-		while (message_all.size() > 30)
-			message_all.remove(0);
 		while (message_list.size() > 30)
 			message_list.remove(0);
+		start = 0;
 	}
 
 	@Override
@@ -69,28 +69,22 @@ public class MessageBoard extends Layer {
 		while (!toAdd.isEmpty()) {
 			message_list.add(toAdd.poll());
 		}
-		while (message_list.size() > 30)
-			message_list.remove(0);
 		quad.render();
 		if (message_all.isEmpty())
 			return;
 		float nowY = range.y1 - 16;
-		for (int i = message_all.size() - 1; i >= 0; i--) {
+		for (int i = message_all.size() - 1 - start; i >= Math.max(message_all.size() - 30 - start, 0); i--) {
 			Message m = message_all.get(i);
-			if (!m.isValid()) {
-				removes.add(m);
-				continue;
-			}
 			m.render(nowY);
 			nowY -= 16;
 		}
 		message_list.removeAll(removes);
 		removes.clear();
-		range.y0 = range.y1 - message_all.size() * 16;
+		range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
-				CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
-		quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
-				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
+				CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
+		quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(
+				CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 		quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
 				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
 	}
@@ -100,9 +94,10 @@ public class MessageBoard extends Layer {
 		doDefaultResize(this);
 		if (ChemistryLab.f3) {
 			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
-					CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
-			quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
-					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_all.size() * 16), 0));
+					CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
+			quad.updateVertex(FastQuad.POSTION_RIGHT_UP,
+					quad.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(CommonRender.toGLX(range.x1),
+							CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 			quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
 					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
 		} else {
@@ -118,14 +113,19 @@ public class MessageBoard extends Layer {
 
 	@Override
 	public void onMouseEvent() {
-		int y = Mouse.getY();
-		int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);
-		try {
-			if(ChemistryLab.f3)
-				message_all.get(message_all.size() - rep).onMouseEvent();
-			else
-				message_list.get(message_list.size() - rep).onMouseEvent();
-		} catch (Exception e) {
+		int down;
+		if ((down = Mouse.getDWheel()) != 0 && message_all.size() > 30) {
+			start = Math.max(0, Math.min(message_all.size() - 30, start + down / 16 / 7));
+		} else {
+			int y = Mouse.getY();
+			int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);
+			try {
+				if (ChemistryLab.f3)
+					message_all.get(message_all.size() - rep).onMouseEvent();
+				else
+					message_list.get(message_list.size() - rep).onMouseEvent();
+			} catch (Exception e) {
+			}
 		}
 	}
 
