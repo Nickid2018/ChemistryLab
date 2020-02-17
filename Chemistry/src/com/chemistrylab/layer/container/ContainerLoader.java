@@ -2,7 +2,6 @@ package com.chemistrylab.layer.container;
 
 import java.util.*;
 import java.lang.reflect.*;
-import org.lwjgl.opengl.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
@@ -69,13 +68,12 @@ public class ContainerLoader {
 			}
 			if (ChemistryLab.getTime() - lastTime > 20) {
 				ChemistryLab.clearFace();
-				ChemistryLab.updateFPS();
+				ChemistryLab.QUAD.render();
 				load_con.setNow(i + 1);
 				load_con.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
 				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}

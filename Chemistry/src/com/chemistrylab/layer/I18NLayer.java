@@ -1,7 +1,8 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-import org.lwjgl.input.*;
+
+import org.lwjgl.glfw.GLFW;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
@@ -25,12 +26,14 @@ public class I18NLayer extends Layer {
 		addComponent(langs);
 		addComponent(new TextComponent(CommonRender.toRatioXPos(100), CommonRender.toRatioYPos(48),
 				CommonRender.toRatioXPos(250), CommonRender.toRatioYPos(96), this, I18N.getString("i18n.change.title"),
-				() -> {
+				(button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter());
 		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(100), CommonRender.toRatioYPos(120),
 				CommonRender.toRatioXPos(250), CommonRender.toRatioYPos(168), this, I18N.getString("program.cancel"),
-				() -> {
-					if (Mouse.isButtonDown(0)) {
+				(button, action, mods) -> {
+					if(action != GLFW.GLFW_PRESS)
+						return;
+					if (button == 0) {
 						LayerRender.popLayer(I18NLayer.this);
 						LayerRender.pushLayer(new ExpandBar());
 					}
@@ -42,9 +45,8 @@ public class I18NLayer extends Layer {
 	private void flush() {
 		ArrayList<Slidable> s = new ArrayList<>();
 		for (String lang : I18N.getSurporttedLanguages()) {
-			SlideTextComponent c = new SlideTextComponent(I18NLayer.this, lang, () -> {
-				if (Mouse.isButtonDown(0)
-						&& !I18N.getSurporttedLanguageName(lang).equalsIgnoreCase(I18N.getNowLanguage())) {
+			SlideTextComponent c = new SlideTextComponent(I18NLayer.this, lang, (button, action, mods) -> {
+				if (button == 0 && !I18N.getSurporttedLanguageName(lang).equalsIgnoreCase(I18N.getNowLanguage())) {
 					LayerRender.popLayer(this);
 					LayerRender.pushLayer(new PleaseWaitLayer(I18N.getString("i18n.change.lang"), () -> {
 						try {
@@ -67,10 +69,10 @@ public class I18NLayer extends Layer {
 	public void render() {
 		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
-			glVertex2f(0, 0);
-			glVertex2f(0, nowHeight);
-			glVertex2f(nowWidth, nowHeight);
-			glVertex2f(nowWidth, 0);
+		glVertex2f(0, 0);
+		glVertex2f(0, nowHeight);
+		glVertex2f(nowWidth, nowHeight);
+		glVertex2f(nowWidth, 0);
 		glEnd();
 	}
 

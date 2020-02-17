@@ -1,8 +1,12 @@
 package com.chemistrylab.layer.container;
 
 import java.util.*;
+
+import org.lwjgl.glfw.GLFW;
+
 import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
@@ -69,8 +73,17 @@ public abstract class AbstractContainer extends Layer {
 	}
 
 	@Override
-	public void onMouseEvent() {
-
+	public void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
+		if (button != 0) {
+			float dx = (float) Mouse.getDX();
+			float dy = (float) Mouse.getDY();
+			range.x0 += dx;
+			range.x1 += dx;
+			range.y0 += dy;
+			range.y1 += dy;
+		}
 	}
 
 	@Override

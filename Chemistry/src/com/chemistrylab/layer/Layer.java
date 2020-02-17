@@ -1,11 +1,10 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-import org.lwjgl.input.*;
-import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.util.concurrent.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.layer.component.*;
 
@@ -28,16 +27,14 @@ public abstract class Layer {
 		range.y1 = y1;
 	}
 
-	public static final boolean checkRange(Range range, int x, int y) {
+	public static final boolean checkRange(Range range, double x, double y) {
 		return CommonRender.othToWinWidth(range.x0) < x && CommonRender.othToWinWidth(range.x1) > x
-				&& CommonRender.othToWinHeight(range.y0) < Display.getHeight() - y
-				&& CommonRender.othToWinHeight(range.y1) > Display.getHeight() - y;
+				&& CommonRender.othToWinHeight(range.y0) < y && CommonRender.othToWinHeight(range.y1) > y;
 	}
 
-	public final boolean checkRange(int x, int y) {
-		return CommonRender.othToWinWidth(range.x0) < x && CommonRender.othToWinWidth(range.x1) > x
-				&& CommonRender.othToWinHeight(range.y0) < Display.getHeight() - y
-				&& CommonRender.othToWinHeight(range.y1) > Display.getHeight() - y;
+	public final boolean checkRange(double d, double e) {
+		return CommonRender.othToWinWidth(range.x0) < d && CommonRender.othToWinWidth(range.x1) > d
+				&& CommonRender.othToWinHeight(range.y0) < e && CommonRender.othToWinHeight(range.y1) > e;
 	}
 
 	protected static final void doDefaultResize(Layer l) {
@@ -60,10 +57,10 @@ public abstract class Layer {
 			render();
 		Color.red.bind();
 		glBegin(GL_LINE_LOOP);
-			glVertex2f(range.x0, range.y0);
-			glVertex2f(range.x1, range.y0);
-			glVertex2f(range.x1, range.y1);
-			glVertex2f(range.x0, range.y1);
+		glVertex2f(range.x0, range.y0);
+		glVertex2f(range.x1, range.y0);
+		glVertex2f(range.x1, range.y1);
+		glVertex2f(range.x0, range.y1);
 		glEnd();
 		if (useComponent()) {
 			for (Component c : comps)
@@ -116,26 +113,6 @@ public abstract class Layer {
 
 	public abstract void render();
 
-	public void onMouseEvent() {
-		if (useComponent()) {
-			for (Component c : comps) {
-				if (c.checkRange(Mouse.getX(), Mouse.getY())) {
-					c.onMouseEvent();
-					if (Mouse.isButtonDown(0))
-						focus = c;
-				}
-			}
-		}
-	}
-
-	public void onContainerResized() {
-		float ratioX = nowWidth / oldWidth;
-		float ratioY = nowHeight / oldHeight;
-		resizeSelf(ratioX, ratioY);
-		if (useComponent())
-			resizeComponents(ratioX, ratioY);
-	}
-
 	protected void resizeSelf(float ratioX, float ratioY) {
 		range.x0 *= ratioX;
 		range.x1 *= ratioX;
@@ -152,6 +129,14 @@ public abstract class Layer {
 		}
 	}
 
+	public void onContainerResized() {
+		float ratioX = nowWidth / oldWidth;
+		float ratioY = nowHeight / oldHeight;
+		resizeSelf(ratioX, ratioY);
+		if (useComponent())
+			resizeComponents(ratioX, ratioY);
+	}
+
 	public void onPop() {
 		if (useComponent()) {
 			for (Component c : comps) {
@@ -160,13 +145,56 @@ public abstract class Layer {
 		}
 	}
 
-	public void onKeyActive() {
+	public void onMouseEvent(int button, int action, int mods) {
+		if (useComponent()) {
+			for (Component c : comps) {
+				if (c.checkRange(Mouse.getX(), Mouse.getY())) {
+					c.onMouseEvent(button, action, mods);
+					if (button == 0)
+						focus = c;
+				}
+			}
+		}
+	}
+
+	public void onScroll(double xoffset, double yoffset) {
+		if (useComponent()) {
+			for (Component c : comps) {
+				if (c.checkRange(Mouse.getX(), Mouse.getY())) {
+					c.onScroll(xoffset, yoffset);
+					return;
+				}
+			}
+		}
+	}
+
+	public void onKeyActive(int key, int scancode, int action, int mods) {
 		if (useComponent()) {
 			if (comps.contains(focus)) {
-				focus.onKeyActive();
+				focus.onKeyActive(key, scancode, action, mods);
 			} else
 				focus = null;
 		}
+	}
+
+	public void onCharInput(int codepoint) {
+		if (useComponent()) {
+			if (comps.contains(focus)) {
+				focus.onCharInput(codepoint);
+			} else
+				focus = null;
+		}
+	}
+
+	public void onFocusLost() {
+		focus = null;
+	}
+
+	public void gainFocus() {
+	}
+
+	public int preUseRange() {
+		return 0;
 	}
 
 	public boolean isMouseEventStop() {

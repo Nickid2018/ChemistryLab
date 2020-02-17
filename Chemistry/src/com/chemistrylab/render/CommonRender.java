@@ -10,8 +10,7 @@ import com.chemistrylab.util.*;
 import org.newdawn.slick.opengl.*;
 import org.newdawn.slick.font.effects.*;
 
-import static com.chemistrylab.ChemistryLab.nowHeight;
-import static com.chemistrylab.ChemistryLab.nowWidth;
+import static com.chemistrylab.ChemistryLab.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class CommonRender {
@@ -27,9 +26,6 @@ public class CommonRender {
 	private static Texture asciifont;
 	private static boolean font_loaded = false;
 	private static final ProgressBar memory = new ProgressBar(ChemistryLab.getTotalMemory(), 20);
-
-	public static void init() {
-	}
 
 	public static void loadUnicodes(Texture[] fonts) {
 		CommonRender.fonts = fonts;
@@ -542,11 +538,11 @@ public class CommonRender {
 	}
 
 	public static float toRatioXPos(float x) {
-		return x / ChemistryLab.DISPLAY_MODE.getWidth() * Display.getWidth();
+		return x / ChemistryLab.DREAM_WIDTH * ChemistryLab.nowWidth;
 	}
 
 	public static float toRatioYPos(float y) {
-		return y / ChemistryLab.DISPLAY_MODE.getHeight() * Display.getHeight();
+		return y / ChemistryLab.DREAM_HEIGHT * ChemistryLab.nowHeight;
 	}
 	
 	public static float toGLX(float x){

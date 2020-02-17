@@ -1,11 +1,12 @@
 package com.chemistrylab.layer.component;
 
 import java.util.*;
-import org.lwjgl.input.*;
-import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
+
+import org.lwjgl.glfw.GLFW;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -118,41 +119,45 @@ public class HorizonSlideBar extends Component {
 	private long last_focus = -1;
 
 	@Override
-	public void onMouseEvent() {
+	public void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
 		if (!isClickLegal(10))
 			return;
 		if (ChemistryLab.getTime() - last_focus > 20) {
 			focus_on = false;
 		}
-		int down;
-		if ((down = Mouse.getDWheel()) != 0) {
-			float mysize = range.y1 - range.y0;
-			float shouldDraw = cons.size() * honzsize;
-			float percent = mysize / shouldDraw;
-			float barlength = (percent > 1 ? 1 : percent) * mysize;
-			postion -= down / (mysize - barlength) / 7;
-			postion = postion > 1 ? 1 : postion;
-			postion = postion < 0 ? 0 : postion;
-		} else if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
-			if (!Mouse.isButtonDown(0))
+		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
+			if (button != 0)
 				return;
 			focus_on = true;
 			last_focus = ChemistryLab.getTime();
-			int why = Mouse.getX();
+			double why = Mouse.getX();
 			float mysize = range.x1 - range.x0;
 			float shouldDraw = cons.size() * honzsize;
 			float percent = mysize / shouldDraw;
 			float barlength = (percent > 1 ? 1 : percent) * mysize;
-			postion = (Display.getHeight() - why - range.x0 - barlength / 2) / (mysize - barlength);
+			postion = (float) ((ChemistryLab.nowHeight - why - range.x0 - barlength / 2) / (mysize - barlength));
 			postion = postion > 1 ? 1 : postion;
 			postion = postion < 0 ? 0 : postion;
 		} else {
 			for (Slidable s : cons) {
-				if (s.checkRange(Mouse.getX(), Mouse.getY())) {
-					s.onMouseEvent();
+				if (s.checkRange((int) Mouse.getX(), (int) Mouse.getY())) {
+					s.onMouseEvent(button, action, mods);
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void onScroll(double xoffset, double yoffset) {
+		float mysize = range.y1 - range.y0;
+		float shouldDraw = cons.size() * honzsize;
+		float percent = mysize / shouldDraw;
+		float barlength = (percent > 1 ? 1 : percent) * mysize;
+		postion -= yoffset / (mysize - barlength) / 7;
+		postion = postion > 1 ? 1 : postion;
+		postion = postion < 0 ? 0 : postion;
 	}
 
 	public int getHorizonSize() {

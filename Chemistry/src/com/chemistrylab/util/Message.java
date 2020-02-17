@@ -1,7 +1,8 @@
 package com.chemistrylab.util;
 
 import java.util.*;
-import org.lwjgl.input.*;
+
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
@@ -58,13 +59,15 @@ public class Message implements Cloneable {
 		return ChemistryLab.getTime() - spawnTime < surviveTime;
 	}
 
-	public void onMouseEvent() {
-		int x = Mouse.getX();
+	public void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
+		double x = Mouse.getX();
 		int l = 0;
 		for (MessageEntry en : entries) {
 			l += CommonRender.calcTextWidth(en.getText(), 16);
 			if (l > x) {
-				en.getClickEvent().run();
+				en.getClickEvent().click(button, action, mods);
 				break;
 			}
 		}

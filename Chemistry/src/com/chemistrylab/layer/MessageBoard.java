@@ -1,7 +1,7 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-import org.lwjgl.input.*;
+import org.lwjgl.glfw.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.util.concurrent.*;
@@ -112,21 +112,24 @@ public class MessageBoard extends Layer {
 	}
 
 	@Override
-	public void onMouseEvent() {
-		int down;
-		if ((down = Mouse.getDWheel()) != 0 && message_all.size() > 30) {
-			start = Math.max(0, Math.min(message_all.size() - 30, start + down / 16 / 7));
-		} else {
-			int y = Mouse.getY();
-			int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);
-			try {
-				if (ChemistryLab.f3)
-					message_all.get(message_all.size() - rep).onMouseEvent();
-				else
-					message_list.get(message_list.size() - rep).onMouseEvent();
-			} catch (Exception e) {
-			}
+	public void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
+		double y = Mouse.getY();
+		int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);
+		try {
+			if (ChemistryLab.f3)
+				message_all.get(message_all.size() - rep).onMouseEvent(button, action, mods);
+			else
+				message_list.get(message_list.size() - rep).onMouseEvent(button, action, mods);
+		} catch (Exception e) {
 		}
 	}
 
+	@Override
+	public void onScroll(double xoffset, double yoffset) {
+		if (message_all.size() > 30) {
+			start = (int) Math.max(0, Math.min(message_all.size() - 30, start + yoffset / 16 / 7));
+		}
+	}
 }

@@ -1,15 +1,16 @@
 package com.chemistrylab.layer.component;
 
 import org.newdawn.slick.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 
 public class SlideTextComponent extends TextComponent implements Slidable {
 
-	public SlideTextComponent(Layer l, String s, Runnable r, int size, Color c) {
+	public SlideTextComponent(Layer l, String s, ButtonClick r, int size, Color c) {
 		this(l, s, r, size, c, false);
 	}
 
-	public SlideTextComponent(Layer l, String s, Runnable r, int size, Color c, boolean uni) {
+	public SlideTextComponent(Layer l, String s, ButtonClick r, int size, Color c, boolean uni) {
 		super(1, 1, 1, 1, l, s, r, size, c, uni);
 	}
 

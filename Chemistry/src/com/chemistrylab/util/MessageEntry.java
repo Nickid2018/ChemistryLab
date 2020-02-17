@@ -7,7 +7,7 @@ public class MessageEntry {
 	private String text = "";
 	private Color color = Color.white;
 	private float shear = 0.35f;
-	private Runnable clickEvent = () -> {};
+	private ButtonClick clickEvent = (button, action, mods) -> {};
 	private boolean itatic = false;
 	private boolean underline = false;
 	private Color underlinecolor = Color.white;
@@ -70,11 +70,11 @@ public class MessageEntry {
 		return this;
 	}
 
-	public Runnable getClickEvent() {
+	public ButtonClick getClickEvent() {
 		return clickEvent;
 	}
 
-	public MessageEntry setClickEvent(Runnable clickEvent) {
+	public MessageEntry setClickEvent(ButtonClick clickEvent) {
 		this.clickEvent = clickEvent;
 		return this;
 	}

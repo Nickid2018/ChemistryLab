@@ -3,7 +3,6 @@ package com.chemistrylab.chemicals;
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.*;
-import org.lwjgl.opengl.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
@@ -51,13 +50,13 @@ public class ChemicalsLoader {
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
+				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(1);
 				load_details.setNow(counter);
 				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading type class:" + ns, 100, 503, 16, Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}
@@ -84,13 +83,13 @@ public class ChemicalsLoader {
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
+				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(2);
 				load_details.setNow(counter);
 				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Atom[" + actualpath + "]", 100, 503, 16, Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}
@@ -106,13 +105,13 @@ public class ChemicalsLoader {
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
+				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(3);
 				load_details.setNow(counter);
 				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Ion[" + actualpath + "]", 100, 503, 16, Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}
@@ -129,13 +128,13 @@ public class ChemicalsLoader {
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
+				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(4);
 				load_details.setNow(counter);
-				load_details.render(100, 520, 800);
+				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Chemical[" + actualpath + "]", 100, 503, 16, Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}

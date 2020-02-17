@@ -2,7 +2,6 @@ package com.chemistrylab.debug;
 
 import java.util.*;
 import java.awt.*;
-import org.lwjgl.input.*;
 import java.awt.datatransfer.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
@@ -33,8 +32,8 @@ public class ContainerCommand extends Command {
 				Containers.addContainer(abc);
 				return new Message[] { new Message()
 						.addMessageEntry(new MessageEntry(I18N.getString("command.container.add"))).addMessageEntry(
-								new MessageEntry("UUID = " + abc.getUUID()).setUnderline(true).setClickEvent(() -> {
-									if (!Mouse.isButtonDown(0))
+								new MessageEntry("UUID = " + abc.getUUID()).setUnderline(true).setClickEvent((button, action, mods) -> {
+									if (button != 0)
 										return;
 									Transferable trans = new StringSelection(abc.getUUID().toString());
 									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
@@ -44,8 +43,8 @@ public class ContainerCommand extends Command {
 				Containers.removeContainer(uuid);
 				return new Message[] { new Message()
 						.addMessageEntry(new MessageEntry(I18N.getString("command.container.remove")))
-						.addMessageEntry(new MessageEntry("UUID = " + uuid).setUnderline(true).setClickEvent(() -> {
-							if (!Mouse.isButtonDown(0))
+						.addMessageEntry(new MessageEntry("UUID = " + uuid).setUnderline(true).setClickEvent((button, action, mods) -> {
+							if (button != 0)
 								return;
 							Transferable trans = new StringSelection(uuid.toString());
 							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);

@@ -1,12 +1,13 @@
 package com.chemistrylab.layer.component;
 
 import java.io.*;
+import org.lwjgl.glfw.*;
 import java.awt.Toolkit;
-import org.lwjgl.input.*;
 import java.util.function.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.awt.datatransfer.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 import com.chemistrylab.render.*;
 
@@ -84,8 +85,10 @@ public class TextField extends Component {
 	private long last_focus = -1;
 
 	@Override
-	public synchronized void onMouseEvent() {
-		if (!Mouse.isButtonDown(0))
+	public synchronized void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
+		if (button != 0)
 			return;
 		if (ChemistryLab.getTime() - last_focus > 20) {
 			focus_on = false;
@@ -93,7 +96,7 @@ public class TextField extends Component {
 			start_to_sel = selpostionstart = selpostionend = 0;
 		}
 		last_focus = ChemistryLab.getTime();
-		float len = CommonRender.winToOthWidth(Mouse.getX());
+		float len = CommonRender.winToOthWidth((float) Mouse.getX());
 		String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
 		postion = startpaint + s.length();
 		if (focus_on) {
@@ -114,23 +117,25 @@ public class TextField extends Component {
 	}
 
 	@Override
-	public void onKeyActive() {
+	public void onKeyActive(int key, int scancode, int action, int mods) {
+		if(action == GLFW.GLFW_RELEASE)
+			return;
 		// shift
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+		if ((key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT)
+				|| (mods == GLFW.GLFW_KEY_LEFT_SHIFT || mods == GLFW.GLFW_KEY_RIGHT_SHIFT)) {
 			shift_on = true;
 		} else {
 			shift_on = false;
 		}
 		// Ctrl+A select all
-		if ((Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-				&& Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL) && key == GLFW.GLFW_KEY_A) {
 			selpostionstart = 0;
 			selpostionend = pa.length();
 			return;
 		}
 		int tmp = postion;
 		// left
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		if (key == GLFW.GLFW_KEY_LEFT) {
 			if (postion == startpaint)
 				startpaint = startpaint >= 1 ? startpaint - 1 : startpaint;
 			postion = postion >= 1 ? postion - 1 : postion;
@@ -165,7 +170,7 @@ public class TextField extends Component {
 			return;
 		}
 		// right
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		if (key == GLFW.GLFW_KEY_RIGHT) {
 			if (postion == startpaint + CommonRender.subTextWidth(pa.substring(startpaint), size, range.x1).length())
 				startpaint = startpaint <= pa.length() - 1 ? startpaint + 1 : startpaint;
 			postion = postion <= pa.length() - 1 ? postion + 1 : postion;
@@ -195,8 +200,8 @@ public class TextField extends Component {
 			return;
 		}
 		// Ctrl+C copy
-		if ((Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-				&& Keyboard.isKeyDown(Keyboard.KEY_C)) {
+		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL)
+				&& key == GLFW.GLFW_KEY_C) {
 			if (selpostionstart != selpostionend) {
 				Transferable trans = new StringSelection(pa.substring(selpostionstart, selpostionend));
 				CLIP.setContents(trans, null);
@@ -204,8 +209,8 @@ public class TextField extends Component {
 			return;
 		}
 		// Ctrl+X cut
-		if ((Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-				&& Keyboard.isKeyDown(Keyboard.KEY_X)) {
+		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL)
+				&& key == GLFW.GLFW_KEY_X) {
 			if (selpostionstart != selpostionend) {
 				Transferable trans = new StringSelection(pa.substring(selpostionstart, selpostionend));
 				CLIP.setContents(trans, null);
@@ -226,8 +231,8 @@ public class TextField extends Component {
 			return;
 		}
 		// Ctrl+P paste
-		if ((Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL))
-				&& Keyboard.isKeyDown(Keyboard.KEY_V)) {
+		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL)
+				&& key == GLFW.GLFW_KEY_P) {
 			Transferable trans = CLIP.getContents(null);
 			if (trans != null && trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				String text;
@@ -254,7 +259,7 @@ public class TextField extends Component {
 			return;
 		}
 		// delete
-		if (Keyboard.isKeyDown(Keyboard.KEY_DELETE) || Keyboard.isKeyDown(Keyboard.KEY_BACK)) {
+		if (key == GLFW.GLFW_KEY_BACKSPACE || key == GLFW.GLFW_KEY_DELETE) {
 			if (selpostionstart != selpostionend) {
 				pa = pa.substring(0, selpostionstart) + pa.substring(selpostionend);
 				postion = selpostionstart;
@@ -281,22 +286,25 @@ public class TextField extends Component {
 			}
 			return;
 		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)){
-			if(fire_enter != null)
+		if (key == GLFW.GLFW_KEY_ENTER) {
+			if (fire_enter != null)
 				fire_enter.accept(pa);
 			return;
 		}
+
+	}
+
+	@Override
+	public void onCharInput(int codepoint) {
 		// Other Chars
-		char get = Keyboard.getEventCharacter();
-		if (Character.isISOControl(get))
-			return;
+		String get = new String(Character.toChars(codepoint));
 		if (selpostionstart != selpostionend) {
 			pa = pa.substring(0, selpostionstart) + get + pa.substring(selpostionend);
-			postion = selpostionstart + 1;
+			postion = selpostionstart + get.length();
 			selpostionstart = selpostionend = 0;
 		} else {
 			pa = pa.substring(0, postion) + get + pa.substring(postion);
-			postion = postion + 1;
+			postion = postion + get.length();
 		}
 		if (postion > startpaint) {
 			String todeal = pa.substring(0, postion);
@@ -305,7 +313,7 @@ public class TextField extends Component {
 					- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
 		}
 	}
-	
+
 	@Override
 	public void render() {
 		super.render();
@@ -322,8 +330,8 @@ public class TextField extends Component {
 			float pos = CommonRender.calcTextWidth(pa.substring(0, postion), size) + range.x0;
 			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(pos, range.y0);
-					glVertex2f(pos, range.y1);
+				glVertex2f(pos, range.y0);
+				glVertex2f(pos, range.y1);
 				glEnd();
 			}
 			if (selpostionstart == selpostionend)
@@ -332,10 +340,10 @@ public class TextField extends Component {
 			float sl_end = CommonRender.calcTextWidth(pa.substring(0, selpostionend), size) + range.x0;
 			selcolor.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(sl_start, range.y0);
-				glVertex2f(sl_end, range.y0);
-				glVertex2f(sl_end, range.y1);
-				glVertex2f(sl_start, range.y1);
+			glVertex2f(sl_start, range.y0);
+			glVertex2f(sl_end, range.y0);
+			glVertex2f(sl_end, range.y1);
+			glVertex2f(sl_start, range.y1);
 			glEnd();
 		} else {
 			String topaint = CommonRender.subTextWidth(pa.substring(startpaint), size, honzsize);
@@ -343,23 +351,24 @@ public class TextField extends Component {
 			float pos = CommonRender.calcTextWidth(pa.substring(startpaint, postion), size) + range.x0;
 			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
 				glBegin(GL_LINE_STRIP);
-					glVertex2f(pos, range.y0);
-					glVertex2f(pos, range.y1);
+				glVertex2f(pos, range.y0);
+				glVertex2f(pos, range.y1);
 				glEnd();
 			}
 			if (selpostionstart == selpostionend)
 				return;
 			float sl_start = (startpaint < selpostionstart
-					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionstart), size) : 0) + range.x0;
+					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionstart), size)
+					: 0) + range.x0;
 			float sl_end = (selpostionend - startpaint < topaint.length()
-					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionend), size) : tx - range.x0)
-					+ range.x0;
+					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionend), size)
+					: tx - range.x0) + range.x0;
 			selcolor.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(sl_start, range.y0);
-				glVertex2f(sl_end, range.y0);
-				glVertex2f(sl_end, range.y1);
-				glVertex2f(sl_start, range.y1);
+			glVertex2f(sl_start, range.y0);
+			glVertex2f(sl_end, range.y0);
+			glVertex2f(sl_end, range.y1);
+			glVertex2f(sl_start, range.y1);
 			glEnd();
 		}
 	}

@@ -1,10 +1,12 @@
 package com.chemistrylab.layer;
 
-import org.lwjgl.input.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.layer.animation.*;
 
 import static org.lwjgl.opengl.GL11.*;
+
+import org.lwjgl.glfw.GLFW;
+
 import static com.chemistrylab.ChemistryLab.*;
 
 public class ExpandBar extends Layer {
@@ -44,8 +46,10 @@ public class ExpandBar extends Layer {
 	}
 
 	@Override
-	public void onMouseEvent() {
-		if (!Mouse.isButtonDown(0))
+	public void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
+		if (button != 0)
 			return;
 		LayerRender.popLayer(this);
 		LayerRender.pushLayer(new SideBarExpand());

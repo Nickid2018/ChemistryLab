@@ -31,16 +31,14 @@ public class EventBus {
 	private static final Map<Future<?>, Event> nonwaitEvents = new HashMap<>();
 
 	/**
-	 * An await progress will reply this when the event has been sent
-	 * successfully.
+	 * An await progress will reply this when the event has been sent successfully.
 	 */
-	public static final Event AWAIT_EVENT_RUN_OVER = Event.createNewEvent("Await_event_run-over");
+	public static final Event AWAIT_EVENT_RUN_OVER = new AwaitEventSign("Await_Event_Run-over");
 
 	/**
-	 * An await progress will reply this when the event used too long time to
-	 * send.
+	 * An await progress will reply this when the event used too long time to send.
 	 */
-	public static final Event AWAIT_EVENT_TIMEOUT = Event.createNewEvent("Await_event_timeout");
+	public static final Event AWAIT_EVENT_TIMEOUT = new AwaitEventSign("Await_Event_Timeout");
 
 	/**
 	 * <p>
@@ -53,18 +51,17 @@ public class EventBus {
 	 * <li>0 - The error</li>
 	 * </ul>
 	 */
-	public static final Event AWAIT_EVENT_ERROR = Event.createNewEvent("Await_event_error");
+	public static final Event AWAIT_EVENT_ERROR = new AwaitEventSign("Await_Event_Error");
 
 	/**
 	 * EventBus has been shutdowned.
 	 */
-	public static final Event EVENTBUS_CLOSED = Event.createNewEvent("EventBus_closed");
+	public static final Event EVENTBUS_CLOSED = Event.createNewEvent("EventBus_Closed");
 
 	/**
 	 * Register an event.
 	 * 
-	 * @param e
-	 *            The event to register
+	 * @param e The event to register
 	 */
 	public static final void registerEvent(Event e) {
 		regedEvents.put(e.eventId, e);
@@ -73,8 +70,7 @@ public class EventBus {
 	/**
 	 * Remove an event.
 	 * 
-	 * @param e
-	 *            The event to remove
+	 * @param e The event to remove
 	 */
 	public static final void removeEvent(Event e) {
 		removeEvent(e.eventId);
@@ -83,8 +79,7 @@ public class EventBus {
 	/**
 	 * Remove an event.
 	 * 
-	 * @param uuid
-	 *            The event to remove
+	 * @param uuid The event to remove
 	 */
 	public static final void removeEvent(UUID uuid) {
 		regedEvents.remove(uuid);
@@ -93,11 +88,10 @@ public class EventBus {
 	/**
 	 * Find an event that has the UUID.
 	 * 
-	 * @param uuid
-	 *            The UUID of the event
+	 * @param uuid The UUID of the event
 	 * @return The event that has the UUID
-	 * @throws NullPointerException
-	 *             when the event of the UUID have not been registered.
+	 * @throws NullPointerException when the event of the UUID have not been
+	 *                              registered.
 	 */
 	public static final Event getEvent(UUID uuid) {
 		return Objects.requireNonNull(regedEvents.get(uuid), "Unregistered event " + uuid).clone();
@@ -125,8 +119,7 @@ public class EventBus {
 	/**
 	 * Add an unit to send await-events.
 	 * 
-	 * @param name
-	 *            The name of the unit
+	 * @param name The name of the unit
 	 * @return Unit number
 	 * @see #awaitPostEvent(Event, EventBusListener, int, TimeUnit, int)
 	 */
@@ -145,13 +138,11 @@ public class EventBus {
 	 * <b>Warning:</b>If an await eventbus will never be used, please remove it.
 	 * </p>
 	 * 
-	 * @param unit
-	 *            Unit number
+	 * @param unit Unit number
 	 */
 	public static final void removeUnit(int unit) {
 		unitLock.lock();
-		ExecutorService es = awaitBusSenderUnits.get(unit);
-		awaitBusSenderUnits.set(unit, null);
+		ExecutorService es = awaitBusSenderUnits.set(unit, null);
 		unitLock.unlock();
 		es.shutdownNow();
 	}
@@ -164,29 +155,26 @@ public class EventBus {
 	 * <b>Warning:</b>If an await eventbus will never be used, please remove it.
 	 * </p>
 	 * 
-	 * @param unit
-	 *            Unit number
-	 * @param awmax
-	 *            Max time to wait
-	 * @param u
-	 *            The unit of time
-	 * @throws Exception
-	 *             when ExecutorService shutdowning meets an exception
+	 * @param unit  Unit number
+	 * @param awmax Max time to wait
+	 * @param u     The unit of time
+	 * @throws Exception when ExecutorService shutdowning meets an exception
+	 * @return true if this executor terminated and false if the timeout elapsed
+	 *         before termination
 	 */
-	public static final void awaitRemoveUnit(int unit, long awmax, TimeUnit u) throws Exception {
+	public static final boolean awaitRemoveUnit(int unit, long awmax, TimeUnit u) throws Exception {
 		unitLock.lock();
 		ExecutorService es = awaitBusSenderUnits.get(unit);
 		awaitBusSenderUnits.set(unit, null);
 		unitLock.unlock();
 		es.shutdown();
-		es.awaitTermination(awmax, u);
+		return es.awaitTermination(awmax, u);
 	}
 
 	/**
 	 * Register a listener to listen events
 	 * 
-	 * @param listener
-	 *            listener to register
+	 * @param listener listener to register
 	 */
 	public static final void registerListener(EventBusListener listener) {
 		sendLock.lock();
@@ -197,24 +185,18 @@ public class EventBus {
 	/**
 	 * Returns true if the listener has been registered.
 	 * 
-	 * @param listener
-	 *            The listener whose presence in this eventbus is to be tested
+	 * @param listener The listener whose presence in this eventbus is to be tested
 	 * @return true if the listener has been registered
 	 */
 	public static final boolean haveListener(EventBusListener listener) {
-		sendLock.lock();
-		boolean ret = registeredClassToSend.contains(listener);
-		sendLock.unlock();
-		return ret;
+		return registeredClassToSend.contains(listener);
 	}
 
 	/**
 	 * Remove the listener.
 	 * 
-	 * @param listener
-	 *            The listener to remove
-	 * @throws IllegalArgumentException
-	 *             If the listener has not been registered.
+	 * @param listener The listener to remove
+	 * @throws IllegalArgumentException If the listener has not been registered.
 	 */
 	public static final void removeListener(EventBusListener listener) {
 		if (!haveListener(listener))
@@ -227,8 +209,7 @@ public class EventBus {
 	/**
 	 * Post an event.
 	 * 
-	 * @param e
-	 *            The event to post
+	 * @param e The event to post
 	 */
 	public static final void postEvent(Event e) {
 		sendLock.lock();
@@ -243,8 +224,7 @@ public class EventBus {
 	/**
 	 * Post an event.
 	 * 
-	 * @param uuid
-	 *            The UUID of the event to post
+	 * @param uuid The UUID of the event to post
 	 */
 	public static final void postEvent(UUID uuid) {
 		Event e = regedEvents.get(uuid);
@@ -253,7 +233,8 @@ public class EventBus {
 		sendLock.lock();
 		for (EventBusListener linss : registeredClassToSend) {
 			if (linss.receiveEvents(e)) {
-				nonwaitEvents.put(nonwaitBusSender.submit(() -> linss.listen(e.clone())), e.clone());
+				Event ev = e.clone();
+				nonwaitEvents.put(nonwaitBusSender.submit(() -> linss.listen(ev)), ev);
 			}
 		}
 		sendLock.unlock();
@@ -262,12 +243,9 @@ public class EventBus {
 	/**
 	 * Post an event and wait the progress over.
 	 * 
-	 * @param e
-	 *            The UUID of the event to post
-	 * @param source
-	 *            The listener of the event monitor
-	 * @param unit
-	 *            Await Unit number
+	 * @param e      The UUID of the event to post
+	 * @param source The listener of the event monitor
+	 * @param unit   Await Unit number
 	 * @see #awaitPostEvent(Event, EventBusListener, int, TimeUnit, int)
 	 * @see #addUnit(String)
 	 */
@@ -278,12 +256,9 @@ public class EventBus {
 	/**
 	 * Post an event and wait the progress over.
 	 * 
-	 * @param e
-	 *            The event to post
-	 * @param source
-	 *            The listener of the event monitor
-	 * @param unit
-	 *            Await Unit number
+	 * @param e      The event to post
+	 * @param source The listener of the event monitor
+	 * @param unit   Await Unit number
 	 * @see #awaitPostEvent(Event, EventBusListener, int, TimeUnit, int)
 	 * @see #addUnit(String)
 	 */
@@ -294,16 +269,11 @@ public class EventBus {
 	/**
 	 * Post an event and wait the progress over.
 	 * 
-	 * @param e
-	 *            The UUID of the event to post
-	 * @param source
-	 *            The listener of the event monitor
-	 * @param awmax
-	 *            Max time to wait
-	 * @param tu
-	 *            The unit of time
-	 * @param unit
-	 *            Await Unit number
+	 * @param e      The UUID of the event to post
+	 * @param source The listener of the event monitor
+	 * @param awmax  Max time to wait
+	 * @param tu     The unit of time
+	 * @param unit   Await Unit number
 	 * @see #awaitPostEvent(Event, EventBusListener, int, TimeUnit, int)
 	 * @see #addUnit(String)
 	 */
@@ -314,16 +284,11 @@ public class EventBus {
 	/**
 	 * Post an event and wait the progress over.
 	 * 
-	 * @param e
-	 *            The event to post
-	 * @param source
-	 *            The listener of the event monitor
-	 * @param awmax
-	 *            Max time to wait
-	 * @param tu
-	 *            The unit of time
-	 * @param unit
-	 *            Await Unit number
+	 * @param e      The event to post
+	 * @param source The listener of the event monitor
+	 * @param awmax  Max time to wait
+	 * @param tu     The unit of time
+	 * @param unit   Await Unit number
 	 * @see #addUnit(String)
 	 */
 	public static final void awaitPostEvent(Event e, EventBusListener source, int awmax, TimeUnit tu, int unit) {
@@ -378,11 +343,9 @@ public class EventBus {
 	}
 
 	/**
-	 * @deprecated The function cannot ensure the event sending progress will
-	 *             start at the same time.The function is replaced by
-	 *             awaitPostEvent
-	 * @param e
-	 *            an event
+	 * @deprecated The function cannot ensure the event sending progress will start
+	 *             at the same time.The function is replaced by awaitPostEvent
+	 * @param e an event
 	 * @see #awaitPostEvent(Event, EventBusListener, int, TimeUnit, int)
 	 */
 	@Deprecated
@@ -468,6 +431,27 @@ public class EventBus {
 		public void listen(Event e) {
 			if (((ThreadPoolExecutor) nonwaitBusSender).getActiveCount() == 0)
 				nonwaitEvents.clear();
+		}
+	}
+
+	private static final class AwaitEventSign extends Event {
+
+		public AwaitEventSign(String name) {
+			super(name);
+			registerEvent(this);
+		}
+
+		@Override
+		public void putExtra(int id, Object obj) {
+		}
+
+		@Override
+		public void cancel() {
+		}
+
+		@Override
+		public Event clone() {
+			return this;
 		}
 	}
 

@@ -4,6 +4,7 @@ import java.nio.*;
 import java.util.*;
 import org.lwjgl.*;
 import org.lwjgl.openal.*;
+import org.lwjgl.system.*;
 import org.apache.log4j.*;
 import java.util.concurrent.*;
 
@@ -40,8 +41,7 @@ public class SoundSystem {
 			.put(new float[] { 0.0f, 0.0f, 0.0f });
 
 	/**
-	 * Orientation of the listener. (first 3 elements are "at", second 3 are
-	 * "up")
+	 * Orientation of the listener. (first 3 elements are "at", second 3 are "up")
 	 */
 	private static final FloatBuffer listenerOri = BufferUtils.createFloatBuffer(6)
 			.put(new float[] { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f });
@@ -50,25 +50,35 @@ public class SoundSystem {
 
 		private Queue<Runnable> queue = new LinkedBlockingQueue<>();
 		private boolean stop = false;
+		private long device;
+		private long context;
 
 		@Override
 		public void run() {
 			logger.info("Start loading Sound System");
-			try {
-				AL.create();
-				logger.info("OpenAL version:" + AL10.alGetString(AL10.AL_VERSION));
-				listenerPos.flip();
-				listenerVel.flip();
-				listenerOri.flip();
-				AL10.alGenBuffers(buffer);
-				AL10.alGenSources(source);
-				AL10.alListener(AL10.AL_POSITION, listenerPos);
-				AL10.alListener(AL10.AL_VELOCITY, listenerVel);
-				AL10.alListener(AL10.AL_ORIENTATION, listenerOri);
-			} catch (LWJGLException e) {
-				logger.error("Can't create AL, program will be started in slient mode.", e);
+			device = ALC10.alcOpenDevice((ByteBuffer) null);
+			if (device == MemoryUtil.NULL) {
+				logger.error("Failed to open the default OpenAL device.System will run in slient mode.");
 				return;
 			}
+			ALCCapabilities deviceCaps = ALC.createCapabilities(device);
+			context = ALC10.alcCreateContext(device, (IntBuffer) null);
+			if (context == MemoryUtil.NULL) {
+				ALC10.alcCloseDevice(device);
+				logger.error("Failed to create OpenAL context.System will run in slient mode.");
+				return;
+			}
+			ALC10.alcMakeContextCurrent(context);
+			AL.createCapabilities(deviceCaps);
+			logger.info("OpenAL version:" + AL10.alGetString(AL10.AL_VERSION));
+			listenerPos.flip();
+			listenerVel.flip();
+			listenerOri.flip();
+			AL10.alGenBuffers(buffer);
+			AL10.alGenSources(source);
+			AL10.alListenerfv(AL10.AL_POSITION, listenerPos);
+			AL10.alListenerfv(AL10.AL_VELOCITY, listenerVel);
+			AL10.alListenerfv(AL10.AL_ORIENTATION, listenerOri);
 			logger.info("Loaded Sound System");
 			// Main Loop of Sound System
 			while (!stop) {
@@ -84,7 +94,8 @@ public class SoundSystem {
 			AL10.alDeleteSources(source);
 			AL10.alDeleteBuffers(buffer);
 			checkALError();
-			AL.destroy();
+			ALC10.alcDestroyContext(context);
+			ALC10.alcCloseDevice(device);
 		}
 
 	}
@@ -96,8 +107,8 @@ public class SoundSystem {
 	public static final void init() {
 		new Thread(INSTANCE, "Sound System").start();
 	}
-	
-	public static final void stopProgram(){
+
+	public static final void stopProgram() {
 		INSTANCE.stop = true;
 	}
 

@@ -8,8 +8,8 @@ public interface Slidable {
 
 	void setNowPositon(float x0, float x1, float y0, float y1);
 
-	void onMouseEvent();
+	void onMouseEvent(int button, int action, int mods);
 
-	boolean checkRange(int x, int y);
+	boolean checkRange(double d, double e);
 
 }

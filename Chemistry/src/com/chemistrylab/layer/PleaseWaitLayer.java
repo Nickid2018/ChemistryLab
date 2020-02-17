@@ -1,7 +1,8 @@
 package com.chemistrylab.layer;
 
-import org.lwjgl.input.*;
 import com.chemistrylab.*;
+
+import org.lwjgl.glfw.GLFW;
 import org.newdawn.slick.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.eventbus.*;
@@ -72,8 +73,10 @@ public final class PleaseWaitLayer extends Layer {
 	}
 
 	@Override
-	public void onMouseEvent() {
-		if ((error != null || success != null) && Mouse.isButtonDown(0) && isClickLegal(500))
+	public void onMouseEvent(int button, int action, int mods) {
+		if(action != GLFW.GLFW_PRESS)
+			return;
+		if ((error != null || success != null) && button == 0 && isClickLegal(500))
 			LayerRender.popLayer(this);
 	}
 

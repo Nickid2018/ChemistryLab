@@ -31,8 +31,8 @@ public final class AiffSound extends Sound{
 		AL10.alSourcei(source, AL10.AL_BUFFER, address);
 		AL10.alSourcef(source, AL10.AL_PITCH, 1.0f);
 		AL10.alSourcef(source, AL10.AL_GAIN, 1.0f);
-		AL10.alSource(source, AL10.AL_POSITION, (FloatBuffer) sourcePos.position(index * 3));
-		AL10.alSource(source, AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
+		AL10.alSourcefv(source, AL10.AL_POSITION, (FloatBuffer) sourcePos.position(index * 3));
+		AL10.alSourcefv(source, AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
 		AL10.alSourcei(source, AL10.AL_LOOPING, AL10.AL_FALSE);
 		SoundSystem.checkALError();
 	}

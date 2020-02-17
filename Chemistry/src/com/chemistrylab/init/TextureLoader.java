@@ -27,12 +27,14 @@ public class TextureLoader {
 
 		// Initialize texture container
 		textureMap = new Textures();
-		CommonRender.init();
+		
+		ChemistryLab.QUAD = new FastQuad(0, 0, ChemistryLab.DREAM_WIDTH, ChemistryLab.DREAM_HEIGHT, Color.white);
 
 		ChemistryLab.clearFace();
+		ChemistryLab.QUAD.render();
 		InitLoader.showAllProgress(0);
 		CommonRender.showMemoryUsed();
-		Display.update();
+		ChemistryLab.flush();
 
 		// Logo
 		Texture logo = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
@@ -66,12 +68,11 @@ public class TextureLoader {
 			load_text.setNow(++i);
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
-				ChemistryLab.updateFPS();
+				ChemistryLab.QUAD.render();
 				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(1);
 				CommonRender.drawAsciiFont("Loading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}
@@ -98,14 +99,13 @@ public class TextureLoader {
 			}
 			if (ChemistryLab.getTime() - lastTime > 20) {
 				ChemistryLab.clearFace();
-				ChemistryLab.updateFPS();
+				ChemistryLab.QUAD.render();
 				load_text.setNow(i + 1);
 				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
 				CommonRender.drawAsciiFont("Loading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443, 16,
 						Color.black);
-				Display.update();
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}

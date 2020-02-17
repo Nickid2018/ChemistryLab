@@ -1,6 +1,5 @@
 package com.chemistrylab.layer;
 
-import org.lwjgl.input.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
@@ -8,6 +7,9 @@ import com.chemistrylab.layer.animation.*;
 import com.chemistrylab.layer.component.*;
 
 import static org.lwjgl.opengl.GL11.*;
+
+import org.lwjgl.glfw.GLFW;
+
 import static com.chemistrylab.ChemistryLab.*;
 
 public class SideBar extends Layer {
@@ -16,19 +18,25 @@ public class SideBar extends Layer {
 
 	public SideBar() {
 		super(0, 0, 200, nowHeight);
-		addComponent(new TextComponent(12, 0, 200, 64, this, I18N.getString("sidebar.language.settings"), () -> {
-			if (Mouse.isButtonDown(0)) {
+		addComponent(new TextComponent(12, 0, 200, 64, this, I18N.getString("sidebar.language.settings"), (button, action, mods) -> {
+			if(action != GLFW.GLFW_PRESS)
+				return;
+			if (button == 0) {
 				LayerRender.pushLayer(new I18NLayer());
 				LayerRender.popLayer(CloseBar.class);
 				LayerRender.pushLayer(new SideBarClose(true));
 			}
 		}, 32, Color.white, true));
-		addComponent(new TextComponent(12, 66, 200, 130, this, I18N.getString("sidebar.log.clear"), () -> {
-			if (Mouse.isButtonDown(0))
+		addComponent(new TextComponent(12, 66, 200, 130, this, I18N.getString("sidebar.log.clear"), (button, action, mods) -> {
+			if(action != GLFW.GLFW_PRESS)
+				return;
+			if (button == 0)
 				clearLog();
 		}, 32, Color.white, true));
-		addComponent(new TextComponent(12, 132, 200, 196, this, I18N.getString("sidebar.reaction.add"), () -> {
-			if (Mouse.isButtonDown(0)) {
+		addComponent(new TextComponent(12, 132, 200, 196, this, I18N.getString("sidebar.reaction.add"), (button, action, mods) -> {
+			if(action != GLFW.GLFW_PRESS)
+				return;
+			if (button == 0) {
 				LayerRender.pushLayer(new AddReactionLayer());
 				LayerRender.popLayer(CloseBar.class);
 				LayerRender.pushLayer(new SideBarClose(true));

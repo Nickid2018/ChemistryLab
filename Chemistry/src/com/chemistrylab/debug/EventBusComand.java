@@ -2,7 +2,6 @@ package com.chemistrylab.debug;
 
 import java.util.*;
 import java.awt.Toolkit;
-import org.lwjgl.input.*;
 import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import java.awt.datatransfer.*;
@@ -31,8 +30,8 @@ public class EventBusComand extends Command {
 			int i0 = 1;
 			for (Event e : events) {
 				ms_r[i0++] = new Message().addMessageEntry(new MessageEntry(e.getName() + " : "))
-						.addMessageEntry(new MessageEntry(e.getEventId() + "").setClickEvent(() -> {
-							if (!Mouse.isButtonDown(0))
+						.addMessageEntry(new MessageEntry(e.getEventId() + "").setClickEvent((button, action, mods) -> {
+							if (button != 0)
 								return;
 							Transferable trans = new StringSelection(e.getEventId().toString());
 							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);

@@ -1,10 +1,10 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-import org.lwjgl.input.*;
 import org.apache.log4j.*;
 import com.chemistrylab.*;
 import java.util.concurrent.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.animation.*;
 
 public class LayerRender {
@@ -52,28 +52,51 @@ public class LayerRender {
 		layers.removeAllElements();
 	}
 
-	public static void postKey() {
+	public static void postKey(int key, int scancode, int action, int mods) {
 		if (layers.contains(focus)) {
-			focus.onKeyActive();
+			focus.onKeyActive(key, scancode, action, mods);
 		} else
 			focus = null;
 	}
 
-	public static void postMouse() {
-		int x = Mouse.getX();
-		int y = Mouse.getY();
+	public static void postCharInput(int codepoint) {
+		if (layers.contains(focus)) {
+			focus.onCharInput(codepoint);
+		} else
+			focus = null;
+	}
+
+	public static void postMouse(int button, int action, int mods) {
+		double x = Mouse.getX();
+		double y = Mouse.getY();
 		boolean top = true;
 		for (int i = layers.size() - 1; i >= 0; i--) {
 			Layer l = layers.elementAt(i);
 			if (l.checkRange(x, y)) {
-				l.onMouseEvent();
-				if (top && Mouse.isButtonDown(0)) {
+				l.onMouseEvent(button, action, mods);
+				if (top && button == 0) {
 					top = false;
-					if (!l.equals(MessageBoard.INSTANCE))
+					if (!l.equals(MessageBoard.INSTANCE) && !l.equals(focus)) {
+						if (focus != null)
+							focus.onFocusLost();
 						focus = l;
+						focus.gainFocus();
+					}
 				}
 				if (l.isMouseEventStop())
 					break;
+			}
+		}
+	}
+
+	public static void postScroll(double xoffset, double yoffset) {
+		double x = Mouse.getX();
+		double y = Mouse.getY();
+		for (int i = layers.size() - 1; i >= 0; i--) {
+			Layer l = layers.elementAt(i);
+			if (l.checkRange(x, y)) {
+				l.onScroll(xoffset, yoffset);
+				return;
 			}
 		}
 	}

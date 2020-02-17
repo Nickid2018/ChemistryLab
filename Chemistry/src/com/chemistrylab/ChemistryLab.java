@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.nio.*;
 import org.lwjgl.*;
+import org.lwjgl.glfw.*;
 import javax.imageio.*;
-import org.lwjgl.input.*;
 import java.awt.image.*;
 import java.awt.Desktop;
 import org.lwjgl.opengl.*;
@@ -21,6 +21,10 @@ import com.chemistrylab.sound.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
+import org.newdawn.slick.opengl.renderer.*;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 public class ChemistryLab {
 
@@ -33,8 +37,6 @@ public class ChemistryLab {
 	public static float oldWidth = 1280;
 	public static float oldHeight = 720;
 
-	public static DisplayMode DISPLAY_MODE;
-
 	public static final String DEFAULT_LOG_FILE = "logs";
 
 	public static final Runtime RUNTIME = Runtime.getRuntime();
@@ -43,22 +45,62 @@ public class ChemistryLab {
 	public static final Event DEBUG_ON = Event.createNewEvent("Debug_On");
 	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_Off");
 	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal_Error");
+	
+	public static FastQuad QUAD;
 
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
 	public static boolean f3_with_ctrl = false;
 	public static boolean f11 = false;
-	public static int maxFPS = 60;
+	public static int maxFPS = 100;
 
-	private static boolean f11ed = false;
+//	private static boolean f11ed = false;
 
 	private static boolean inited = false;
 
-	private static long lastFPS;
 	private static int fps;
-	private static int printFPS;
+	private static int fpsCount;
+	private static int ups;
+	private static int upsCount;
 
+	private static long lastTime;
 	private static long lastClick = -1;
+	
+	private static final GLFWErrorCallbackI error_callback = (error, description) -> {
+		logger.error(error);
+	};
+
+	private static final GLFWKeyCallbackI key_callback = (window, key, scancode, action, mods) -> {
+		HotKeyMap.activeKey(key, scancode, action, mods);
+		LayerRender.postKey(key, scancode, action, mods);
+	};
+
+	private static final GLFWCharCallbackI char_callback = (window, codepoint) -> {
+		LayerRender.postCharInput(codepoint);
+	};
+
+	private static final GLFWMouseButtonCallbackI mouse_callback = (window, button, action, mods) -> {
+		LayerRender.postMouse(button, action, mods);
+	};
+
+	private static final GLFWScrollCallbackI scroll_callback = (window, xoffset, yoffset) -> {
+		LayerRender.postScroll(xoffset, yoffset);
+	};
+
+	private static final GLFWFramebufferSizeCallbackI resize_callback = (window, width, height) -> {
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, width, height, 0, 1, -1);
+		GL11.glViewport(0, 0, width, height);
+		oldWidth = nowWidth;
+		oldHeight = nowHeight;
+		nowWidth = width;
+		nowHeight = height;
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		LayerRender.windowResize();
+	};
+
+	public static long window;
 
 	// Status
 	private static boolean i18n_reload = false;
@@ -67,38 +109,39 @@ public class ChemistryLab {
 		Thread.currentThread().setName("Render Thread");
 
 		System.setProperty("org.lwjgl.librarypath", ".");
+		Renderer.setRenderer(new GLRender());
+		glfwSetErrorCallback(error_callback);
 
 		try {
 			// Basic output
 			logger.info("Chemistry Lab v1.0_INDEV");
 			logger.info("Made by Nickid2018.Address https://github.com/Nickid2018/");
-			logger.info("LWJGL Version:" + Sys.getVersion());
-
-			// Switch a DisplayMode
-			DisplayMode[] alls = Display.getAvailableDisplayModes();
-			for (DisplayMode dm : alls) {
-				if (dm.getWidth() == nowWidth && dm.getHeight() == nowHeight && dm.getBitsPerPixel() == 32) {
-					DISPLAY_MODE = dm;
-				}
-			}
-			// If not have any, create a non-fullscreen mode
-			if (DISPLAY_MODE == null) {
-				DISPLAY_MODE = new DisplayMode(1280, 720);
-				LayerRender.logger.warn("Can't find an adaptable resolution ( 1280 x 720 x 32 )");
-			}
+			logger.info("LWJGL Version:" + Version.getVersion());
 
 			// Initialize basic settings
 			Sigar.load();
 			LayerRender.logger.info("Creating window...");
-			Display.setTitle("Chemistry Lab");
-			Display.setDisplayMode(DISPLAY_MODE);
-			Display.setInitialBackground(1, 1, 1);
-			Display.setVSyncEnabled(true);
-			Display.setResizable(true);
-			Display.create();
+			if (!glfwInit()) {
+				logger.error("Unable to initialize GLFW");
+				return;
+			}
+			glfwDefaultWindowHints();
+			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, "Chemistry Lab", NULL, NULL);
+			if (window == NULL) {
+				glfwTerminate();
+				logger.error("Failed to create the GLFW window");
+				return;
+			}
+			glfwSetFramebufferSizeCallback(window, resize_callback);
+			glfwSetKeyCallback(window, key_callback);
+			glfwSetCharCallback(window, char_callback);
+			glfwSetMouseButtonCallback(window, mouse_callback);
+			glfwSetScrollCallback(window, scroll_callback);
+			glfwMakeContextCurrent(window);
 
 			// Init OpenGL
 			LayerRender.logger.info("Initializing OpenGL...");
+			GL.createCapabilities();
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
 			GL11.glOrtho(0, nowWidth, nowHeight, 0, 1, -1);
@@ -110,9 +153,8 @@ public class ChemistryLab {
 			LayerRender.logger.info("OpenGL initialized.Version:" + GL11.glGetString(GL11.GL_VERSION));
 
 			// HotKey Active
-			Keyboard.enableRepeatEvents(true);
-			HotKeyMap.addHotKey(Keyboard.KEY_F3, () -> {
-				if (Keyboard.isRepeatEvent())
+			HotKeyMap.addHotKey(GLFW.GLFW_KEY_F3, (scancode, action, mods) -> {
+				if (action != GLFW.GLFW_PRESS)
 					return;
 				f3 = !f3;
 				logger.info("Debug Mode:" + (f3 ? "on" : "off"));
@@ -121,10 +163,12 @@ public class ChemistryLab {
 				} else {
 					EventBus.postEvent(DEBUG_OFF);
 				}
-				f3_with_shift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-				f3_with_ctrl = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+				f3_with_shift = (mods & GLFW.GLFW_MOD_SHIFT) == GLFW.GLFW_MOD_SHIFT;
+				f3_with_ctrl = (mods & GLFW.GLFW_MOD_CONTROL) == GLFW.GLFW_MOD_CONTROL;
 			});
-			HotKeyMap.addHotKey(Keyboard.KEY_F5, () -> {
+			HotKeyMap.addHotKey(GLFW_KEY_F5, (scancode, action, mods) -> {
+				if (action != GLFW.GLFW_PRESS)
+					return;
 				GL11.glReadBuffer(GL11.GL_FRONT);
 				int width = (int) nowWidth;
 				int height = (int) nowHeight;
@@ -154,8 +198,8 @@ public class ChemistryLab {
 						MessageBoard.INSTANCE.addMessage(
 								new Message().addMessageEntry(new MessageEntry(I18N.getString("screenshot.success")))
 										.addMessageEntry(new MessageEntry(file.getAbsolutePath()).setUnderline(true)
-												.setClickEvent(() -> {
-													if (Mouse.isButtonDown(0) && isSystemClickLegal(100))
+												.setClickEvent((button, action2, mods2) -> {
+													if (button == 0 && isSystemClickLegal(100))
 														if (Desktop.isDesktopSupported()) {
 															try {
 																Desktop.getDesktop().open(file);
@@ -169,39 +213,27 @@ public class ChemistryLab {
 					}
 				});
 			});
-			HotKeyMap.addHotKey(Keyboard.KEY_F11, () -> {
-				if (Keyboard.isRepeatEvent())
+			HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
+				if (action != GLFW.GLFW_PRESS)
 					return;
 				f11 = !f11;
 				logger.info("Fullscreen:" + (f11 ? "on" : "off"));
-				f11ed = true;
-				if (f11)
-					try {
-						Display.setFullscreen(true);
-					} catch (LWJGLException e) {
-						e.printStackTrace();
-					}
-				else
-					try {
-						Display.setFullscreen(false);
-						// Solved Bug Code: Cannot resize after full-screen
-						// exiting
-						Display.setResizable(false);
-						Display.setResizable(true);
-					} catch (LWJGLException e) {
-						e.printStackTrace();
-					}
+//				f11ed = true;
+				if (f11) {
+
+				} else {
+
+				}
 			});
 
-			lastFPS = getTime();
-
 			// Init program
+			lastTime = getTime();
 			InitLoader.logger.info("Start load resources.");
 			ResourceManager.loadPacks();
 			ResourceManager.logger.info("Loaded Resource Packs.");
 			InitLoader.init();
 
-			Display.setTitle(I18N.getString("window.title"));
+			glfwSetWindowTitle(window, I18N.getString("window.title"));
 
 			// Sound System
 			SoundSystem.init();
@@ -221,28 +253,34 @@ public class ChemistryLab {
 			// Test End
 
 			// Main loop of program
-			while (!Display.isCloseRequested()) {
+			long targetTime = 1000L / maxFPS;
+			while (!glfwWindowShouldClose(window)) {
 
 				// Status Changed
 				if (i18n_reload) {
 					i18n_reload = false;
-					Display.setTitle(I18N.getString("window.title"));
+					glfwSetWindowTitle(window, I18N.getString("window.title"));
 				}
 
-				checkResize();
-				checkErrors();
+				long startTime = getTime();
 
-				// Input
-				pollInput();
+				checkErrors();
 
 				// Program frame render
 				LayerRender.render();
-
-				// Update FPS and Window
 				updateFPS();
+
 				checkGLError();
-				Display.update();
-				Display.sync(maxFPS);
+				// Update FPS and Window
+
+				glfwSwapBuffers(window);
+				updateUPS();
+				glfwPollEvents();
+				update();
+
+				/* Same as above, multiply time in seconds by 1000 */
+				long endTime = getTime();
+				Thread.sleep(Math.max(0, startTime + targetTime - endTime));
 			}
 		} catch (Throwable e) {
 			logger.fatal("qwq, this program crashed!", e);
@@ -293,7 +331,7 @@ public class ChemistryLab {
 						"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l,
 						w);
 				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
-				IOUtils.write("LWJGL Version:" + Sys.getVersion() + l, w);
+				IOUtils.write("LWJGL Version:" + Version.getVersion() + l, w);
 				IOUtils.write("OpenGL Version:" + GL11.glGetString(GL11.GL_VERSION) + l, w);
 				w.flush();
 				w.close();
@@ -301,32 +339,11 @@ public class ChemistryLab {
 				logger.error("Write crash-report error.", e2);
 			}
 
-			while (!Display.isCloseRequested()) {
+			while (!glfwWindowShouldClose(window)) {
 
-				checkResize();
 				clearFace();
 
-				while (Keyboard.next()) {
-					if (Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_F11)) {
-						f11 = !f11;
-						logger.info("Fullscreen:" + (f11 ? "on" : "off"));
-						f11ed = true;
-						if (f11)
-							try {
-								Display.setFullscreen(true);
-							} catch (LWJGLException e1) {
-								e.printStackTrace();
-							}
-						else
-							try {
-								Display.setFullscreen(false);
-								Display.setResizable(true);
-							} catch (LWJGLException e1) {
-								e.printStackTrace();
-							}
-					}
-				}
-
+				QUAD.render();
 				CommonRender.drawFont("Program Crashed!",
 						nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
 				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
@@ -338,9 +355,11 @@ public class ChemistryLab {
 				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16,
 						Color.yellow.darker(0.3f));
 
+				checkGLError();
 				// Update Window
-				Display.update();
-				Display.sync(maxFPS);
+				glfwSwapBuffers(window);
+				glfwPollEvents();
+
 			}
 		}
 
@@ -358,26 +377,36 @@ public class ChemistryLab {
 	 * @return The system time in milliseconds
 	 */
 	public static long getTime() {
-		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+		return MathHelper.fastFloor(glfwGetTime() * 1000);
 	}
 
-	/**
-	 * Calculate the FPS
-	 */
 	public static void updateFPS() {
-		if (getTime() - lastFPS > 1000) {
-			printFPS = fps;
-			DebugSystem.addFPSInfo(printFPS);
-			fps = 0; // reset the FPS counter
-			lastFPS += 1000; // add one second
+		fpsCount++;
+	}
+
+	public static void updateUPS() {
+		upsCount++;
+	}
+
+	public static void update() {
+		if (getTime() - lastTime > 1000) {
+			fps = fpsCount;
+			fpsCount = 0;
+			ups = upsCount;
+			upsCount = 0;
+			lastTime = getTime();
+			DebugSystem.addFPSInfo(fps);
 		}
-		if (fps % 12 == 0)
+		if (fpsCount % 20 == 0)
 			DebugSystem.addMemInfo(ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory());
-		fps++;
 	}
 
 	public static int getFPS() {
-		return printFPS;
+		return fps;
+	}
+
+	public static int getUPS() {
+		return ups;
 	}
 
 	/**
@@ -388,10 +417,13 @@ public class ChemistryLab {
 	}
 
 	public static void flush() {
-		checkResize();
-		pollInput();
-		checkGLError();
 		checkClose();
+		updateFPS();
+		checkGLError();
+		glfwSwapBuffers(window);
+		updateUPS();
+		glfwPollEvents();
+		update();
 	}
 
 	public static void checkGLError() {
@@ -423,24 +455,8 @@ public class ChemistryLab {
 	}
 
 	public static void checkClose() {
-		if (Display.isCloseRequested())
+		if (glfwWindowShouldClose(window))
 			release();
-	}
-
-	public static void checkResize() {
-		if (Display.wasResized() || f11ed) {
-			f11ed = false;
-			GL11.glMatrixMode(GL11.GL_PROJECTION);
-			GL11.glLoadIdentity();
-			GL11.glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-			oldWidth = nowWidth;
-			oldHeight = nowHeight;
-			nowWidth = Display.getWidth();
-			nowHeight = Display.getHeight();
-			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			LayerRender.windowResize();
-		}
 	}
 
 	public static boolean isSystemClickLegal(long del) {
@@ -456,18 +472,6 @@ public class ChemistryLab {
 	private static void checkErrors() throws Throwable {
 		if (error != null)
 			throw error;
-	}
-
-	public static void pollInput() {
-		// For mouse
-		LayerRender.postMouse();
-		// For keyboard
-		while (Keyboard.next()) {
-			if (Keyboard.getEventKeyState()) {
-				HotKeyMap.activeKey();
-			}
-			LayerRender.postKey();
-		}
 	}
 
 	public static void release() {
@@ -489,10 +493,11 @@ public class ChemistryLab {
 			getTextures().releaseAll();
 		VertexDataManager.MANAGER.releaseResource();
 		ShaderManager.MANAGER.releaseResource();
-		Display.destroy();
+		glfwDestroyWindow(window);
 		SoundSystem.stopProgram();
 		EventBus.releaseEventBus();
-		logger.info("Program stopped.Releasing resources used " + (ChemistryLab.getTime() - tt) + " milliseconds.");
+		logger.info("Program stopped.Releasing resources used " + (getTime() - tt) + " milliseconds.");
+		glfwTerminate();
 		System.exit(0);
 	}
 

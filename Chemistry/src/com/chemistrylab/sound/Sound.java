@@ -18,7 +18,7 @@ public abstract class Sound {
 			sourcePos.put(index * 3 + 0, x);
 			sourcePos.put(index * 3 + 1, y);
 			sourcePos.put(index * 3 + 2, z);
-			AL10.alSource(source, AL10.AL_POSITION, (FloatBuffer) sourcePos.position(index * 3));
+			AL10.alSourcefv(source, AL10.AL_POSITION, (FloatBuffer) sourcePos.position(index * 3));
 			AL10.alSourcePlay(source);
 			SoundSystem.checkALError();
 		});
@@ -40,7 +40,7 @@ public abstract class Sound {
 			sourceVel.put(index * 3 + 0, x);
 			sourceVel.put(index * 3 + 1, y);
 			sourceVel.put(index * 3 + 2, z);
-			AL10.alSource(source, AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
+			AL10.alSourcefv(source, AL10.AL_VELOCITY, (FloatBuffer) sourceVel.position(index * 3));
 			AL10.alSourcePlay(source);
 			SoundSystem.checkALError();
 		});

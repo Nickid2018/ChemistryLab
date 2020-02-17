@@ -1,23 +1,24 @@
 package com.chemistrylab.layer.component;
 
 import org.newdawn.slick.*;
+import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 import com.chemistrylab.render.*;
 
 public class TextComponent extends Component {
 
-	protected Runnable act;
+	protected ButtonClick act;
 	protected String s;
 	protected int size;
 	protected Color t;
 	protected boolean unifont;
 	protected boolean aligncenter = false;
 
-	public TextComponent(float x0, float y0, float x1, float y1, Layer l, String s, Runnable r, int size, Color c) {
+	public TextComponent(float x0, float y0, float x1, float y1, Layer l, String s, ButtonClick r, int size, Color c) {
 		this(x0, y0, x1, y1, l, s, r, size, c, false);
 	}
 
-	public TextComponent(float x0, float y0, float x1, float y1, Layer l, String s, Runnable r, int size, Color c,
+	public TextComponent(float x0, float y0, float x1, float y1, Layer l, String s, ButtonClick r, int size, Color c,
 			boolean unif) {
 		super(x0, y0, x1, y1, l);
 		act = r;
@@ -64,7 +65,7 @@ public class TextComponent extends Component {
 	}
 
 	@Override
-	public void onMouseEvent() {
-		act.run();
+	public void onMouseEvent(int button, int action, int mods) {
+		act.click(button, action, mods);
 	}
 }
