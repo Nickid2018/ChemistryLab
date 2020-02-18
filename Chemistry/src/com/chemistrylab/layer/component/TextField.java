@@ -7,9 +7,9 @@ import java.util.function.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.awt.datatransfer.*;
-import com.chemistrylab.util.*;
 import com.chemistrylab.layer.*;
 import com.chemistrylab.render.*;
+import com.chemistrylab.util.Mouse;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -82,25 +82,38 @@ public class TextField extends Component {
 	private boolean focus_on = false;
 	private boolean started = false;
 	private boolean shift_on = false;
-	private long last_focus = -1;
+	private boolean started_split = false;
+	private long startTime;
 
 	@Override
 	public synchronized void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
-			return;
 		if (button != 0)
 			return;
-		if (ChemistryLab.getTime() - last_focus > 20) {
-			focus_on = false;
-			started = false;
-			start_to_sel = selpostionstart = selpostionend = 0;
+		focus_on = action == GLFW.GLFW_PRESS;
+		if (focus_on) {
+			startTime = ChemistryLab.getTime();
+		} else {
+			started = ChemistryLab.getTime() - startTime > 100;
+			if (started)
+				started_split = true;
+			else {
+				float len = CommonRender.winToOthWidth((float) Mouse.getX());
+				String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
+				postion = startpaint + s.length();
+				selpostionstart = selpostionend = start_to_sel = 0;
+			}
 		}
-		last_focus = ChemistryLab.getTime();
-		float len = CommonRender.winToOthWidth((float) Mouse.getX());
+	}
+
+	@Override
+	public void onCursorPositionChanged(double xpos, double ypos) {
+		if (!focus_on)
+			return;
+		float len = CommonRender.winToOthWidth((float) xpos);
 		String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
 		postion = startpaint + s.length();
 		if (focus_on) {
-			if (started) {
+			if (started && !started_split) {
 				if (postion >= start_to_sel) {
 					selpostionstart = start_to_sel;
 					selpostionend = postion;
@@ -110,25 +123,29 @@ public class TextField extends Component {
 				}
 			} else {
 				started = true;
+				started_split = false;
 				start_to_sel = selpostionstart = selpostionend = postion;
 			}
 		}
-		focus_on = true;
+	}
+
+	private boolean modPress(int mods, int key) {
+		return (mods & key) == key;
 	}
 
 	@Override
 	public void onKeyActive(int key, int scancode, int action, int mods) {
-		if(action == GLFW.GLFW_RELEASE)
+		if (action == GLFW.GLFW_RELEASE)
 			return;
 		// shift
 		if ((key == GLFW.GLFW_KEY_LEFT_SHIFT || key == GLFW.GLFW_KEY_RIGHT_SHIFT)
-				|| (mods == GLFW.GLFW_KEY_LEFT_SHIFT || mods == GLFW.GLFW_KEY_RIGHT_SHIFT)) {
+				|| modPress(mods, GLFW.GLFW_MOD_SHIFT)) {
 			shift_on = true;
 		} else {
 			shift_on = false;
 		}
 		// Ctrl+A select all
-		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL) && key == GLFW.GLFW_KEY_A) {
+		if (modPress(mods, GLFW.GLFW_MOD_CONTROL) && key == GLFW.GLFW_KEY_A) {
 			selpostionstart = 0;
 			selpostionend = pa.length();
 			return;
@@ -200,8 +217,7 @@ public class TextField extends Component {
 			return;
 		}
 		// Ctrl+C copy
-		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL)
-				&& key == GLFW.GLFW_KEY_C) {
+		if (modPress(mods, GLFW.GLFW_MOD_CONTROL) && key == GLFW.GLFW_KEY_C) {
 			if (selpostionstart != selpostionend) {
 				Transferable trans = new StringSelection(pa.substring(selpostionstart, selpostionend));
 				CLIP.setContents(trans, null);
@@ -209,8 +225,7 @@ public class TextField extends Component {
 			return;
 		}
 		// Ctrl+X cut
-		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL)
-				&& key == GLFW.GLFW_KEY_X) {
+		if (modPress(mods, GLFW.GLFW_MOD_CONTROL) && key == GLFW.GLFW_KEY_X) {
 			if (selpostionstart != selpostionend) {
 				Transferable trans = new StringSelection(pa.substring(selpostionstart, selpostionend));
 				CLIP.setContents(trans, null);
@@ -230,9 +245,8 @@ public class TextField extends Component {
 			}
 			return;
 		}
-		// Ctrl+P paste
-		if ((mods == GLFW.GLFW_KEY_LEFT_CONTROL || mods == GLFW.GLFW_KEY_RIGHT_CONTROL)
-				&& key == GLFW.GLFW_KEY_P) {
+		// Ctrl+V paste
+		if (modPress(mods, GLFW.GLFW_MOD_CONTROL) && key == GLFW.GLFW_KEY_V) {
 			Transferable trans = CLIP.getContents(null);
 			if (trans != null && trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				String text;

@@ -64,5 +64,6 @@ public final class ShaderManager {
 			}
 			glDeleteProgram(en.getKey());
 		}
+		saved_pIds.clear();
 	}
 }

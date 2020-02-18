@@ -157,6 +157,16 @@ public abstract class Layer {
 		}
 	}
 
+	public void onCursorPositionChanged(double xpos, double ypos) {
+		if (useComponent()) {
+			for (Component c : comps) {
+				if (c.checkRange(xpos, ypos)) {
+					c.onCursorPositionChanged(xpos, ypos);
+				}
+			}
+		}
+	}
+
 	public void onScroll(double xoffset, double yoffset) {
 		if (useComponent()) {
 			for (Component c : comps) {
@@ -181,6 +191,15 @@ public abstract class Layer {
 		if (useComponent()) {
 			if (comps.contains(focus)) {
 				focus.onCharInput(codepoint);
+			} else
+				focus = null;
+		}
+	}
+
+	public void onModCharInput(int codepoint, int mods) {
+		if (useComponent()) {
+			if (comps.contains(focus)) {
+				focus.onModCharInput(codepoint, mods);
 			} else
 				focus = null;
 		}

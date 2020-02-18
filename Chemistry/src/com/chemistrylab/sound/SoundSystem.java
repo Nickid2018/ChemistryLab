@@ -52,6 +52,9 @@ public class SoundSystem {
 		private boolean stop = false;
 		private long device;
 		private long context;
+		private long start_stop;
+		private String alcVersion;
+		private String alVersion;
 
 		@Override
 		public void run() {
@@ -80,6 +83,9 @@ public class SoundSystem {
 			AL10.alListenerfv(AL10.AL_VELOCITY, listenerVel);
 			AL10.alListenerfv(AL10.AL_ORIENTATION, listenerOri);
 			logger.info("Loaded Sound System");
+			alcVersion = ALC10.alcGetInteger(device, ALC10.ALC_MAJOR_VERSION) + "."
+					+ ALC10.alcGetInteger(device, ALC10.ALC_MINOR_VERSION);
+			alVersion = AL11.alGetString(AL11.AL_VERSION);
 			// Main Loop of Sound System
 			while (!stop) {
 				try {
@@ -96,20 +102,35 @@ public class SoundSystem {
 			checkALError();
 			ALC10.alcDestroyContext(context);
 			ALC10.alcCloseDevice(device);
+			logger.info("Sound System closed, used " + (System.currentTimeMillis() - start_stop) + " milliseconds.");
 		}
 
 	}
 
 	private static SoundThread INSTANCE = new SoundThread();
+	private static Thread THREAD_INSTANCE;
 
 	private static int index = 0;
 
 	public static final void init() {
-		new Thread(INSTANCE, "Sound System").start();
+		(THREAD_INSTANCE = new Thread(INSTANCE, "Sound System")).start();
+	}
+
+	public static final String getALVersion() {
+		return INSTANCE.alVersion;
+	}
+
+	public static final String getALCVersion() {
+		return INSTANCE.alcVersion;
 	}
 
 	public static final void stopProgram() {
 		INSTANCE.stop = true;
+		INSTANCE.start_stop = System.currentTimeMillis();
+	}
+
+	public static boolean isAlive() {
+		return THREAD_INSTANCE.isAlive();
 	}
 
 	public static final synchronized int newSound() {

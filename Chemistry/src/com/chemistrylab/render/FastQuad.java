@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static com.chemistrylab.ChemistryLab.*;
 
-public class FastQuad {
+public class FastQuad implements VBOData{
 
 	public static final int POSTION_LEFT_UP = 0;
 	public static final int POSTION_LEFT_DOWN = 1;
@@ -58,6 +58,7 @@ public class FastQuad {
 	public FastQuad(float x0, float y0, float x1, float y1, Color c, boolean stream) {
 
 		Objects.requireNonNull(c, "color");
+		VertexDataManager.MANAGER.addReloadableVBOData(this);
 
 		this.stream = stream;
 
@@ -164,5 +165,63 @@ public class FastQuad {
 		glBindVertexArray(0);
 		glUseProgram(0);
 		glDisable(GL_TEXTURE_2D);
+		shader_not_load = false;
+	}
+
+	public static boolean shader_not_load = false;
+	
+	@Override
+	public final void reload() {
+		//First:Shader
+		if(shader_not_load){
+			shader_not_load = false;
+			try {
+				quad_pid = ShaderManager.MANAGER.createProgram();
+				quad_vsid = ShaderManager.MANAGER.attachVertexShader(quad_pid, "assets/shader/simple.vsh");
+				quad_fsid = ShaderManager.MANAGER.attachFragmentShader(quad_pid, "assets/shader/simple.fsh");
+				// Position information will be attribute 0
+				glBindAttribLocation(quad_pid, 0, "in_Position");
+				// Color information will be attribute 1
+				glBindAttribLocation(quad_pid, 1, "in_Color");
+				glLinkProgram(quad_pid);
+				glValidateProgram(quad_pid);
+			} catch (Exception e) {
+				Event ev = THREAD_FATAL.clone();
+				ev.putExtra(0, e);
+				ev.putExtra(1, Thread.currentThread());
+				EventBus.postEvent(ev);
+			}
+		}
+		//Second:VAO,VBO
+		Vertex[] vertices = new Vertex[] { v0, v1, v2, v3 };
+		// Put each 'Vertex' in one FloatBuffer
+		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(4 * Vertex.sizeInBytes);
+		for (int i = 0; i < vertices.length; i++) {
+			// Add position, color and texture floats to the buffer
+			verticesBuffer.put(vertices[i].getElements());
+		}
+		verticesBuffer.flip();
+		vaoId = VertexDataManager.MANAGER.newVertexArrays();
+		glBindVertexArray(vaoId);
+
+		// Create a new Vertex Buffer Object in memory and select it (bind)
+		vboId = VertexDataManager.MANAGER.newVertexBuffer(vaoId);
+		glBindBuffer(GL_ARRAY_BUFFER, vboId);
+		glBufferData(GL_ARRAY_BUFFER, verticesBuffer, stream ? GL_STREAM_DRAW : GL_STATIC_DRAW);
+
+		// Put the position coordinates in attribute list 0
+		glVertexAttribPointer(0, 4, GL_FLOAT, false, Vertex.sizeInBytes, 0);
+		// Put the color components in attribute list 1
+		glVertexAttribPointer(1, 4, GL_FLOAT, false, Vertex.sizeInBytes, Vertex.elementBytes * 4);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		// Deselect (bind to 0) the VAO
+		glBindVertexArray(0);
+
+		vboiId = VertexDataManager.MANAGER.newElementArrayBuffer(vaoId);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboiId);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, VertexDataManager.indicesBuffer, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 }

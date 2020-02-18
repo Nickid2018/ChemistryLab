@@ -11,6 +11,7 @@ import org.newdawn.slick.*;
 import java.awt.datatransfer.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.init.*;
+import com.chemistrylab.sound.*;
 import com.chemistrylab.debug.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
@@ -38,8 +39,6 @@ public class Background extends Layer {
 	@Override
 	public void render() {
 		// Background Picture
-		// CommonRender.drawTexture(table, 0, 0, nowWidth, nowHeight, 0, 0, 1,
-		// 1);
 		tex.render();
 
 		// Debug Render Layer
@@ -48,8 +47,11 @@ public class Background extends Layer {
 
 			// Left part
 			CommonRender.drawFont("Chemistry Lab version 1.0_INDEV", 0, 0, 16, Color.white, true);
-			CommonRender.drawFont(ChemistryLab.getFPS() + " FPS L:" + LayerRender.getLayerAmount() + " A:"
-					+ LayerRender.getAnimationAmount(), 0, next, 16, Color.white, true);
+			CommonRender
+					.drawFont(
+							ChemistryLab.getFPS() + " FPS " + ChemistryLab.getUPS() + " UPS L:"
+									+ LayerRender.getLayerAmount() + " A:" + LayerRender.getAnimationAmount(),
+							0, next, 16, Color.white, true);
 			CommonRender.drawFont("Now Language Environment:" + I18N.getNowLanguage(), 0, next * 2, 16, Color.white,
 					true);
 			CommonRender.drawFont("Chemicals L:" + chemicals.size() + " F:" + chemicals.getFailedPartLoad() + " A:"
@@ -68,31 +70,37 @@ public class Background extends Layer {
 									+ "/" + MathHelper.eplison(ChemistryLab.getTotalMemory() / 1048576, 1) + "MB",
 							nowWidth, 0, 16, Color.white, true);
 			CommonRender.drawRightFont("LWJGL version " + Version.getVersion(), nowWidth, next, 16, Color.white, true);
-			CommonRender.drawRightFont("OpenGL version " + glGetString(GL11.GL_VERSION), nowWidth, next * 2, 16,
+			CommonRender.drawRightFont("GLFW version " + GLFW.glfwGetVersionString(), nowWidth, next * 2, 16,
 					Color.white, true);
+			CommonRender.drawRightFont("OpenGL version " + glGetString(GL11.GL_VERSION), nowWidth, next * 3, 16,
+					Color.white, true);
+			CommonRender.drawRightFont(
+					"OpenAL version " + SoundSystem.getALVersion() + " ALC " + SoundSystem.getALCVersion(), nowWidth,
+					next * 4, 16, Color.white, true);
+
 			try {
 				CpuInfo[] info = sigar.getCpuInfoList();
-				CommonRender.drawRightFont("CPU:" + info[0].getVendor() + " " + info[0].getModel(), nowWidth, next * 3,
+				CommonRender.drawRightFont("CPU:" + info[0].getVendor() + " " + info[0].getModel(), nowWidth, next * 5,
 						16, Color.white, true);
 			} catch (SigarException e) {
-				CommonRender.drawRightFont("CPU:Cannot get information about CPU", nowWidth, next * 3, 16, Color.red,
+				CommonRender.drawRightFont("CPU:Cannot get information about CPU", nowWidth, next * 5, 16, Color.red,
 						true);
 			}
-			CommonRender.drawRightFont("Now Resolution: " + nowWidth + " x " + nowHeight, nowWidth, next * 4, 16,
+			CommonRender.drawRightFont("Now Resolution: " + nowWidth + " x " + nowHeight, nowWidth, next * 6, 16,
 					Color.white, true);
 			StringBuilder sb = new StringBuilder("Active Resource Packs: ");
 			for (String s : ResourceManager.getResourcePacks()) {
 				sb.append(s + ",");
 			}
 			sb.deleteCharAt(sb.length() - 1);
-			CommonRender.drawRightFont(sb.toString(), nowWidth, next * 5, 16, Color.white, true);
-			CommonRender.drawRightFont("==Environment Infos==", nowWidth, next * 6, 16, Color.white, true);
-			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", nowWidth, next * 7, 16,
+			CommonRender.drawRightFont(sb.toString(), nowWidth, next * 7, 16, Color.white, true);
+			CommonRender.drawRightFont("==Environment Infos==", nowWidth, next * 8, 16, Color.white, true);
+			CommonRender.drawRightFont("Temperature: " + Environment.getTemperature() + "K", nowWidth, next * 9, 16,
 					Color.white, true);
-			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", nowWidth, next * 8, 16,
+			CommonRender.drawRightFont("Pressure: " + Environment.getPressure() + "Pa", nowWidth, next * 10, 16,
 					Color.white, true);
-			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", nowWidth, next * 9,
-					16, Color.white, true);
+			CommonRender.drawRightFont("Molar Volume of Gas: " + Environment.getGasMolV() + "L/mol", nowWidth,
+					next * 11, 16, Color.white, true);
 
 			// With SHIFT---A mem & fps version
 			if (f3_with_shift) {
@@ -156,9 +164,9 @@ public class Background extends Layer {
 	@Override
 	public void onKeyActive(int key, int scancode, int action, int mods) {
 		super.onKeyActive(key, scancode, action, mods);
-		if(onCommand)
+		if (onCommand)
 			focus = f;
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		if (!onCommand && key == GLFW.GLFW_KEY_SLASH) {
 			f = new TextField(0, nowHeight - 16, nowWidth, nowHeight, this, 16);

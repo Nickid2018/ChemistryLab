@@ -5,10 +5,8 @@
 /config/
 /screenshot/
 /OpenAL.dll
-/assimp.dll
 /glfw.dll
 /lwjgl.dll
 /lwjgl_opengl.dll
-/proguard.settings
 /sigar-amd64-winnt.dll
 /sigar-x86-winnt.dll

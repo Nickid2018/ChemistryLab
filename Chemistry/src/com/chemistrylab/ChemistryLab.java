@@ -45,7 +45,7 @@ public class ChemistryLab {
 	public static final Event DEBUG_ON = Event.createNewEvent("Debug_On");
 	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_Off");
 	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal_Error");
-	
+
 	public static FastQuad QUAD;
 
 	public static boolean f3 = false;
@@ -54,9 +54,8 @@ public class ChemistryLab {
 	public static boolean f11 = false;
 	public static int maxFPS = 100;
 
-//	private static boolean f11ed = false;
-
 	private static boolean inited = false;
+//	private static boolean recreateWindow = false;
 
 	private static int fps;
 	private static int fpsCount;
@@ -65,7 +64,7 @@ public class ChemistryLab {
 
 	private static long lastTime;
 	private static long lastClick = -1;
-	
+
 	private static final GLFWErrorCallbackI error_callback = (error, description) -> {
 		logger.error(error);
 	};
@@ -75,17 +74,19 @@ public class ChemistryLab {
 		LayerRender.postKey(key, scancode, action, mods);
 	};
 
-	private static final GLFWCharCallbackI char_callback = (window, codepoint) -> {
-		LayerRender.postCharInput(codepoint);
-	};
+	private static final GLFWCharCallbackI char_callback = (window, codepoint) -> LayerRender.postCharInput(codepoint);
 
-	private static final GLFWMouseButtonCallbackI mouse_callback = (window, button, action, mods) -> {
-		LayerRender.postMouse(button, action, mods);
-	};
+	private static final GLFWCharModsCallbackI char_mod_callback = (window, codepoint, mods) -> LayerRender
+			.postModCharInput(codepoint, mods);
 
-	private static final GLFWScrollCallbackI scroll_callback = (window, xoffset, yoffset) -> {
-		LayerRender.postScroll(xoffset, yoffset);
-	};
+	private static final GLFWMouseButtonCallbackI mouse_callback = (window, button, action, mods) -> LayerRender
+			.postMouse(button, action, mods);
+
+	private static final GLFWCursorPosCallbackI cursor_posi_callback = (window, xpos, ypos) -> LayerRender
+			.postCursorPos(xpos, ypos);
+
+	private static final GLFWScrollCallbackI scroll_callback = (window, xoffset, yoffset) -> LayerRender
+			.postScroll(xoffset, yoffset);
 
 	private static final GLFWFramebufferSizeCallbackI resize_callback = (window, width, height) -> {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -109,6 +110,7 @@ public class ChemistryLab {
 		Thread.currentThread().setName("Render Thread");
 
 		System.setProperty("org.lwjgl.librarypath", ".");
+		// Slick Library must use this to adapt LWJGL3.2.3
 		Renderer.setRenderer(new GLRender());
 		glfwSetErrorCallback(error_callback);
 
@@ -120,11 +122,12 @@ public class ChemistryLab {
 
 			// Initialize basic settings
 			Sigar.load();
-			LayerRender.logger.info("Creating window...");
 			if (!glfwInit()) {
 				logger.error("Unable to initialize GLFW");
 				return;
 			}
+			logger.info("GLFW Version:" + glfwGetVersionString());
+			LayerRender.logger.info("Creating window...");
 			glfwDefaultWindowHints();
 			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, "Chemistry Lab", NULL, NULL);
 			if (window == NULL) {
@@ -135,7 +138,9 @@ public class ChemistryLab {
 			glfwSetFramebufferSizeCallback(window, resize_callback);
 			glfwSetKeyCallback(window, key_callback);
 			glfwSetCharCallback(window, char_callback);
+			glfwSetCharModsCallback(window, char_mod_callback);
 			glfwSetMouseButtonCallback(window, mouse_callback);
+			glfwSetCursorPosCallback(window, cursor_posi_callback);
 			glfwSetScrollCallback(window, scroll_callback);
 			glfwMakeContextCurrent(window);
 
@@ -214,16 +219,11 @@ public class ChemistryLab {
 				});
 			});
 			HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
-				if (action != GLFW.GLFW_PRESS)
-					return;
-				f11 = !f11;
-				logger.info("Fullscreen:" + (f11 ? "on" : "off"));
-//				f11ed = true;
-				if (f11) {
-
-				} else {
-
-				}
+//				if (action != GLFW.GLFW_PRESS)
+//					return;
+//				f11 = !f11;
+//				logger.info("Fullscreen:" + (f11 ? "on" : "off"));
+//				recreateWindow = true;
 			});
 
 			// Init program
@@ -262,9 +262,35 @@ public class ChemistryLab {
 					glfwSetWindowTitle(window, I18N.getString("window.title"));
 				}
 
+//				if (recreateWindow) {
+//					recreateWindow = false;
+//					// Recreate Window
+//					glfwSetWindowShouldClose(window, true);
+//					glfwPollEvents();
+//					GLCapabilities cap = GL.getCapabilities();
+//					VertexDataManager.MANAGER.releaseResource();
+//					ShaderManager.MANAGER.releaseResource();
+//					glfwDestroyWindow(window);
+//					PointerBuffer pb = f11 ? glfwGetMonitors() : null;
+//					long recreate = pb == null ? NULL : pb.get(0);
+//					glfwDefaultWindowHints();
+//					window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
+//							CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate,
+//							NULL);
+//					glfwSetFramebufferSizeCallback(window, resize_callback);
+//					glfwSetKeyCallback(window, key_callback);
+//					glfwSetCharCallback(window, char_callback);
+//					glfwSetMouseButtonCallback(window, mouse_callback);
+//					glfwSetScrollCallback(window, scroll_callback);
+//					glfwMakeContextCurrent(window);
+//					GL.setCapabilities(cap);
+//					VertexDataManager.MANAGER.reload();
+//				}
+
 				long startTime = getTime();
 
 				checkErrors();
+				clearFace();
 
 				// Program frame render
 				LayerRender.render();
@@ -275,7 +301,6 @@ public class ChemistryLab {
 
 				glfwSwapBuffers(window);
 				updateUPS();
-				glfwPollEvents();
 				update();
 
 				/* Same as above, multiply time in seconds by 1000 */
@@ -359,7 +384,6 @@ public class ChemistryLab {
 				// Update Window
 				glfwSwapBuffers(window);
 				glfwPollEvents();
-
 			}
 		}
 
@@ -389,6 +413,7 @@ public class ChemistryLab {
 	}
 
 	public static void update() {
+		glfwPollEvents();
 		if (getTime() - lastTime > 1000) {
 			fps = fpsCount;
 			fpsCount = 0;
@@ -498,6 +523,13 @@ public class ChemistryLab {
 		EventBus.releaseEventBus();
 		logger.info("Program stopped.Releasing resources used " + (getTime() - tt) + " milliseconds.");
 		glfwTerminate();
+		// Wait Sound System Run Over
+		while (SoundSystem.isAlive()) {
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+			}
+		}
 		System.exit(0);
 	}
 

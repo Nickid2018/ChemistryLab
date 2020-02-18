@@ -15,7 +15,9 @@ public final class VertexDataManager {
 	public static final byte[] indices = { 0, 1, 2, 2, 3, 0 };
 	public static final int indicesCount = indices.length;
 	public static final ByteBuffer indicesBuffer = BufferUtils.createByteBuffer(indicesCount);
-	
+
+	private static final Set<VBOData> can_reload = new HashSet<>();
+
 	static {
 		indicesBuffer.put(indices);
 		indicesBuffer.flip();
@@ -26,6 +28,14 @@ public final class VertexDataManager {
 	private Map<Integer, Set<Integer>> saved_vaos = new HashMap<>();
 
 	private VertexDataManager() {
+	}
+
+	public void addReloadableVBOData(VBOData data) {
+		can_reload.add(data);
+	}
+
+	public void removeReloadableVBOData(VBOData data) {
+		can_reload.remove(data);
 	}
 
 	public int newVertexArrays() {
@@ -65,7 +75,16 @@ public final class VertexDataManager {
 				glDeleteBuffers(ele);
 			}
 			glBindVertexArray(0);
-	        glDeleteVertexArrays(en.getKey());
+			glDeleteVertexArrays(en.getKey());
 		}
+		vao_indexes.clear();
+		saved_eles.clear();
+		saved_vaos.clear();
+		FastQuad.shader_not_load = true;
+		FastTexture.shader_not_load = true;
+	}
+
+	public void reload() {
+		can_reload.forEach(VBOData::reload);
 	}
 }

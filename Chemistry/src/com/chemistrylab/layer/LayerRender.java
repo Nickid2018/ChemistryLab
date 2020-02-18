@@ -66,6 +66,13 @@ public class LayerRender {
 			focus = null;
 	}
 
+	public static void postModCharInput(int codepoint, int mods) {
+		if (layers.contains(focus)) {
+			focus.onModCharInput(codepoint, mods);
+		} else
+			focus = null;
+	}
+
 	public static void postMouse(int button, int action, int mods) {
 		double x = Mouse.getX();
 		double y = Mouse.getY();
@@ -132,5 +139,16 @@ public class LayerRender {
 				a++;
 		}
 		return a;
+	}
+
+	public static void postCursorPos(double xpos, double ypos) {
+		for (int i = layers.size() - 1; i >= 0; i--) {
+			Layer l = layers.elementAt(i);
+			if (l.checkRange(xpos, ypos)) {
+				l.onCursorPositionChanged(xpos, ypos);
+				if (l.isMouseEventStop())
+					break;
+			}
+		}
 	}
 }
