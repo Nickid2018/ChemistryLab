@@ -18,6 +18,7 @@ public abstract class Layer {
 	private final Queue<Runnable> sr = new LinkedBlockingDeque<>();
 	protected long lastClick = -1;
 	protected Component focus = null;
+	protected Component cursor = null;
 
 	public Layer(float x0, float y0, float x1, float y1) {
 		range = new Range();
@@ -159,10 +160,22 @@ public abstract class Layer {
 
 	public void onCursorPositionChanged(double xpos, double ypos) {
 		if (useComponent()) {
+			boolean find = false;
 			for (Component c : comps) {
 				if (c.checkRange(xpos, ypos)) {
 					c.onCursorPositionChanged(xpos, ypos);
+					if (c != cursor) {
+						if (cursor != null)
+							cursor.onCursorOut();
+						cursor = c;
+						cursor.onCursorIn();
+						find = true;
+					}
 				}
+			}
+			if (!find && cursor != null) {
+				cursor.onCursorOut();
+				cursor = null;
 			}
 		}
 	}
@@ -210,6 +223,12 @@ public abstract class Layer {
 	}
 
 	public void gainFocus() {
+	}
+
+	public void onCursorIn() {
+	}
+
+	public void onCursorOut() {
 	}
 
 	public int preUseRange() {

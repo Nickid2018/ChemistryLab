@@ -157,7 +157,7 @@ public class VerticalSlideBar extends Component {
 		float shouldDraw = cons.size() * vertsize;
 		float percent = mysize / shouldDraw;
 		float barlength = (percent > 1 ? 1 : percent) * mysize;
-		postion -= yoffset / (mysize - barlength) / 7;
+		postion -= yoffset / (mysize - barlength);
 		postion = postion > 1 ? 1 : postion;
 		postion = postion < 0 ? 0 : postion;
 	}

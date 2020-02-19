@@ -1,8 +1,7 @@
 package com.chemistrylab.util;
 
 import java.util.*;
-
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
@@ -14,6 +13,7 @@ public class Message implements Cloneable {
 	private final ArrayList<MessageEntry> entries;
 	private long surviveTime;
 	private long disappearTime = 5000;
+	private boolean haveEvent = false;
 
 	public Message() {
 		this(15000);
@@ -30,6 +30,8 @@ public class Message implements Cloneable {
 
 	public Message addMessageEntry(MessageEntry en) {
 		entries.add(en);
+		if (en.getClickEvent() != null)
+			haveEvent = true;
 		return this;
 	}
 
@@ -60,14 +62,15 @@ public class Message implements Cloneable {
 	}
 
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		double x = Mouse.getX();
 		int l = 0;
 		for (MessageEntry en : entries) {
 			l += CommonRender.calcTextWidth(en.getText(), 16);
-			if (l > x) {
-				en.getClickEvent().click(button, action, mods);
+			if (l > x && haveEvent) {
+				if (en.getClickEvent() != null)
+					en.getClickEvent().click(button, action, mods);
 				break;
 			}
 		}
@@ -93,6 +96,16 @@ public class Message implements Cloneable {
 			}
 			lastx = x;
 		}
+	}
+
+	public void onCusorIn() {
+		if (haveEvent) {
+			GLFW.glfwSetCursor(ChemistryLab.window, ChemistryLab.HAND_CURSOR);
+		}
+	}
+
+	public void onCusorOut() {
+		GLFW.glfwSetCursor(ChemistryLab.window, ChemistryLab.ARROW_CURSOR);
 	}
 
 	@Override

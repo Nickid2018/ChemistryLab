@@ -13,6 +13,7 @@ public class LayerRender {
 	private static final Stack<Layer> layers = new Stack<>();
 	private static final Queue<Runnable> sr = new LinkedBlockingDeque<>();
 	private static Layer focus = null;
+	private static Layer cursor = null;
 
 	public static void addRunInRender(Runnable r) {
 		sr.offer(r);
@@ -108,6 +109,29 @@ public class LayerRender {
 		}
 	}
 
+	public static void postCursorPos(double xpos, double ypos) {
+		boolean find = false;
+		for (int i = layers.size() - 1; i >= 0; i--) {
+			Layer l = layers.elementAt(i);
+			if (l.checkRange(xpos, ypos)&&!(l instanceof Background)) {
+				l.onCursorPositionChanged(xpos, ypos);
+				if (l.isMouseEventStop())
+					break;
+			}
+			if (l != cursor) {
+				if (cursor != null)
+					cursor.onCursorOut();
+				cursor = l;
+				cursor.onCursorIn();
+				find = true;
+			}
+		}
+		if (!find && cursor != null) {
+			cursor.onCursorOut();
+			cursor = null;
+		}
+	}
+
 	public static void windowResize() {
 		for (Layer l : layers) {
 			l.onContainerResized();
@@ -139,16 +163,5 @@ public class LayerRender {
 				a++;
 		}
 		return a;
-	}
-
-	public static void postCursorPos(double xpos, double ypos) {
-		for (int i = layers.size() - 1; i >= 0; i--) {
-			Layer l = layers.elementAt(i);
-			if (l.checkRange(xpos, ypos)) {
-				l.onCursorPositionChanged(xpos, ypos);
-				if (l.isMouseEventStop())
-					break;
-			}
-		}
 	}
 }

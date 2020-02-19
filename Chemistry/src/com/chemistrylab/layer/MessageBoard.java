@@ -21,6 +21,8 @@ public class MessageBoard extends Layer {
 	private FastQuad quad = new FastQuad(0, 640, 360, 640, new Color(100, 100, 100, 75), true);
 	private int start = 0;
 
+	private Message message;
+
 	private MessageBoard() {
 		super(0, 640, 800, 640);
 	}
@@ -131,12 +133,12 @@ public class MessageBoard extends Layer {
 		if (action != GLFW.GLFW_PRESS)
 			return;
 		double y = Mouse.getY();
-		int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);
+		int rep = MathHelper.floor((range.y1 - y) / 16);
 		try {
 			if (ChemistryLab.f3)
-				message_all.get(message_all.size() - rep).onMouseEvent(button, action, mods);
+				message_all.get(message_all.size() - rep - 1 - start).onMouseEvent(button, action, mods);
 			else
-				message_list.get(message_list.size() - rep).onMouseEvent(button, action, mods);
+				message_list.get(message_list.size() - rep - 1).onMouseEvent(button, action, mods);
 		} catch (Exception e) {
 		}
 	}
@@ -144,7 +146,33 @@ public class MessageBoard extends Layer {
 	@Override
 	public void onScroll(double xoffset, double yoffset) {
 		if (message_all.size() > 30) {
-			start = (int) Math.max(0, Math.min(message_all.size() - 30, start + yoffset / 16 / 7));
+			start = (int) Math.max(0, Math.min(message_all.size() - 30, start + yoffset));
 		}
+	}
+
+	@Override
+	public void onCursorPositionChanged(double xpos, double ypos) {
+		int rep = MathHelper.floor((range.y1 - ypos) / 16);
+		try {
+			Message now;
+			if (ChemistryLab.f3)
+				now = message_all.get(message_all.size() - rep - 1 - start);
+			else
+				now = message_list.get(message_list.size() - rep - 1);
+			if (message != now) {
+				if (message != null)
+					message.onCusorOut();
+				message = now;
+				message.onCusorIn();
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	@Override
+	public void onCursorOut() {
+		if (message != null)
+			message.onCusorOut();
+		message = null;
 	}
 }

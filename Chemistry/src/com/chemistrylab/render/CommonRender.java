@@ -33,17 +33,25 @@ public class CommonRender {
 		font_loaded = true;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void reloadFontUNI() {
 		Map<Integer, UnicodeFont> shadow = new HashMap<>();
 		for (Integer size : LOAD_FONTS.keySet()) {
 			UnicodeFont u = new UnicodeFont(new java.awt.Font(FONT_NAME, java.awt.Font.PLAIN, size));
 			String get = ADD_STRINGS.get(size);
-			if (!get.isEmpty())
+			if (!get.isEmpty()) {
+				u.getEffects().add(new ColorEffect());
 				u.addGlyphs(get);
+				try {
+					u.loadGlyphs();
+				} catch (SlickException e) {
+				}
+			}
 			shadow.put(size, u);
 		}
 		LOAD_FONTS.clear();
 		LOAD_FONTS.putAll(shadow);
+		System.gc();
 	}
 
 	public static void preLoadFontUNI(int size) {

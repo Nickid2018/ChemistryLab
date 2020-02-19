@@ -7,7 +7,7 @@ public class MessageEntry {
 	private String text = "";
 	private Color color = Color.white;
 	private float shear = 0.35f;
-	private ButtonClick clickEvent = (button, action, mods) -> {};
+	private ButtonClick clickEvent = null;
 	private boolean itatic = false;
 	private boolean underline = false;
 	private Color underlinecolor = Color.white;

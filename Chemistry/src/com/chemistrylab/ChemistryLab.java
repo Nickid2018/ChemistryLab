@@ -43,6 +43,9 @@ public class ChemistryLab {
 	public static final Runtime RUNTIME = Runtime.getRuntime();
 	public static final MemoryMXBean MEMORY = ManagementFactory.getMemoryMXBean();
 
+	public static long ARROW_CURSOR;
+	public static long HAND_CURSOR;
+
 	public static final Event DEBUG_ON = Event.createNewEvent("Debug_On");
 	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_Off");
 	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal_Error");
@@ -66,12 +69,9 @@ public class ChemistryLab {
 	private static long lastTime;
 	private static long lastClick = -1;
 
-	private static final GLFWErrorCallbackI error_callback = (error, description) -> {
-		Map<Integer, String> ERROR_CODES = APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000,
-				null, GLFW.class);
-		logger.error("GLFW Error: " + ERROR_CODES.get(error) + "(0x" + Integer.toHexString(error) + ")-"
-				+ MemoryUtil.memUTF8(description));
-	};
+	private static final GLFWErrorCallbackI error_callback = (error, description) -> logger.error("GLFW Error: "
+			+ APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000, null, GLFW.class).get(error)
+			+ "(0x" + Integer.toHexString(error) + ")-" + MemoryUtil.memUTF8(description));
 
 	private static final GLFWKeyCallbackI key_callback = (window, key, scancode, action, mods) -> {
 		HotKeyMap.activeKey(key, scancode, action, mods);
@@ -147,6 +147,10 @@ public class ChemistryLab {
 			glfwSetCursorPosCallback(window, cursor_posi_callback);
 			glfwSetScrollCallback(window, scroll_callback);
 			glfwMakeContextCurrent(window);
+			
+			//Cursor
+			ARROW_CURSOR = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+			HAND_CURSOR = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
 			// Init OpenGL
 			LayerRender.logger.info("Initializing OpenGL...");
@@ -445,15 +449,16 @@ public class ChemistryLab {
 		PointerBuffer pb = fullScreen ? glfwGetMonitors() : null;
 		long recreate = pb == null ? NULL : pb.get(0);
 		glfwDefaultWindowHints();
+		oldWidth = nowWidth;
+		oldHeight = nowHeight;
 		if (fullScreen) {
 			window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
-					CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate,
-					NULL);
+					CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate, NULL);
 			nowWidth = CommonRender.TOOLKIT.getScreenSize().width;
 			nowHeight = CommonRender.TOOLKIT.getScreenSize().height;
 		} else {
-			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, I18N.getString("window.title"),
-					recreate, NULL);
+			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, I18N.getString("window.title"), recreate,
+					NULL);
 			nowWidth = DREAM_WIDTH;
 			nowHeight = DREAM_HEIGHT;
 		}
