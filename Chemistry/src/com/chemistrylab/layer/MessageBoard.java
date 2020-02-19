@@ -55,6 +55,8 @@ public class MessageBoard extends Layer {
 		}
 		message_list.removeAll(removes);
 		removes.clear();
+		range.x1 = 800;
+		range.y1 = ChemistryLab.nowHeight - 80;
 		range.y0 = range.y1 - message_list.size() * 16;
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 				CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
@@ -62,6 +64,8 @@ public class MessageBoard extends Layer {
 				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
 		quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
 				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+		quad.updateVertex(FastQuad.POSTION_LEFT_DOWN,
+				quad.getVertex(FastQuad.POSTION_LEFT_DOWN).setXYZ(-1, CommonRender.toGLY(range.y1), 0));
 	}
 
 	@Override
@@ -80,6 +84,8 @@ public class MessageBoard extends Layer {
 		}
 		message_list.removeAll(removes);
 		removes.clear();
+		range.x1 = 800;
+		range.y1 = ChemistryLab.nowHeight - 80;
 		range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 				CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
@@ -87,12 +93,17 @@ public class MessageBoard extends Layer {
 				CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 		quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
 				.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+		quad.updateVertex(FastQuad.POSTION_LEFT_DOWN,
+				quad.getVertex(FastQuad.POSTION_LEFT_DOWN).setXYZ(-1, CommonRender.toGLY(range.y1), 0));
 	}
 
 	@Override
 	public void onContainerResized() {
 		doDefaultResize(this);
+		range.x1 = 800;
+		range.y1 = ChemistryLab.nowHeight - 80;
 		if (ChemistryLab.f3) {
+			range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
 			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 					CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 			quad.updateVertex(FastQuad.POSTION_RIGHT_UP,
@@ -100,6 +111,8 @@ public class MessageBoard extends Layer {
 							CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 			quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
 					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+			quad.updateVertex(FastQuad.POSTION_LEFT_DOWN,
+					quad.getVertex(FastQuad.POSTION_LEFT_DOWN).setXYZ(-1, CommonRender.toGLY(range.y1), 0));
 		} else {
 			range.y0 = range.y1 - message_list.size() * 16;
 			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
@@ -108,12 +121,14 @@ public class MessageBoard extends Layer {
 					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
 			quad.updateVertex(FastQuad.POSTION_RIGHT_DOWN, quad.getVertex(FastQuad.POSTION_RIGHT_DOWN)
 					.setXYZ(CommonRender.toGLX(range.x1), CommonRender.toGLY(range.y1), 0));
+			quad.updateVertex(FastQuad.POSTION_LEFT_DOWN,
+					quad.getVertex(FastQuad.POSTION_LEFT_DOWN).setXYZ(-1, CommonRender.toGLY(range.y1), 0));
 		}
 	}
 
 	@Override
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		double y = Mouse.getY();
 		int rep = MathHelper.floor((-ChemistryLab.nowHeight + y + range.y1 + 16) / 16);

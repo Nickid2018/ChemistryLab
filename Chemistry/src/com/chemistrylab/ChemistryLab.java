@@ -9,6 +9,7 @@ import javax.imageio.*;
 import java.awt.image.*;
 import java.awt.Desktop;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
 import org.hyperic.sigar.*;
 import org.apache.log4j.*;
 import org.newdawn.slick.*;
@@ -51,11 +52,11 @@ public class ChemistryLab {
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
 	public static boolean f3_with_ctrl = false;
-	public static boolean f11 = false;
+	public static boolean fullScreen = false;
 	public static int maxFPS = 100;
 
 	private static boolean inited = false;
-//	private static boolean recreateWindow = false;
+	private static boolean recreateWindow = false;
 
 	private static int fps;
 	private static int fpsCount;
@@ -66,7 +67,10 @@ public class ChemistryLab {
 	private static long lastClick = -1;
 
 	private static final GLFWErrorCallbackI error_callback = (error, description) -> {
-		logger.error(error);
+		Map<Integer, String> ERROR_CODES = APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000,
+				null, GLFW.class);
+		logger.error("GLFW Error: " + ERROR_CODES.get(error) + "(0x" + Integer.toHexString(error) + ")-"
+				+ MemoryUtil.memUTF8(description));
 	};
 
 	private static final GLFWKeyCallbackI key_callback = (window, key, scancode, action, mods) -> {
@@ -219,11 +223,11 @@ public class ChemistryLab {
 				});
 			});
 			HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
-//				if (action != GLFW.GLFW_PRESS)
-//					return;
-//				f11 = !f11;
-//				logger.info("Fullscreen:" + (f11 ? "on" : "off"));
-//				recreateWindow = true;
+				if (action != GLFW.GLFW_PRESS)
+					return;
+				fullScreen = !fullScreen;
+				logger.info("Fullscreen:" + (fullScreen ? "on" : "off"));
+				recreateWindow = true;
 			});
 
 			// Init program
@@ -262,30 +266,11 @@ public class ChemistryLab {
 					glfwSetWindowTitle(window, I18N.getString("window.title"));
 				}
 
-//				if (recreateWindow) {
-//					recreateWindow = false;
-//					// Recreate Window
-//					glfwSetWindowShouldClose(window, true);
-//					glfwPollEvents();
-//					GLCapabilities cap = GL.getCapabilities();
-//					VertexDataManager.MANAGER.releaseResource();
-//					ShaderManager.MANAGER.releaseResource();
-//					glfwDestroyWindow(window);
-//					PointerBuffer pb = f11 ? glfwGetMonitors() : null;
-//					long recreate = pb == null ? NULL : pb.get(0);
-//					glfwDefaultWindowHints();
-//					window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
-//							CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate,
-//							NULL);
-//					glfwSetFramebufferSizeCallback(window, resize_callback);
-//					glfwSetKeyCallback(window, key_callback);
-//					glfwSetCharCallback(window, char_callback);
-//					glfwSetMouseButtonCallback(window, mouse_callback);
-//					glfwSetScrollCallback(window, scroll_callback);
-//					glfwMakeContextCurrent(window);
-//					GL.setCapabilities(cap);
-//					VertexDataManager.MANAGER.reload();
-//				}
+				if (recreateWindow) {
+					recreateWindow = false;
+					// Recreate Window
+					swapFullScreen();
+				}
 
 				long startTime = getTime();
 
@@ -364,7 +349,7 @@ public class ChemistryLab {
 				logger.error("Write crash-report error.", e2);
 			}
 
-			while (!glfwWindowShouldClose(window)) {
+			while (!glfwWindowShouldClose(window) && inited) {
 
 				clearFace();
 
@@ -451,6 +436,47 @@ public class ChemistryLab {
 		update();
 	}
 
+	public static void swapFullScreen() throws Exception {
+		glfwSetWindowShouldClose(window, true);
+		glfwPollEvents();
+		VertexDataManager.MANAGER.releaseResource();
+		ShaderManager.MANAGER.releaseResource();
+		glfwDestroyWindow(window);
+		PointerBuffer pb = fullScreen ? glfwGetMonitors() : null;
+		long recreate = pb == null ? NULL : pb.get(0);
+		glfwDefaultWindowHints();
+		if (fullScreen) {
+			window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
+					CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate,
+					NULL);
+			nowWidth = CommonRender.TOOLKIT.getScreenSize().width;
+			nowHeight = CommonRender.TOOLKIT.getScreenSize().height;
+		} else {
+			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, I18N.getString("window.title"),
+					recreate, NULL);
+			nowWidth = DREAM_WIDTH;
+			nowHeight = DREAM_HEIGHT;
+		}
+		glfwSetFramebufferSizeCallback(window, resize_callback);
+		glfwSetKeyCallback(window, key_callback);
+		glfwSetCharCallback(window, char_callback);
+		glfwSetMouseButtonCallback(window, mouse_callback);
+		glfwSetScrollCallback(window, scroll_callback);
+		glfwMakeContextCurrent(window);
+		GL.createCapabilities();
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, nowWidth, nowHeight, 0, 1, -1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glViewport(0, 0, (int) nowWidth, (int) nowHeight);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		VertexDataManager.MANAGER.reload();
+		InitLoader.getTextureLoader().reloadTexture();
+		CommonRender.reloadFontUNI();
+		LayerRender.windowResize();
+	}
+
 	public static void checkGLError() {
 		int ret = GL11.glGetError();
 		if (ret != GL11.GL_NO_ERROR) {
@@ -519,17 +545,22 @@ public class ChemistryLab {
 		VertexDataManager.MANAGER.releaseResource();
 		ShaderManager.MANAGER.releaseResource();
 		glfwDestroyWindow(window);
-		SoundSystem.stopProgram();
-		EventBus.releaseEventBus();
+		if (inited) {
+			SoundSystem.stopProgram();
+			EventBus.releaseEventBus();
+		}
 		logger.info("Program stopped.Releasing resources used " + (getTime() - tt) + " milliseconds.");
 		glfwTerminate();
-		// Wait Sound System Run Over
-		while (SoundSystem.isAlive()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
+		if (inited) {
+			// Wait Sound System Run Over
+			while (SoundSystem.isAlive()) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+				}
 			}
 		}
+
 		System.exit(0);
 	}
 

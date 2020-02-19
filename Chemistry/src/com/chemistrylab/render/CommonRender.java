@@ -19,11 +19,12 @@ public class CommonRender {
 	public static final int WINDOW_HEIGHT = TOOLKIT.getScreenSize().height;
 	public static final int WINDOW_WIDTH = TOOLKIT.getScreenSize().width;
 	public static final Map<Integer, UnicodeFont> LOAD_FONTS = new HashMap<>();
+	public static final Map<Integer, String> ADD_STRINGS = new HashMap<>();
 	public static final String FONT_NAME = "Î¢ÈíÑÅºÚ";
-	public static final FastQuad TABLE  = new FastQuad(0, 0, nowWidth, nowHeight, new Color(150, 150, 150, 75));
+	public static final FastQuad TABLE = new FastQuad(0, 0, nowWidth, nowHeight, new Color(150, 150, 150, 75));
 
 	private static Texture[] fonts;
-	private static Texture asciifont;
+	public static Texture asciifont;
 	private static boolean font_loaded = false;
 	private static final ProgressBar memory = new ProgressBar(ChemistryLab.getTotalMemory(), 20);
 
@@ -31,22 +32,34 @@ public class CommonRender {
 		CommonRender.fonts = fonts;
 		font_loaded = true;
 	}
-	
-	public static void preLoadFontUNI(int size){
-		if (!LOAD_FONTS.containsKey(size)){
+
+	public static void reloadFontUNI() {
+		Map<Integer, UnicodeFont> shadow = new HashMap<>();
+		for (Integer size : LOAD_FONTS.keySet()) {
+			UnicodeFont u = new UnicodeFont(new java.awt.Font(FONT_NAME, java.awt.Font.PLAIN, size));
+			String get = ADD_STRINGS.get(size);
+			if (!get.isEmpty())
+				u.addGlyphs(get);
+			shadow.put(size, u);
+		}
+		LOAD_FONTS.clear();
+		LOAD_FONTS.putAll(shadow);
+	}
+
+	public static void preLoadFontUNI(int size) {
+		if (!LOAD_FONTS.containsKey(size)) {
 			LOAD_FONTS.put(size, new UnicodeFont(new java.awt.Font(FONT_NAME, java.awt.Font.PLAIN, size)));
 			LOAD_FONTS.get(size).setPaddingAdvanceY(0);
+			ADD_STRINGS.put(size, "");
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public static void loadFontUNI(String s, int size) {
-		if (!LOAD_FONTS.containsKey(size)){
-			LOAD_FONTS.put(size, new UnicodeFont(new java.awt.Font(FONT_NAME, java.awt.Font.PLAIN, size)));
-			LOAD_FONTS.get(size).setPaddingAdvanceY(0);
-		}
+		preLoadFontUNI(size);
 		LOAD_FONTS.get(size).getEffects().add(new ColorEffect());
 		LOAD_FONTS.get(size).addGlyphs(s);
+		ADD_STRINGS.replace(size, ADD_STRINGS.get(size) + s);
 		try {
 			LOAD_FONTS.get(size).loadGlyphs();
 		} catch (SlickException e) {
@@ -113,10 +126,10 @@ public class CommonRender {
 			}
 			shade.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(x, next);
-				glVertex2f(lastx, next);
-				glVertex2f(lastx, next + drawYS);
-				glVertex2f(x, next + drawYS);
+			glVertex2f(x, next);
+			glVertex2f(lastx, next);
+			glVertex2f(lastx, next + drawYS);
+			glVertex2f(x, next + drawYS);
 			glEnd();
 			lastx = x;
 		}
@@ -133,14 +146,14 @@ public class CommonRender {
 				texturex = (pagein & 0xF) / 16.0f;
 				texturey = (pagein >> 4) / 16.0f;
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx, next);
-					glTexCoord2f(texturex + 0.03125f, texturey);
-					glVertex2f(lastx + drawXS / 2, next);
-					glTexCoord2f(texturex + 0.03125f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS / 2, next + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, next + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx, next);
+				glTexCoord2f(texturex + 0.03125f, texturey);
+				glVertex2f(lastx + drawXS / 2, next);
+				glTexCoord2f(texturex + 0.03125f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS / 2, next + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, next + drawYS);
 				glEnd();
 				lastx += drawXS / 2;
 			} else if (Character.isSpaceChar(c)) {
@@ -151,14 +164,14 @@ public class CommonRender {
 				texturex = (pagein & 0xF) / 16.0f;
 				texturey = (pagein >> 4) / 16.0f;
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx, next);
-					glTexCoord2f(texturex + 0.0625f, texturey);
-					glVertex2f(lastx + drawXS, next);
-					glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS, next + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, next + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx, next);
+				glTexCoord2f(texturex + 0.0625f, texturey);
+				glVertex2f(lastx + drawXS, next);
+				glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS, next + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, next + drawYS);
 				glEnd();
 				lastx += drawXS;
 			}
@@ -247,10 +260,10 @@ public class CommonRender {
 		if (withshade) {
 			shade.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(x, y);
-				glVertex2f(lastx, y);
-				glVertex2f(lastx, y + drawYS);
-				glVertex2f(x, y + drawYS);
+			glVertex2f(x, y);
+			glVertex2f(lastx, y);
+			glVertex2f(lastx, y + drawYS);
+			glVertex2f(x, y + drawYS);
 			glEnd();
 		}
 		text.bind();
@@ -266,14 +279,14 @@ public class CommonRender {
 				texturex = (pagein & 0xF) / 16.0f;
 				texturey = (pagein >> 4) / 16.0f;
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx, y);
-					glTexCoord2f(texturex + 0.03125f, texturey);
-					glVertex2f(lastx + drawXS / 2, y);
-					glTexCoord2f(texturex + 0.03125f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS / 2, y + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, y + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx, y);
+				glTexCoord2f(texturex + 0.03125f, texturey);
+				glVertex2f(lastx + drawXS / 2, y);
+				glTexCoord2f(texturex + 0.03125f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS / 2, y + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, y + drawYS);
 				glEnd();
 				lastx += drawXS / 2;
 			} else if (Character.isSpaceChar(c)) {
@@ -284,14 +297,14 @@ public class CommonRender {
 				texturex = (pagein & 0xF) / 16.0f;
 				texturey = (pagein >> 4) / 16.0f;
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx, y);
-					glTexCoord2f(texturex + 0.0625f, texturey);
-					glVertex2f(lastx + drawXS, y);
-					glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS, y + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, y + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx, y);
+				glTexCoord2f(texturex + 0.0625f, texturey);
+				glVertex2f(lastx + drawXS, y);
+				glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS, y + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, y + drawYS);
 				glEnd();
 				lastx += drawXS;
 			}
@@ -322,14 +335,14 @@ public class CommonRender {
 				texturex = (pagein & 0xF) / 16.0f;
 				texturey = (pagein >> 4) / 16.0f;
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx + drawXS * shr, y);
-					glTexCoord2f(texturex + 0.03125f, texturey);
-					glVertex2f(lastx + drawXS * shr + drawXS / 2, y);
-					glTexCoord2f(texturex + 0.03125f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS / 2, y + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, y + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx + drawXS * shr, y);
+				glTexCoord2f(texturex + 0.03125f, texturey);
+				glVertex2f(lastx + drawXS * shr + drawXS / 2, y);
+				glTexCoord2f(texturex + 0.03125f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS / 2, y + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, y + drawYS);
 				glEnd();
 				lastx += drawXS / 2;
 			} else if (Character.isSpaceChar(c)) {
@@ -340,14 +353,14 @@ public class CommonRender {
 				texturex = (pagein & 0xF) / 16.0f;
 				texturey = (pagein >> 4) / 16.0f;
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx + drawXS * shr, y);
-					glTexCoord2f(texturex + 0.0625f, texturey);
-					glVertex2f(lastx + drawXS * shr + drawXS, y);
-					glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS, y + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, y + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx + drawXS * shr, y);
+				glTexCoord2f(texturex + 0.0625f, texturey);
+				glVertex2f(lastx + drawXS * shr + drawXS, y);
+				glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS, y + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, y + drawYS);
 				glEnd();
 				lastx += drawXS;
 			}
@@ -376,10 +389,10 @@ public class CommonRender {
 			}
 			new Color(150, 150, 150, 75).bind();
 			glBegin(GL_QUADS);
-				glVertex2f(x, y);
-				glVertex2f(lastx, y);
-				glVertex2f(lastx, y + drawYS);
-				glVertex2f(x, y + drawYS);
+			glVertex2f(x, y);
+			glVertex2f(lastx, y);
+			glVertex2f(lastx, y + drawYS);
+			glVertex2f(x, y + drawYS);
 			glEnd();
 			lastx = x;
 		}
@@ -396,26 +409,26 @@ public class CommonRender {
 			texturey = (c >> 4) / 16.0f;
 			if (c == 'i' || c == 'l') {
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx, y);
-					glTexCoord2f(texturex + 0.0625f / 2, texturey);
-					glVertex2f(lastx + drawXS * 1 / 2, y);
-					glTexCoord2f(texturex + 0.0625f / 2, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS * 1 / 2, y + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, y + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx, y);
+				glTexCoord2f(texturex + 0.0625f / 2, texturey);
+				glVertex2f(lastx + drawXS * 1 / 2, y);
+				glTexCoord2f(texturex + 0.0625f / 2, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS * 1 / 2, y + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, y + drawYS);
 				glEnd();
 				lastx += drawXS * 1 / 4;
 			} else {
 				glBegin(GL_QUADS);
-					glTexCoord2f(texturex, texturey);
-					glVertex2f(lastx, y);
-					glTexCoord2f(texturex + 0.0625f, texturey);
-					glVertex2f(lastx + drawXS, y);
-					glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
-					glVertex2f(lastx + drawXS, y + drawYS);
-					glTexCoord2f(texturex, texturey + 0.0625f);
-					glVertex2f(lastx, y + drawYS);
+				glTexCoord2f(texturex, texturey);
+				glVertex2f(lastx, y);
+				glTexCoord2f(texturex + 0.0625f, texturey);
+				glVertex2f(lastx + drawXS, y);
+				glTexCoord2f(texturex + 0.0625f, texturey + 0.0625f);
+				glVertex2f(lastx + drawXS, y + drawYS);
+				glTexCoord2f(texturex, texturey + 0.0625f);
+				glVertex2f(lastx, y + drawYS);
 				glEnd();
 				lastx += drawXS * 3 / 4;
 			}
@@ -436,14 +449,14 @@ public class CommonRender {
 		c.bind();
 
 		glBegin(GL_QUADS);
-			glTexCoord2f(sx, sy);
-			glVertex2f(x0, y0);
-			glTexCoord2f(sx0, sy);
-			glVertex2f(x1, y0);
-			glTexCoord2f(sx0, sy0);
-			glVertex2f(x1, y1);
-			glTexCoord2f(sx, sy0);
-			glVertex2f(x0, y1);
+		glTexCoord2f(sx, sy);
+		glVertex2f(x0, y0);
+		glTexCoord2f(sx0, sy);
+		glVertex2f(x1, y0);
+		glTexCoord2f(sx0, sy0);
+		glVertex2f(x1, y1);
+		glTexCoord2f(sx, sy0);
+		glVertex2f(x0, y1);
 		glEnd();
 
 		glDisable(GL_TEXTURE_2D);
@@ -544,13 +557,13 @@ public class CommonRender {
 	public static float toRatioYPos(float y) {
 		return y / ChemistryLab.DREAM_HEIGHT * ChemistryLab.nowHeight;
 	}
-	
-	public static float toGLX(float x){
+
+	public static float toGLX(float x) {
 		float x_center = nowWidth / 2;
-		return  x / x_center - 1;
+		return x / x_center - 1;
 	}
-	
-	public static float toGLY(float y){
+
+	public static float toGLY(float y) {
 		float y_center = nowHeight / 2;
 		return -(y / y_center - 1);
 	}
@@ -569,8 +582,8 @@ public class CommonRender {
 		memory.render(100, 100, ChemistryLab.nowWidth - 200);
 		CommonRender.drawAsciiFont(
 				"Memory Used:" + MathHelper.eplison(used / 1048576.0, 1) + "/"
-						+ MathHelper.eplison(ChemistryLab.getTotalMemory() / 1048576, 1) + "MB", 100, 83, 16,
-				Color.black);
+						+ MathHelper.eplison(ChemistryLab.getTotalMemory() / 1048576, 1) + "MB",
+				100, 83, 16, Color.black);
 	}
 
 	static {

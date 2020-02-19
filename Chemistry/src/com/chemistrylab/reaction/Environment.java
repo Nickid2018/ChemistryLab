@@ -19,7 +19,7 @@ public final class Environment {
 
 	public static final void init() throws Exception {
 		Properties pro = new Properties();
-		InputStream is = ResourceManager.getResourceAsStream("config/environment.properties");
+		InputStream is = ResourceManager.getResourceAsStream("config/environment.properties", true);
 		pro.load(is);
 		JMCLRegister.registerVariable("T");
 		JMCLRegister.registerVariable("P");
