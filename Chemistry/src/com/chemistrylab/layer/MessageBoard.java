@@ -60,6 +60,7 @@ public class MessageBoard extends Layer {
 		range.x1 = 800;
 		range.y1 = ChemistryLab.nowHeight - 80;
 		range.y0 = range.y1 - message_list.size() * 16;
+		// Update Vertex
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 				CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
 		quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
@@ -89,6 +90,7 @@ public class MessageBoard extends Layer {
 		range.x1 = 800;
 		range.y1 = ChemistryLab.nowHeight - 80;
 		range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
+		// Update Vertex
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 				CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 		quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(
@@ -106,6 +108,7 @@ public class MessageBoard extends Layer {
 		range.y1 = ChemistryLab.nowHeight - 80;
 		if (ChemistryLab.f3) {
 			range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
+			// Update Vertex
 			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 					CommonRender.toGLY(range.y1 - Math.min(message_all.size(), 30) * 16), 0));
 			quad.updateVertex(FastQuad.POSTION_RIGHT_UP,
@@ -117,6 +120,7 @@ public class MessageBoard extends Layer {
 					quad.getVertex(FastQuad.POSTION_LEFT_DOWN).setXYZ(-1, CommonRender.toGLY(range.y1), 0));
 		} else {
 			range.y0 = range.y1 - message_list.size() * 16;
+			// Update Vertex
 			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
 					CommonRender.toGLY(range.y1 - message_list.size() * 16), 0));
 			quad.updateVertex(FastQuad.POSTION_RIGHT_UP, quad.getVertex(FastQuad.POSTION_RIGHT_UP)
@@ -161,9 +165,9 @@ public class MessageBoard extends Layer {
 				now = message_list.get(message_list.size() - rep - 1);
 			if (message != now) {
 				if (message != null)
-					message.onCusorOut();
+					message.onCursorOut();
 				message = now;
-				message.onCusorIn();
+				message.onCursorIn();
 			}
 		} catch (Exception e) {
 		}
@@ -172,7 +176,7 @@ public class MessageBoard extends Layer {
 	@Override
 	public void onCursorOut() {
 		if (message != null)
-			message.onCusorOut();
+			message.onCursorOut();
 		message = null;
 	}
 }

@@ -14,15 +14,19 @@ public class EventBusComand extends Command {
 	public Message[] invokeCommand(String info) throws CommandException {
 		switch (info) {
 		case "nonwait-size":
+			// Format: eventbus nonwait-size
 			return new Message[] { new Message().addMessageEntry(new MessageEntry(
 					String.format(I18N.getString("command.eventbus.nonwaitsize"), EventBus.getNonawaitSize()))) };
 		case "nonwait-pass":
+			// Format: eventbus nonwait-pass
 			return new Message[] { new Message().addMessageEntry(new MessageEntry(String
 					.format(I18N.getString("command.eventbus.passednonwait"), EventBus.getPassedNonwaitEvents()))) };
 		case "await-units":
+			// Format: eventbus await-units
 			return new Message[] { new Message().addMessageEntry(new MessageEntry(String
 					.format(I18N.getString("command.eventbus.awaitunitsize"), EventBus.getAvailableAwaitUnits()))) };
 		case "reg-events":
+			// Format: eventbus reg-events
 			Collection<Event> events = EventBus.getRegisteredEvents();
 			Message[] ms_r = new Message[events.size() + 2];
 			ms_r[0] = new Message().addMessageEntry(
@@ -41,6 +45,7 @@ public class EventBusComand extends Command {
 					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 			return ms_r;
 		case "now-events":
+			// Format: eventbus now-events
 			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
 			Message[] ms = new Message[evsnap.size() + 2];
 			ms[0] = new Message().addMessageEntry(
@@ -56,6 +61,7 @@ public class EventBusComand extends Command {
 		String[] sps = info.split(" ", 3);
 		switch (sps[0]) {
 		case "post":
+			// Format: eventbus post {uuid} {addition}
 			try {
 				if (sps.length == 3) {
 					Event e = EventBus.getEvent(UUID.fromString(sps[1]));

@@ -82,6 +82,7 @@ public class ResourceManager {
 	 */
 	public static InputStream getResourceAsStream(String ref, boolean seq) {
 		reloadLock.lock();
+		boolean savedFuzzy = getCanFuzzy();
 		setCanFuzzy(seq);
 		boolean find = false;
 		Vector<InputStream> lst = new Vector<>();
@@ -100,9 +101,10 @@ public class ResourceManager {
 		}
 		reloadLock.unlock();
 		if (!find) {
+			setCanFuzzy(savedFuzzy);
 			throw new RuntimeException("Resource not found: " + ref);
 		}
-		setCanFuzzy(false);
+		setCanFuzzy(savedFuzzy);
 		SequenceInputStream sis = new SequenceInputStream(lst.elements());
 		return new BufferedInputStream(sis);
 	}

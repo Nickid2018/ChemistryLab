@@ -3,10 +3,12 @@ package com.chemistrylab;
 import java.util.*;
 import org.lwjgl.glfw.*;
 
+//Called in Key Callback
 public class HotKeyMap {
 
 	@FunctionalInterface
 	public static interface HotKeyReference {
+
 		void hotKeyActive(int scancode, int action, int mods);
 	}
 

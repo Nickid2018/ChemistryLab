@@ -3,6 +3,7 @@ package com.chemistrylab.init;
 import java.util.*;
 
 public class MathHelper {
+	
 	public static final float SQRT_2 = sqrt(2.0F);
 	/**
 	 * A table of sin values computed from 0 (inclusive) to 2*pi (exclusive),

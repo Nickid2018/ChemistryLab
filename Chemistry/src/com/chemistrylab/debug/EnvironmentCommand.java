@@ -10,10 +10,12 @@ public class EnvironmentCommand extends Command {
 		String[] div = info.split(" ", 2);
 		switch (div[0]) {
 		case "temperature":
+			// Format: environment temperature {value}
 			Environment.setTemperature(Double.parseDouble(div[1]));
 			return new Message[] { new Message().addMessageEntry(
 					new MessageEntry(String.format(I18N.getString("command.environment.temp"), div[1]))) };
 		case "pressure":
+			// Format: environment pressure {value}
 			Environment.setPressure(Double.parseDouble(div[1]));
 			return new Message[] { new Message().addMessageEntry(
 					new MessageEntry(String.format(I18N.getString("command.environment.press"), div[1]))) };

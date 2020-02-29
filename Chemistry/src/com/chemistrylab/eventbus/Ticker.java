@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.*;
 
 public final class Ticker implements EventBusListener {
 
-	public static final Event NEXT_TICK = Event.createNewEvent("Next_tick");
+	public static final Event NEXT_TICK = Event.createNewEvent("Next_Tick");
 
 	public static final Logger logger = Logger.getLogger("Ticker");
 

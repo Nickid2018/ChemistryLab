@@ -1,6 +1,6 @@
 package com.chemistrylab.layer.animation;
 
-import com.chemistrylab.layer.Layer;
+import com.chemistrylab.layer.*;
 
 public abstract class SildeLayer extends Layer {
 

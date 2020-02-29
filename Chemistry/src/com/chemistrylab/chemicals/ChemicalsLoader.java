@@ -13,25 +13,32 @@ import com.chemistrylab.render.*;
 
 public class ChemicalsLoader {
 
+	// Mapping of constructors of Chemical decompiling class
 	public static final Map<String, Constructor<?>> mapping = new HashMap<>();
 	public static final Chemicals chemicals = new Chemicals();
 
+	// Registry
 	public static final Set<String> atoms = new TreeSet<>();
 	public static final Set<String> ions = new TreeSet<>();
 	public static final Set<String> chemical = new TreeSet<>();
 
+	// Logger
 	public static final Logger logger = Logger.getLogger("Chemical Loader");
 
+	// Counters
 	private static int failedClasses = 0;
 	private static long lastTime = ChemistryLab.getTime();
 	private static int counter = 0;
 
+	// Status to paint
 	private static final String[] CHEMICAL_LOAD_STATUS = { "Loading chemical resolver(1/4)", "Loading atoms(2/4)",
 			"Loading ions(3/4)", "Loading chemicals(4/4)" };
 
+	// Progress Bar
 	private static ProgressBar load_chemical_status = new ProgressBar(4, 20);
 	private static ProgressBar load_details = new ProgressBar(-1, 20);
 
+	// Load Chemical Decompilers and resource
 	public static final void loadChemicals() throws Exception {
 		Properties pro = new Properties();
 		InputStream is = ResourceManager.getResourceAsStream("assets/models/chemicals/class.map", true);
@@ -48,6 +55,7 @@ public class ChemicalsLoader {
 				failedClasses++;
 			}
 			counter++;
+			// Show Time!
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
 				ChemistryLab.QUAD.render();
@@ -156,7 +164,7 @@ public class ChemicalsLoader {
 		ions.add("H_1p");
 		ions.add("OH_1n");
 		ions.add("Na_1p");
-		// Chemical
+		// Chemicals
 		chemical.add("alkalis/NaOH");
 		chemical.add("oxides/H2O");
 	}

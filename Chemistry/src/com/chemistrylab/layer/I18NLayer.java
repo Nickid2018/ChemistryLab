@@ -1,8 +1,7 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
@@ -31,9 +30,7 @@ public class I18NLayer extends Layer {
 		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(100), CommonRender.toRatioYPos(120),
 				CommonRender.toRatioXPos(250), CommonRender.toRatioYPos(168), this, I18N.getString("program.cancel"),
 				(button, action, mods) -> {
-					if(action != GLFW.GLFW_PRESS)
-						return;
-					if (button == 0) {
+					if (button == 0 && action == GLFW.GLFW_PRESS) {
 						LayerRender.popLayer(I18NLayer.this);
 						LayerRender.pushLayer(new ExpandBar());
 					}

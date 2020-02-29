@@ -2,6 +2,7 @@ package com.chemistrylab.chemicals;
 
 import com.alibaba.fastjson.*;
 
+// DO NOT OBFUSCATE IT AND ITS SUBCLASS IN FINAL VERSION
 public abstract class Chemical {
 	
 	protected ChemicalResource resource;

@@ -8,6 +8,7 @@ public class CommandController {
 	private static final Map<String, Command> commap = new HashMap<>();
 
 	public static final Message[] runCommand(String command) throws CommandException {
+		// Surprise! Crash! (P.S. The function is to save breakpoint data)
 		if (command.equals("crash"))
 			throw new Error("Manually Crash");
 		String[] sa = command.split(" ", 2);
@@ -70,6 +71,7 @@ public class CommandController {
 	}
 
 	static {
+		// Register Commands
 		addCommandDecomper("tick", new TickerCommand());
 		addCommandDecomper("eventbus", new EventBusComand());
 		addCommandDecomper("container", new ContainerCommand());

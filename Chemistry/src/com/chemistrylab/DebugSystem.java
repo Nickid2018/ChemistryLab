@@ -3,11 +3,12 @@ package com.chemistrylab;
 import java.util.*;
 import java.util.concurrent.*;
 
+//The class will display in SHIFT-F3 Debug window
 public final class DebugSystem {
 
-	public static int maxstoreinfos 									= 		 150;
-	private static final Queue<Integer> storedFPS 		=		 new LinkedBlockingQueue<>(maxstoreinfos);
-	private static final Queue<Long> storedMemory 	=		 new LinkedBlockingQueue<>(maxstoreinfos);
+	public static int maxstoreinfos = 150;
+	private static final Queue<Integer> storedFPS = new LinkedBlockingQueue<>(maxstoreinfos);
+	private static final Queue<Long> storedMemory = new LinkedBlockingQueue<>(maxstoreinfos);
 
 	public static final void addFPSInfo(int fpsin) {
 		if (storedFPS.size() == maxstoreinfos) {

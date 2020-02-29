@@ -2,6 +2,7 @@ package com.chemistrylab.chemicals;
 
 import java.util.*;
 
+//The map to save ChemicalResource
 public class Chemicals extends HashMap<String, ChemicalResource> {
 
 	/**

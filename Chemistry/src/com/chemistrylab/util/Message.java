@@ -98,13 +98,13 @@ public class Message implements Cloneable {
 		}
 	}
 
-	public void onCusorIn() {
+	public void onCursorIn() {
 		if (haveEvent) {
 			GLFW.glfwSetCursor(ChemistryLab.window, ChemistryLab.HAND_CURSOR);
 		}
 	}
 
-	public void onCusorOut() {
+	public void onCursorOut() {
 		GLFW.glfwSetCursor(ChemistryLab.window, ChemistryLab.ARROW_CURSOR);
 	}
 
@@ -113,6 +113,7 @@ public class Message implements Cloneable {
 		try {
 			return (Message) super.clone();
 		} catch (CloneNotSupportedException e) {
+			// That's impossible!!
 			return null;
 		}
 	}

@@ -1,8 +1,7 @@
 package com.chemistrylab.layer;
 
+import org.lwjgl.glfw.*;
 import com.chemistrylab.*;
-
-import org.lwjgl.glfw.GLFW;
 import org.newdawn.slick.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.eventbus.*;
@@ -16,15 +15,15 @@ public final class PleaseWaitLayer extends Layer {
 	private String success;
 	private final Runnable whattodo;
 
-	private static final AnimationTexture dealing = (AnimationTexture) getTextures()
-			.get("texture.guianimation.dealing");
-	private static final FastTexture tex;
+	private final AnimationTexture dealing = ((AnimationTexture) getTextures().get("texture.guianimation.dealing"))
+			.clone();
+
+	private final FastTexture tex;
 	private static final FastQuad show;
 
 	static {
 		float center_x = nowWidth / 2;
 		float center_y = nowHeight / 2;
-		tex = new FastTexture(center_x - 224, center_y - 24, center_x - 176, center_y + 24, 0, 0, 1, 1, dealing);
 		show = new FastQuad(center_x - 300, center_y - 100, center_x + 300, center_y + 100, Color.white);
 	}
 
@@ -34,6 +33,9 @@ public final class PleaseWaitLayer extends Layer {
 		whattodo = wtd;
 		CommonRender.loadFontUNI(info, 32);
 		dealing.startToBind(this);
+		float center_x = nowWidth / 2;
+		float center_y = nowHeight / 2;
+		tex = new FastTexture(center_x - 224, center_y - 24, center_x - 176, center_y + 24, 0, 0, 1, 1, dealing);
 	}
 
 	public PleaseWaitLayer start() {
@@ -74,7 +76,7 @@ public final class PleaseWaitLayer extends Layer {
 
 	@Override
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		if ((error != null || success != null) && button == 0 && isClickLegal(500))
 			LayerRender.popLayer(this);

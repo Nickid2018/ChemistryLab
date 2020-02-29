@@ -13,10 +13,13 @@ import static com.chemistrylab.ChemistryLab.*;
 
 public abstract class Layer {
 
+	// AABB
 	protected final Range range;
 	protected Set<Component> comps = new HashSet<>();
 	private final Queue<Runnable> sr = new LinkedBlockingDeque<>();
 	protected long lastClick = -1;
+
+	// Status
 	protected Component focus = null;
 	protected Component cursor = null;
 
@@ -33,9 +36,8 @@ public abstract class Layer {
 				&& CommonRender.othToWinHeight(range.y0) < y && CommonRender.othToWinHeight(range.y1) > y;
 	}
 
-	public final boolean checkRange(double d, double e) {
-		return CommonRender.othToWinWidth(range.x0) < d && CommonRender.othToWinWidth(range.x1) > d
-				&& CommonRender.othToWinHeight(range.y0) < e && CommonRender.othToWinHeight(range.y1) > e;
+	public final boolean checkRange(double x, double y) {
+		return checkRange(range, x, y);
 	}
 
 	protected static final void doDefaultResize(Layer l) {

@@ -29,8 +29,10 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class ChemistryLab {
 
+	// Logger Of Main Thread
 	public static final Logger logger = Logger.getLogger("Main Looper");
 
+	// Window Settings
 	public static final float DREAM_WIDTH = 1280;
 	public static final float DREAM_HEIGHT = 720;
 	public static float nowWidth = 1280;
@@ -40,34 +42,46 @@ public class ChemistryLab {
 
 	public static final String DEFAULT_LOG_FILE = "logs";
 
+	// Memory Manager
 	public static final Runtime RUNTIME = Runtime.getRuntime();
 	public static final MemoryMXBean MEMORY = ManagementFactory.getMemoryMXBean();
 
+	// GLFW Cursora
 	public static long ARROW_CURSOR;
 	public static long HAND_CURSOR;
 
+	// Events
 	public static final Event DEBUG_ON = Event.createNewEvent("Debug_On");
 	public static final Event DEBUG_OFF = Event.createNewEvent("Debug_Off");
 	public static final Event THREAD_FATAL = Event.createNewEvent("Fatal_Error");
 
+	// Quad of cover
 	public static FastQuad QUAD;
 
+	// Action Keys
 	public static boolean f3 = false;
 	public static boolean f3_with_shift = false;
 	public static boolean f3_with_ctrl = false;
 	public static boolean fullScreen = false;
+
+	// FPS Limit (P.S. The FPS often over the number -_||)
 	public static int maxFPS = 100;
 
+	// Window State
 	private static boolean inited = false;
 	private static boolean recreateWindow = false;
 
+	// FPS and UPS
 	private static int fps;
 	private static int fpsCount;
 	private static int ups;
 	private static int upsCount;
 
+	// Mouse Click
 	private static long lastTime;
 	private static long lastClick = -1;
+
+	// Callback Start!!
 
 	private static final GLFWErrorCallbackI error_callback = (error, description) -> logger.error("GLFW Error: "
 			+ APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000, null, GLFW.class).get(error)
@@ -105,6 +119,7 @@ public class ChemistryLab {
 		LayerRender.windowResize();
 	};
 
+	// Window Handle
 	public static long window;
 
 	// Status
@@ -147,8 +162,8 @@ public class ChemistryLab {
 			glfwSetCursorPosCallback(window, cursor_posi_callback);
 			glfwSetScrollCallback(window, scroll_callback);
 			glfwMakeContextCurrent(window);
-			
-			//Cursor
+
+			// Cursor
 			ARROW_CURSOR = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 			HAND_CURSOR = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 
@@ -190,6 +205,7 @@ public class ChemistryLab {
 				ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
 				GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 				// Run in Thread Manager
+				// Concurrent Operation
 				ThreadManger.invoke(() -> {
 					Date date = new Date();
 					File file = new File("screenshot/screenshot_"
@@ -208,17 +224,18 @@ public class ChemistryLab {
 					}
 					try {
 						ImageIO.write(image, format, file);
+						// Yes, as you see, you are blind!
 						MessageBoard.INSTANCE.addMessage(
 								new Message().addMessageEntry(new MessageEntry(I18N.getString("screenshot.success")))
 										.addMessageEntry(new MessageEntry(file.getAbsolutePath()).setUnderline(true)
 												.setClickEvent((button, action2, mods2) -> {
-													if (button == 0 && isSystemClickLegal(100))
-														if (Desktop.isDesktopSupported()) {
-															try {
-																Desktop.getDesktop().open(file);
-															} catch (Exception e) {
-															}
+													if (button == 0 && isSystemClickLegal(100)
+															&& Desktop.isDesktopSupported()) {
+														try {
+															Desktop.getDesktop().open(file);
+														} catch (Exception e) {
 														}
+													}
 												})));
 					} catch (Exception e) {
 						MessageBoard.INSTANCE.addMessage(new Message().addMessageEntry(
@@ -229,6 +246,8 @@ public class ChemistryLab {
 			HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
 				if (action != GLFW.GLFW_PRESS)
 					return;
+				// Send Recreate Request
+				// P.S. Recreate cannot be run to callback
 				fullScreen = !fullScreen;
 				logger.info("Fullscreen:" + (fullScreen ? "on" : "off"));
 				recreateWindow = true;
@@ -270,15 +289,20 @@ public class ChemistryLab {
 					glfwSetWindowTitle(window, I18N.getString("window.title"));
 				}
 
+				// Recreate Screen
 				if (recreateWindow) {
 					recreateWindow = false;
 					// Recreate Window
 					swapFullScreen();
 				}
 
+				// TPS and UPS time start
 				long startTime = getTime();
 
+				// Check Fatal Error
 				checkErrors();
+
+				// Clear Graph
 				clearFace();
 
 				// Program frame render
@@ -292,12 +316,12 @@ public class ChemistryLab {
 				updateUPS();
 				update();
 
-				/* Same as above, multiply time in seconds by 1000 */
+				// Calculate Sleep Time
 				long endTime = getTime();
 				Thread.sleep(Math.max(0, startTime + targetTime - endTime));
 			}
 		} catch (Throwable e) {
-			logger.fatal("qwq, this program crashed!", e);
+			logger.fatal("QAQ, this program crashed!", e);
 			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
 			LayerRender.popLayers();
 
@@ -353,10 +377,12 @@ public class ChemistryLab {
 				logger.error("Write crash-report error.", e2);
 			}
 
+			// Error Screen
 			while (!glfwWindowShouldClose(window) && inited) {
 
 				clearFace();
 
+				// Cover Surface
 				QUAD.render();
 				CommonRender.drawFont("Program Crashed!",
 						nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
@@ -380,6 +406,11 @@ public class ChemistryLab {
 		release();
 	}
 
+	/**
+	 * Get textures
+	 * 
+	 * @return Textures
+	 */
 	public static Textures getTextures() {
 		return InitLoader.getTextureLoader().getTextures();
 	}
@@ -409,8 +440,10 @@ public class ChemistryLab {
 			ups = upsCount;
 			upsCount = 0;
 			lastTime = getTime();
+			// FPS Recording
 			DebugSystem.addFPSInfo(fps);
 		}
+		// Memory Recording
 		if (fpsCount % 20 == 0)
 			DebugSystem.addMemInfo(ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory());
 	}
@@ -430,6 +463,9 @@ public class ChemistryLab {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
+	/**
+	 * Flush Window
+	 */
 	public static void flush() {
 		checkClose();
 		updateFPS();
@@ -440,12 +476,19 @@ public class ChemistryLab {
 		update();
 	}
 
+	/**
+	 * Swap Window
+	 * 
+	 * @throws Exception
+	 */
 	public static void swapFullScreen() throws Exception {
 		glfwSetWindowShouldClose(window, true);
 		glfwPollEvents();
+		// Release Resource, or the program will break down!
 		VertexDataManager.MANAGER.releaseResource();
 		ShaderManager.MANAGER.releaseResource();
 		glfwDestroyWindow(window);
+		// Get Monitor Info
 		PointerBuffer pb = fullScreen ? glfwGetMonitors() : null;
 		long recreate = pb == null ? NULL : pb.get(0);
 		glfwDefaultWindowHints();
@@ -462,6 +505,7 @@ public class ChemistryLab {
 			nowWidth = DREAM_WIDTH;
 			nowHeight = DREAM_HEIGHT;
 		}
+		// Callback re-bind
 		glfwSetFramebufferSizeCallback(window, resize_callback);
 		glfwSetKeyCallback(window, key_callback);
 		glfwSetCharCallback(window, char_callback);
@@ -469,6 +513,7 @@ public class ChemistryLab {
 		glfwSetScrollCallback(window, scroll_callback);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		// Re-initialize OpenGL
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, nowWidth, nowHeight, 0, 1, -1);
@@ -476,12 +521,15 @@ public class ChemistryLab {
 		GL11.glViewport(0, 0, (int) nowWidth, (int) nowHeight);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		// Reload Resource
 		VertexDataManager.MANAGER.reload();
 		InitLoader.getTextureLoader().reloadTexture();
 		CommonRender.reloadFontUNI();
+		// Send Resize
 		LayerRender.windowResize();
 	}
 
+	// Check GL Error
 	public static void checkGLError() {
 		int ret = GL11.glGetError();
 		if (ret != GL11.GL_NO_ERROR) {
@@ -510,11 +558,13 @@ public class ChemistryLab {
 		}
 	}
 
+	// Check Window Close
 	public static void checkClose() {
 		if (glfwWindowShouldClose(window))
 			release();
 	}
 
+	// Check Click Legal
 	public static boolean isSystemClickLegal(long del) {
 		boolean b = getTime() - lastClick > del;
 		if (b)
@@ -522,6 +572,7 @@ public class ChemistryLab {
 		return b;
 	}
 
+	// Check Fatal Error from Other Thread
 	private static Throwable error;
 	private static Thread errorthread;
 
@@ -530,6 +581,9 @@ public class ChemistryLab {
 			throw error;
 	}
 
+	/**
+	 * Release Resource
+	 */
 	public static void release() {
 		logger.info("Stopping!");
 		if (inited)
@@ -569,6 +623,7 @@ public class ChemistryLab {
 		System.exit(0);
 	}
 
+	// Clear logs
 	private static long clearingLogTime = getTime();
 	private static PleaseWaitLayer layer = null;
 
@@ -588,6 +643,7 @@ public class ChemistryLab {
 		}).start());
 	}
 
+	// Print Throwable as String
 	public static String asStack(Throwable e) {
 		String l = System.getProperty("line.separator");
 		StringBuilder sb = new StringBuilder(e.toString().replace("\n", l) + l);
@@ -635,6 +691,7 @@ public class ChemistryLab {
 		return sb.deleteCharAt(sb.length() - 1).toString();
 	}
 
+	// Stack as StackTraceElement
 	public static String asStack(StackTraceElement[] es) {
 		String l = System.getProperty("line.separator");
 		StringBuilder sb = new StringBuilder();
@@ -645,7 +702,7 @@ public class ChemistryLab {
 	}
 
 	/**
-	 * Get the class of caller.
+	 * Get the class of caller. Hack of Reflection.
 	 * 
 	 * @return The class of caller
 	 */
@@ -655,7 +712,7 @@ public class ChemistryLab {
 		// Destination: sun.reflect.Reflection
 		// Function to Reflect: getCallerClass(I)Ljava.lang.Class;
 		// Function Warning: Deprecated at defined class
-		// Version can work: Java 8
+		// Version can work: Java 8 (Also can run in Java 6 and 7)
 		try {
 			Class<?> reflc = Class.forName("sun.reflect.Reflection");
 			// Invoke Function Stack:
@@ -673,12 +730,16 @@ public class ChemistryLab {
 		}
 	}
 
+	// Get Total Memory
 	public static final double getTotalMemory() {
 		return RUNTIME.maxMemory();
 	}
 
 	static {
+		// Configure Log4j
+		// Warning: Do Not Use Resource Loader!
 		PropertyConfigurator.configure(ChemistryLab.class.getResource("/assets/log4j.properties"));
+		// Listen Event
 		EventBus.registerListener((e) -> {
 			try {
 				if (e.equals(I18N.I18N_RELOADED))

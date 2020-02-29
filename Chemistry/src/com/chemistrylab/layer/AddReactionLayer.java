@@ -1,8 +1,7 @@
 package com.chemistrylab.layer;
 
 import java.util.*;
-
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
 import com.chemistrylab.render.*;
@@ -24,6 +23,7 @@ public class AddReactionLayer extends Layer {
 
 	public AddReactionLayer() {
 		super(0, 0, nowWidth, nowHeight);
+		// UI
 		TextComponent title = new TextComponent(nowWidth / 2, CommonRender.toRatioYPos(50), nowWidth / 2,
 				CommonRender.toRatioYPos(98), this, I18N.getString("addreact.title"), (button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
@@ -65,11 +65,13 @@ public class AddReactionLayer extends Layer {
 		deltaSs.addEffect(new LineBorderEffect(1, Color.white));
 		addComponent(deltaSs);
 		TextComponent labele = new TextComponent(CommonRender.toRatioXPos(1000), CommonRender.toRatioYPos(240),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(288), this, "kJ/mol", (button, action, mods) -> {
+				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(288), this, "kJ/mol",
+				(button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
 		addComponent(labele);
 		TextComponent labelf = new TextComponent(CommonRender.toRatioXPos(1000), CommonRender.toRatioYPos(300),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(348), this, "J/(mol¡¤K)", (button, action, mods) -> {
+				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(348), this, "J/(mol¡¤K)",
+				(button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
 		addComponent(labelf);
 		kl = new TextComponent(CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(360),
@@ -81,9 +83,7 @@ public class AddReactionLayer extends Layer {
 		rev = new TextComponent(CommonRender.toRatioXPos(50), CommonRender.toRatioYPos(360),
 				CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(408), this,
 				I18N.getString("addreact.nonreversible"), (button, action, mods) -> {
-					if(action != GLFW.GLFW_PRESS)
-						return;
-					if (button == 0 && isClickLegal(250)) {
+					if (button == 0 && isClickLegal(250) && action == GLFW.GLFW_PRESS) {
 						isReversible = !isReversible;
 						rev.setText(isReversible ? I18N.getString("addreact.reversible")
 								: I18N.getString("addreact.nonreversible"));
@@ -101,9 +101,7 @@ public class AddReactionLayer extends Layer {
 		TextComponent ok = new TextComponent(CommonRender.toRatioXPos(DREAM_WIDTH / 5), CommonRender.toRatioYPos(500),
 				CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 2), CommonRender.toRatioYPos(548), this,
 				I18N.getString("program.add"), (button, action, mods) -> {
-					if(action != GLFW.GLFW_PRESS)
-						return;
-					if (button == 0) {
+					if (button == 0 && action == GLFW.GLFW_PRESS) {
 						LayerRender.popLayer(this);
 						LayerRender.pushLayer(new ExpandBar());
 						LayerRender.pushLayer(pw = new PleaseWaitLayer(I18N.getString("program.writing"), () -> {
@@ -147,7 +145,7 @@ public class AddReactionLayer extends Layer {
 		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 3),
 				CommonRender.toRatioYPos(500), CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 4),
 				CommonRender.toRatioYPos(548), this, I18N.getString("program.cancel"), (button, action, mods) -> {
-					if(action != GLFW.GLFW_PRESS)
+					if (action != GLFW.GLFW_PRESS)
 						return;
 					if (button == 0) {
 						LayerRender.popLayer(AddReactionLayer.this);
@@ -162,10 +160,10 @@ public class AddReactionLayer extends Layer {
 	public void render() {
 		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
-			glVertex2f(0, 0);
-			glVertex2f(0, nowHeight);
-			glVertex2f(nowWidth, nowHeight);
-			glVertex2f(nowWidth, 0);
+		glVertex2f(0, 0);
+		glVertex2f(0, nowHeight);
+		glVertex2f(nowWidth, nowHeight);
+		glVertex2f(nowWidth, 0);
 		glEnd();
 	}
 

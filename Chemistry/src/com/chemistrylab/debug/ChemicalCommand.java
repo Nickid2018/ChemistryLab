@@ -13,6 +13,7 @@ public class ChemicalCommand extends Command {
 		try {
 			switch (split[0]) {
 			case "add":
+				//Format: chemical add {uuid} {chemical} {unit} {count}
 				String container = split[1];
 				AbstractContainer con = Containers.getContainer(container);
 				ChemicalResource chem = ChemicalsLoader.chemicals.get(split[2]);

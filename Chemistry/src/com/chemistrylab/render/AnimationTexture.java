@@ -9,7 +9,7 @@ import com.chemistrylab.util.*;
 import org.newdawn.slick.opengl.*;
 import java.util.concurrent.atomic.*;
 
-public class AnimationTexture implements Texture {
+public class AnimationTexture implements Texture, Cloneable {
 
 	private String ref;
 	private int frames;
@@ -69,7 +69,7 @@ public class AnimationTexture implements Texture {
 	}
 
 	public void endToBind(Object o) {
-		//Ensure no Null Pointers
+		// Ensure no Null Pointers
 		startTimes.replace(o, 0L);
 	}
 
@@ -181,4 +181,12 @@ public class AnimationTexture implements Texture {
 		id[frame].setTextureFilter(textureFilter);
 	}
 
+	@Override
+	public AnimationTexture clone() {
+		try {
+			return (AnimationTexture) super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
 }

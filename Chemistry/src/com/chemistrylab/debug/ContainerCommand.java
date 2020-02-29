@@ -14,10 +14,11 @@ public class ContainerCommand extends Command {
 
 	@Override
 	public Message[] invokeCommand(String info) throws CommandException {
-		String[] split = split(info);
+		String[] split = CommandController.split(info);
 		try {
 			switch (split[0]) {
 			case "add":
+				// Format: container add container.XXX.model {size} {xpos} {ypos} {addition}
 				String model = split[1];
 				Map<String, Size> sizes = LOADER.getSizes(model);
 				String si = split[2];
@@ -30,26 +31,30 @@ public class ContainerCommand extends Command {
 					abc.specials(json);
 				}
 				Containers.addContainer(abc);
-				return new Message[] { new Message()
-						.addMessageEntry(new MessageEntry(I18N.getString("command.container.add"))).addMessageEntry(
-								new MessageEntry("UUID = " + abc.getUUID()).setUnderline(true).setClickEvent((button, action, mods) -> {
-									if (button != 0)
-										return;
-									Transferable trans = new StringSelection(abc.getUUID().toString());
-									Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-								})) };
+				return new Message[] {
+						new Message().addMessageEntry(new MessageEntry(I18N.getString("command.container.add")))
+								.addMessageEntry(new MessageEntry("UUID = " + abc.getUUID()).setUnderline(true)
+										.setClickEvent((button, action, mods) -> {
+											if (button != 0)
+												return;
+											Transferable trans = new StringSelection(abc.getUUID().toString());
+											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+										})) };
 			case "remove":
+				// Format: container remove {uuid}
 				String uuid = split[1];
 				Containers.removeContainer(uuid);
-				return new Message[] { new Message()
-						.addMessageEntry(new MessageEntry(I18N.getString("command.container.remove")))
-						.addMessageEntry(new MessageEntry("UUID = " + uuid).setUnderline(true).setClickEvent((button, action, mods) -> {
-							if (button != 0)
-								return;
-							Transferable trans = new StringSelection(uuid.toString());
-							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-						})) };
+				return new Message[] {
+						new Message().addMessageEntry(new MessageEntry(I18N.getString("command.container.remove")))
+								.addMessageEntry(new MessageEntry("UUID = " + uuid).setUnderline(true)
+										.setClickEvent((button, action, mods) -> {
+											if (button != 0)
+												return;
+											Transferable trans = new StringSelection(uuid.toString());
+											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+										})) };
 			case "info-container":
+				// Format: container info-container container.XXX.model
 				String model0 = split[1];
 				Map<String, Size> sizes0 = LOADER.getSizes(model0);
 				Message[] ms_r = new Message[sizes0.size() + 2];
@@ -68,34 +73,5 @@ public class ContainerCommand extends Command {
 			throw new CommandException(e.getMessage());
 		}
 		throw new CommandException(I18N.getString("command.unknown"));
-	}
-
-	public String[] split(String in) {
-		ArrayList<String> al = new ArrayList<>();
-		boolean isStr = false;
-		boolean isRound = false;
-		int begin = 0;
-		for (int i = 0; i < in.length(); i++) {
-			char at = in.charAt(i);
-			// "
-			if (at == '"' && !isRound)
-				isStr = !isStr;
-			// {
-			if (at == '{' && !isStr)
-				isRound = true;
-			// }
-			if (at == '}' && !isStr)
-				isRound = false;
-			if (at == ' ' && !isStr && !isRound) {
-				al.add(in.substring(begin, i).trim());
-				begin = i;
-			}
-		}
-		if (begin != in.length())
-			al.add(in.substring(begin).trim());
-		// To array
-		Object[] o = al.toArray();
-		String[] over = Arrays.copyOf(o, o.length, String[].class);
-		return over;
 	}
 }

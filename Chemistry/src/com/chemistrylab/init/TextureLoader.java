@@ -31,6 +31,7 @@ public class TextureLoader {
 
 		ChemistryLab.QUAD = new FastQuad(0, 0, ChemistryLab.DREAM_WIDTH, ChemistryLab.DREAM_HEIGHT, Color.white);
 
+		// Pre Draw
 		ChemistryLab.clearFace();
 		ChemistryLab.QUAD.render();
 		InitLoader.showAllProgress(0);
@@ -121,7 +122,7 @@ public class TextureLoader {
 		// Initialize texture container
 		textureMap.releaseAll();
 		textureMap.clear();
-		
+
 		CommonRender.asciifont = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
 				ResourceManager.getResourceAsStream("assets/textures/font/ascii.png"), GL_NEAREST);
 		textureMap.put("font.ascii.page", CommonRender.asciifont);

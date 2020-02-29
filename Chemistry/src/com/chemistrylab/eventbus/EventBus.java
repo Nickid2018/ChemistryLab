@@ -12,6 +12,9 @@ import java.util.concurrent.locks.*;
  * <p>
  * The functions in this class are all thread-safe.
  * </p>
+ * <p>
+ * <b>The Class will send event in concurrent thread!</b>
+ * </p>
  * 
  * @author Nickid2018
  * @see #postEvent(Event)

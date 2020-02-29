@@ -1,12 +1,10 @@
 package com.chemistrylab.layer;
 
+import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.layer.animation.*;
 
 import static org.lwjgl.opengl.GL11.*;
-
-import org.lwjgl.glfw.GLFW;
-
 import static com.chemistrylab.ChemistryLab.*;
 
 public class CloseBar extends Layer {
@@ -17,25 +15,26 @@ public class CloseBar extends Layer {
 
 	@Override
 	public void render() {
+		// This block will be replaced by picture
 		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
-			glVertex2f(200, nowHeight / 2 - 20);
-			glVertex2f(221, nowHeight / 2 - 20);
-			glVertex2f(221, nowHeight / 2 + 20);
-			glVertex2f(200, nowHeight / 2 + 20);
+		glVertex2f(200, nowHeight / 2 - 20);
+		glVertex2f(221, nowHeight / 2 - 20);
+		glVertex2f(221, nowHeight / 2 + 20);
+		glVertex2f(200, nowHeight / 2 + 20);
 		glEnd();
 		new Color(255, 255, 255, 128).bind();
 		glBegin(GL_QUADS);
-			glVertex2f(220, nowHeight / 2 - 19);
-			glVertex2f(217, nowHeight / 2 - 19);
-			glVertex2f(205, nowHeight / 2);
-			glVertex2f(202, nowHeight / 2);
+		glVertex2f(220, nowHeight / 2 - 19);
+		glVertex2f(217, nowHeight / 2 - 19);
+		glVertex2f(205, nowHeight / 2);
+		glVertex2f(202, nowHeight / 2);
 		glEnd();
 		glBegin(GL_QUADS);
-			glVertex2f(202, nowHeight / 2);
-			glVertex2f(205, nowHeight / 2);
-			glVertex2f(220, nowHeight / 2 + 19);
-			glVertex2f(217, nowHeight / 2 + 19);
+		glVertex2f(202, nowHeight / 2);
+		glVertex2f(205, nowHeight / 2);
+		glVertex2f(220, nowHeight / 2 + 19);
+		glVertex2f(217, nowHeight / 2 + 19);
 		glEnd();
 	}
 
@@ -47,9 +46,7 @@ public class CloseBar extends Layer {
 
 	@Override
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
-			return;
-		if (button != 0)
+		if (action != GLFW.GLFW_PRESS || button != 0)
 			return;
 		LayerRender.popLayer(this);
 		LayerRender.pushLayer(new SideBarClose());
