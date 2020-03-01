@@ -133,6 +133,18 @@ public class ChemistryLab {
 		// Slick Library must use this to adapt LWJGL3.2.3
 		Renderer.setRenderer(new GLRender());
 		glfwSetErrorCallback(error_callback);
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+			System.gc();
+			if (inited) {
+				Event error = THREAD_FATAL.clone();
+				error.putExtra(0, e);
+				error.putExtra(1, t);
+				EventBus.postEvent(error);
+			} else {
+				// Use AWT
+				onError(e);
+			}
+		});
 
 		try {
 			// Basic output
@@ -195,7 +207,7 @@ public class ChemistryLab {
 				f3_with_shift = (mods & GLFW.GLFW_MOD_SHIFT) == GLFW.GLFW_MOD_SHIFT;
 				f3_with_ctrl = (mods & GLFW.GLFW_MOD_CONTROL) == GLFW.GLFW_MOD_CONTROL;
 			});
-			HotKeyMap.addHotKey(GLFW_KEY_F5, (scancode, action, mods) -> {
+			HotKeyMap.addHotKey(GLFW_KEY_F2, (scancode, action, mods) -> {
 				if (action != GLFW.GLFW_PRESS)
 					return;
 				GL11.glReadBuffer(GL11.GL_FRONT);
@@ -744,6 +756,61 @@ public class ChemistryLab {
 		return RUNTIME.maxMemory();
 	}
 
+	private static void onError(Throwable t) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		}
+		Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
+		Date date = new Date();
+		String crash = "crash-report_"
+				+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".csh.log";
+		String l = System.getProperty("line.separator");
+		String stack = asStack(t);
+		File crashrep = new File("crash-reports/" + crash);
+		crash = crashrep.getAbsolutePath();
+		FileWriter w;
+		try {
+			crashrep.createNewFile();
+			w = new FileWriter(crashrep);
+			IOUtils.write("Program had crashed.This report is the detail of this error." + l, w);
+			IOUtils.write("Time " + String.format("%tc", date) + l, w);
+			IOUtils.write("=== S T A C K T R A C E ===" + l, w);
+			IOUtils.write("Thread \"Render Thread\"" + l, w);
+			IOUtils.write(stack + l, w);
+			IOUtils.write("=== T H R E A D S ===" + l, w);
+			for (Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()) {
+				IOUtils.write("Thread \"" + en.getKey().getName() + "\" State:" + en.getKey().getState() + l, w);
+				IOUtils.write(asStack(en.getValue()) + l, w);
+			}
+			IOUtils.write("=== E V E N T B U S ===" + l, w);
+			if (inited) {
+				IOUtils.write("Active Events:" + l, w);
+				for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
+					IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
+				}
+			} else {
+				IOUtils.write("EventBus hasn't been initialized." + l, w);
+			}
+			IOUtils.write("=== S Y S T E M ===" + l, w);
+			IOUtils.write("Operating System:" + System.getProperty("os.name") + " " + System.getProperty("os.version")
+					+ " " + System.getProperty("os.arch") + l, w);
+			IOUtils.write(
+					"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l, w);
+			IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
+			IOUtils.write("LWJGL Version:" + Version.getVersion() + l, w);
+			IOUtils.write("OpenGL Version:Haven't been loaded" + l, w);
+			w.flush();
+			w.close();
+		} catch (IOException e2) {
+			logger.error("Write crash-report error.", e2);
+		}
+		UIManager.getLookAndFeel().provideErrorFeedback(null);
+		JOptionPane.showMessageDialog(null, "An error occurred!\n" + stack.replaceAll("\t", "    ")
+				+ "\nThe crash report has been saved in " + crash, "Error", JOptionPane.ERROR_MESSAGE);
+		System.exit(-1);
+	}
+
 	static {
 		// Configure Log4j
 		// Warning: Do Not Use Resource Loader!
@@ -786,59 +853,7 @@ public class ChemistryLab {
 		} catch (Exception e1) {
 			logger.error("QAQ, the program crashed!", e1);
 			// Can't make window, use AWT
-			try {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} catch (Exception e) {
-			}
-			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
-			Date date = new Date();
-			String crash = "crash-report_"
-					+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".csh.log";
-			String l = System.getProperty("line.separator");
-			String stack = asStack(e1);
-			File crashrep = new File("crash-reports/" + crash);
-			crash = crashrep.getAbsolutePath();
-			FileWriter w;
-			try {
-				crashrep.createNewFile();
-				w = new FileWriter(crashrep);
-				IOUtils.write("Program had crashed.This report is the detail of this error." + l, w);
-				IOUtils.write("Time " + String.format("%tc", date) + l, w);
-				IOUtils.write("=== S T A C K T R A C E ===" + l, w);
-				IOUtils.write("Thread \"Render Thread\"" + l, w);
-				IOUtils.write(stack + l, w);
-				IOUtils.write("=== T H R E A D S ===" + l, w);
-				for (Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()) {
-					IOUtils.write("Thread \"" + en.getKey().getName() + "\" State:" + en.getKey().getState() + l, w);
-					IOUtils.write(asStack(en.getValue()) + l, w);
-				}
-				IOUtils.write("=== E V E N T B U S ===" + l, w);
-				if (inited) {
-					IOUtils.write("Active Events:" + l, w);
-					for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
-						IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
-					}
-				} else {
-					IOUtils.write("EventBus hasn't been initialized." + l, w);
-				}
-				IOUtils.write("=== S Y S T E M ===" + l, w);
-				IOUtils.write("Operating System:" + System.getProperty("os.name") + " "
-						+ System.getProperty("os.version") + " " + System.getProperty("os.arch") + l, w);
-				IOUtils.write(
-						"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l,
-						w);
-				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
-				IOUtils.write("LWJGL Version:" + Version.getVersion() + l, w);
-				IOUtils.write("OpenGL Version:Haven't been loaded" + l, w);
-				w.flush();
-				w.close();
-			} catch (IOException e2) {
-				logger.error("Write crash-report error.", e2);
-			}
-			UIManager.getLookAndFeel().provideErrorFeedback(null);
-			JOptionPane.showMessageDialog(null, "An error occurred!\n" + stack.replaceAll("\t", "    ")
-					+ "\nThe crash report has been saved in " + crash, "Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(-1);
+			onError(e1);
 		}
 	}
 }
