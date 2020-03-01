@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl-openal.jar" sourcepath="D:/cj/LWJGL/lwjgl-3.2.3/lwjgl-openal-sources.jar"/>
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl-opengl.jar" sourcepath="D:/cj/LWJGL/lwjgl-3.2.3/lwjgl-opengl-sources.jar"/>
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl.jar" sourcepath="D:/cj/LWJGL/lwjgl-3.2.3/lwjgl-sources.jar"/>
+	<classpathentry kind="lib" path="libs/com/jcraft/jogg.jar" sourcepath="D:/cj/Ext/jogg.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
