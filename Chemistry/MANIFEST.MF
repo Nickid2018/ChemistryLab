@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 Main-Class: com.chemistrylab.ChemistryLab
 Class-Path: libs\com\alibaba\fastjson-1.2.58\fastjson-1.2.58.jar
+            libs\com\jcraft\jogg.jar
             libs\com\cj\jmcl-1.0\jmcl-1.0.jar
             libs\com\cj\rdt-1.0\rdt-1.0.jar
             libs\org\apache\commons\codec-1.13\commons-codec-1.13.jar
