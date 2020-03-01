@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.nio.*;
 import org.lwjgl.*;
+import javax.swing.*;
 import org.lwjgl.glfw.*;
 import javax.imageio.*;
 import java.awt.image.*;
@@ -22,7 +23,7 @@ import com.chemistrylab.sound.*;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.eventbus.*;
-import org.newdawn.slick.opengl.renderer.*;
+import org.newdawn.slick.opengl.renderer.Renderer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -33,14 +34,14 @@ public class ChemistryLab {
 	public static final Logger logger = Logger.getLogger("Main Looper");
 
 	// Window Settings
-	public static final float DREAM_WIDTH = 1280;
-	public static final float DREAM_HEIGHT = 720;
-	public static float nowWidth = 1280;
-	public static float nowHeight = 720;
-	public static float oldWidth = 1280;
-	public static float oldHeight = 720;
+	public static float DREAM_WIDTH;
+	public static float DREAM_HEIGHT;
+	public static float nowWidth;
+	public static float nowHeight;
+	public static float oldWidth;
+	public static float oldHeight;
 
-	public static final String DEFAULT_LOG_FILE = "logs";
+	public static String DEFAULT_LOG_FILE;
 
 	// Memory Manager
 	public static final Runtime RUNTIME = Runtime.getRuntime();
@@ -65,7 +66,7 @@ public class ChemistryLab {
 	public static boolean fullScreen = false;
 
 	// FPS Limit (P.S. The FPS often over the number -_||)
-	public static int maxFPS = 100;
+	public static int maxFPS;
 
 	// Window State
 	private static boolean inited = false;
@@ -505,6 +506,11 @@ public class ChemistryLab {
 			nowWidth = DREAM_WIDTH;
 			nowHeight = DREAM_HEIGHT;
 		}
+		if (window == NULL) {
+			glfwTerminate();
+			logger.error("Failed to recreate the GLFW window");
+			return;
+		}
 		// Callback re-bind
 		glfwSetFramebufferSizeCallback(window, resize_callback);
 		glfwSetKeyCallback(window, key_callback);
@@ -521,6 +527,9 @@ public class ChemistryLab {
 		GL11.glViewport(0, 0, (int) nowWidth, (int) nowHeight);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		// Cursors
+		ARROW_CURSOR = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+		HAND_CURSOR = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 		// Reload Resource
 		VertexDataManager.MANAGER.reload();
 		InitLoader.getTextureLoader().reloadTexture();
@@ -755,5 +764,81 @@ public class ChemistryLab {
 				EventBus.postEvent(ev);
 			}
 		});
+		// Read window properties
+		try {
+			Properties settings = new Properties();
+			InputStream is = new FileInputStream("config/window.properties");
+			settings.load(is);
+			is.close();
+			DREAM_WIDTH = Integer.parseInt(settings.getProperty("width", "1280"));
+			DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "1280"));
+			maxFPS = Integer.parseInt(settings.getProperty("maxfps", "100"));
+			DEFAULT_LOG_FILE = settings.getProperty("logdir", "logs");
+			String locale = settings.getProperty("locale", "default");
+			if (locale.equals("default"))
+				I18N.NOW = I18N.SYSTEM_DEFAULT;
+			else
+				I18N.NOW = Locale.forLanguageTag(locale);
+			nowWidth = DREAM_WIDTH;
+			nowHeight = DREAM_HEIGHT;
+			oldWidth = DREAM_WIDTH;
+			oldHeight = DREAM_HEIGHT;
+		} catch (Exception e1) {
+			logger.error("QAQ, the program crashed!", e1);
+			// Can't make window, use AWT
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+			}
+			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
+			Date date = new Date();
+			String crash = "crash-report_"
+					+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".csh.log";
+			String l = System.getProperty("line.separator");
+			String stack = asStack(e1);
+			File crashrep = new File("crash-reports/" + crash);
+			crash = crashrep.getAbsolutePath();
+			FileWriter w;
+			try {
+				crashrep.createNewFile();
+				w = new FileWriter(crashrep);
+				IOUtils.write("Program had crashed.This report is the detail of this error." + l, w);
+				IOUtils.write("Time " + String.format("%tc", date) + l, w);
+				IOUtils.write("=== S T A C K T R A C E ===" + l, w);
+				IOUtils.write("Thread \"Render Thread\"" + l, w);
+				IOUtils.write(stack + l, w);
+				IOUtils.write("=== T H R E A D S ===" + l, w);
+				for (Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()) {
+					IOUtils.write("Thread \"" + en.getKey().getName() + "\" State:" + en.getKey().getState() + l, w);
+					IOUtils.write(asStack(en.getValue()) + l, w);
+				}
+				IOUtils.write("=== E V E N T B U S ===" + l, w);
+				if (inited) {
+					IOUtils.write("Active Events:" + l, w);
+					for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
+						IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
+					}
+				} else {
+					IOUtils.write("EventBus hasn't been initialized." + l, w);
+				}
+				IOUtils.write("=== S Y S T E M ===" + l, w);
+				IOUtils.write("Operating System:" + System.getProperty("os.name") + " "
+						+ System.getProperty("os.version") + " " + System.getProperty("os.arch") + l, w);
+				IOUtils.write(
+						"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l,
+						w);
+				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
+				IOUtils.write("LWJGL Version:" + Version.getVersion() + l, w);
+				IOUtils.write("OpenGL Version:Haven't been loaded" + l, w);
+				w.flush();
+				w.close();
+			} catch (IOException e2) {
+				logger.error("Write crash-report error.", e2);
+			}
+			UIManager.getLookAndFeel().provideErrorFeedback(null);
+			JOptionPane.showMessageDialog(null, "An error occurred!\n" + stack.replaceAll("\t", "    ")
+					+ "\nThe crash report has been saved in " + crash, "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
 	}
 }

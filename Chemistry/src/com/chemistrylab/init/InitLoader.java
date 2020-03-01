@@ -50,6 +50,14 @@ public class InitLoader {
 		CommonRender.drawAsciiFont(STATUS_MAP[status], 100, 383, 16, Color.black);
 		TextureLoader.drawLogo();
 	}
+	
+	public static void showReloadProgress() {
+		all_progress.setMax(4);
+		all_progress.setNow(3);
+		all_progress.render(100, 400, ChemistryLab.nowWidth - 200);
+		CommonRender.drawAsciiFont("Reloading Texture Resource", 100, 383, 16, Color.black);
+		TextureLoader.drawLogo();
+	}
 
 	public static TextureLoader getTextureLoader() {
 		return textureloader;

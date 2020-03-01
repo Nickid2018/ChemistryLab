@@ -14,10 +14,11 @@ public class I18N {
 	public static final Event I18N_RELOADED = Event.createNewEvent("I18N_reloaded");
 
 	// Locales
-	private static final Locale SYSTEM_DEFAULT = Locale.getDefault();
 	private static final Properties langStrings = new Properties();
 	private static final Properties langNameStrings = new Properties();
-	private static Locale NOW = SYSTEM_DEFAULT;
+	
+	public static final Locale SYSTEM_DEFAULT = Locale.getDefault();
+	public static Locale NOW;
 
 	// Load I18N file(s)
 	public static void load() throws Exception {

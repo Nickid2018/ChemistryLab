@@ -129,7 +129,7 @@ public class TextureLoader {
 
 		ChemistryLab.clearFace();
 		ChemistryLab.QUAD.render();
-		InitLoader.showAllProgress(0);
+		InitLoader.showReloadProgress();
 		CommonRender.showMemoryUsed();
 		ChemistryLab.flush();
 
@@ -167,8 +167,8 @@ public class TextureLoader {
 				ChemistryLab.QUAD.render();
 				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
-				InitLoader.showAllProgress(1);
-				CommonRender.drawAsciiFont("Loading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
+				InitLoader.showReloadProgress();
+				CommonRender.drawAsciiFont("Reloading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}
@@ -196,8 +196,8 @@ public class TextureLoader {
 				load_text.setNow(i + 1);
 				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
-				InitLoader.showAllProgress(2);
-				CommonRender.drawAsciiFont("Loading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443, 16,
+				InitLoader.showReloadProgress();
+				CommonRender.drawAsciiFont("Reloading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443, 16,
 						Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
