@@ -4,6 +4,7 @@ public final class BooleanProperty extends Property<Boolean> {
 
 	private boolean val;
 
+	@Override
 	public BooleanProperty setValue(Boolean b) {
 		val = b;
 		return this;

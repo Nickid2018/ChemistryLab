@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static com.chemistrylab.ChemistryLab.*;
 
-public class FastQuad implements VBOData{
+public class FastQuad implements VBOData {
 
 	public static final int POSTION_LEFT_UP = 0;
 	public static final int POSTION_LEFT_DOWN = 1;
@@ -169,11 +169,11 @@ public class FastQuad implements VBOData{
 	}
 
 	public static boolean shader_not_load = false;
-	
+
 	@Override
 	public final void reload() {
-		//First:Shader
-		if(shader_not_load){
+		// First:Shader
+		if (shader_not_load) {
 			shader_not_load = false;
 			try {
 				quad_pid = ShaderManager.MANAGER.createProgram();
@@ -192,7 +192,7 @@ public class FastQuad implements VBOData{
 				EventBus.postEvent(ev);
 			}
 		}
-		//Second:VAO,VBO
+		// Second:VAO,VBO
 		Vertex[] vertices = new Vertex[] { v0, v1, v2, v3 };
 		// Put each 'Vertex' in one FloatBuffer
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(4 * Vertex.sizeInBytes);

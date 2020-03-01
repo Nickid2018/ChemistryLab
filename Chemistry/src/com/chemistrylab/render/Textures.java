@@ -11,7 +11,7 @@ public class Textures extends HashMap<String, Texture> {
 	private static final long serialVersionUID = 5333716862597581852L;
 
 	public void releaseAll() {
-		forEach((s,t)->{
+		forEach((s, t) -> {
 			t.release();
 		});
 	}

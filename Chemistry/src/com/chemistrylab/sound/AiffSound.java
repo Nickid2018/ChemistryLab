@@ -5,7 +5,7 @@ import java.nio.*;
 import org.lwjgl.openal.*;
 import javax.sound.sampled.*;
 
-public final class AiffSound extends Sound{
+public final class AiffSound extends Sound {
 
 	private AiffData aiffFile;
 

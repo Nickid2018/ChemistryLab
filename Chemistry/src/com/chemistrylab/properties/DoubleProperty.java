@@ -4,6 +4,7 @@ public class DoubleProperty extends Property<Double> {
 
 	private double val;
 
+	@Override
 	public DoubleProperty setValue(Double d) {
 		val = d;
 		return this;

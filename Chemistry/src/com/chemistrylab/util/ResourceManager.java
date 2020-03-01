@@ -24,12 +24,11 @@ public class ResourceManager {
 	private static boolean canFuzzy = false;
 
 	private static final ReentrantLock reloadLock = new ReentrantLock();
-	
+
 	/**
 	 * Add a location that will be searched for resources
 	 * 
-	 * @param location
-	 *            The location that will be searched for resoruces
+	 * @param location The location that will be searched for resoruces
 	 */
 	public static void addResourceLocation(ResourceLocation location) {
 		reloadLock.lock();
@@ -40,8 +39,7 @@ public class ResourceManager {
 	/**
 	 * Remove a location that will be no longer be searched for resources
 	 * 
-	 * @param location
-	 *            The location that will be removed from the search list
+	 * @param location The location that will be removed from the search list
 	 */
 	public static void removeResourceLocation(ResourceLocation location) {
 		reloadLock.lock();
@@ -50,8 +48,8 @@ public class ResourceManager {
 	}
 
 	/**
-	 * Remove all the locations, no resources will be found until new locations
-	 * have been added
+	 * Remove all the locations, no resources will be found until new locations have
+	 * been added
 	 */
 	public static void removeAllResourceLocations() {
 		reloadLock.lock();
@@ -63,8 +61,7 @@ public class ResourceManager {
 	/**
 	 * Get a resource
 	 * 
-	 * @param ref
-	 *            The reference to the resource to retrieve
+	 * @param ref The reference to the resource to retrieve
 	 * @return A stream from which the resource can be read
 	 */
 	public static InputStream getResourceAsStream(String ref) {
@@ -74,10 +71,8 @@ public class ResourceManager {
 	/**
 	 * Get a resource
 	 * 
-	 * @param ref
-	 *            The reference to the resource to retrieve
-	 * @param seq
-	 *            If true, sequence the stream
+	 * @param ref The reference to the resource to retrieve
+	 * @param seq If true, sequence the stream
 	 * @return A stream from which the resource can be read
 	 */
 	public static InputStream getResourceAsStream(String ref, boolean seq) {
@@ -89,11 +84,10 @@ public class ResourceManager {
 		for (ResourceLocation location : locations) {
 			InputStream in = location.getResourceAsStream(ref);
 			if (in != null) {
-				if (!seq){
+				if (!seq) {
 					reloadLock.unlock();
 					return in;
-				}
-				else {
+				} else {
 					find = true;
 					lst.add(in);
 				}
@@ -112,8 +106,7 @@ public class ResourceManager {
 	/**
 	 * Check if a resource is available from any given resource loader
 	 * 
-	 * @param ref
-	 *            A reference to the resource that should be checked
+	 * @param ref A reference to the resource that should be checked
 	 * @return True if the resource can be located
 	 */
 	public static boolean resourceExists(String ref) {
@@ -132,8 +125,7 @@ public class ResourceManager {
 	/**
 	 * Get a resource as a URL
 	 * 
-	 * @param ref
-	 *            The reference to the resource to retrieve
+	 * @param ref The reference to the resource to retrieve
 	 * @return A URL from which the resource can be read
 	 */
 	public static URL getResource(String ref) {
@@ -153,7 +145,7 @@ public class ResourceManager {
 		reloadLock.lock();
 		for (ResourceLocation location : locations) {
 			OutputStream out = location.getOutputStream(ref);
-			if (out != null){
+			if (out != null) {
 				reloadLock.unlock();
 				return out;
 			}
@@ -181,8 +173,8 @@ public class ResourceManager {
 			((ZipFileLocation) location).flushFile();
 		}
 	}
-	
-	public static final void loadPacks(){
+
+	public static final void loadPacks() {
 		locations.add(new ClasspathLocation());
 		locations.add(new AbsoluteLocation());
 		locations.add(new FileSystemLocation(new File(".")));
@@ -200,8 +192,8 @@ public class ResourceManager {
 			}
 		}
 	}
-	
-	public static final void reloadPacks(){
+
+	public static final void reloadPacks() {
 		reloadLock.lock();
 		removeAllResourceLocations();
 		locations.add(new ClasspathLocation());

@@ -50,7 +50,7 @@ public class ChemicalMixture extends HashMap<ChemicalResource, Unit> {
 			EventBus.postEvent(post);
 			return ret;
 		} else {
-			//Set listen environment change
+			// Set listen environment change
 			Unit u = new Unit(value.getChemical(), value.getUnit(), value.getNum());
 			super.put(key, u);
 			lock.unlock();

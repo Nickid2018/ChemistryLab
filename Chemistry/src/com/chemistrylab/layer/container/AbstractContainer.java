@@ -74,7 +74,7 @@ public abstract class AbstractContainer extends Layer {
 
 	@Override
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		if (button != 0) {
 			float dx = (float) Mouse.getDX();

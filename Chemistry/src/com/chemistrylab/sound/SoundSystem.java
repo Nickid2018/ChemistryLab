@@ -85,7 +85,7 @@ public class SoundSystem {
 			logger.info("Loaded Sound System");
 			alcVersion = ALC10.alcGetInteger(device, ALC10.ALC_MAJOR_VERSION) + "."
 					+ ALC10.alcGetInteger(device, ALC10.ALC_MINOR_VERSION);
-			alVersion = AL11.alGetString(AL11.AL_VERSION);
+			alVersion = AL10.alGetString(AL10.AL_VERSION);
 			// Main Loop of Sound System
 			while (!stop) {
 				try {

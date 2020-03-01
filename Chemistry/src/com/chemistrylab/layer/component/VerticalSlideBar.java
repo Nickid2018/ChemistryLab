@@ -49,10 +49,10 @@ public class VerticalSlideBar extends Component {
 			// Bar
 			barcolor.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(range.x1 - barheight, drawup);
-				glVertex2f(range.x1 - barheight, drawdown);
-				glVertex2f(range.x1, drawdown);
-				glVertex2f(range.x1, drawup);
+			glVertex2f(range.x1 - barheight, drawup);
+			glVertex2f(range.x1 - barheight, drawdown);
+			glVertex2f(range.x1, drawdown);
+			glVertex2f(range.x1, drawup);
 			glEnd();
 			// Inside
 			int canDraws = MathHelper.fastFloor(mysize / vertsize);
@@ -91,10 +91,10 @@ public class VerticalSlideBar extends Component {
 			// Bar
 			barcolor.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(range.x1 - barheight, drawup);
-				glVertex2f(range.x1 - barheight, drawdown);
-				glVertex2f(range.x1, drawdown);
-				glVertex2f(range.x1, drawup);
+			glVertex2f(range.x1 - barheight, drawup);
+			glVertex2f(range.x1 - barheight, drawdown);
+			glVertex2f(range.x1, drawdown);
+			glVertex2f(range.x1, drawup);
 			glEnd();
 			// Inside
 			int canDraws = MathHelper.fastFloor(mysize / vertsize);
@@ -122,7 +122,7 @@ public class VerticalSlideBar extends Component {
 
 	@Override
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		if (!isClickLegal(10))
 			return;
@@ -150,7 +150,7 @@ public class VerticalSlideBar extends Component {
 			}
 		}
 	}
-	
+
 	@Override
 	public void onScroll(double xoffset, double yoffset) {
 		float mysize = range.y1 - range.y0;

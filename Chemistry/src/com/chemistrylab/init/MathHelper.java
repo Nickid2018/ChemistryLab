@@ -3,22 +3,22 @@ package com.chemistrylab.init;
 import java.util.*;
 
 public class MathHelper {
-	
+
 	public static final float SQRT_2 = sqrt(2.0F);
 	/**
-	 * A table of sin values computed from 0 (inclusive) to 2*pi (exclusive),
-	 * with steps of 2*PI / 65536.
+	 * A table of sin values computed from 0 (inclusive) to 2*pi (exclusive), with
+	 * steps of 2*PI / 65536.
 	 */
 	private static final float[] SIN_TABLE = new float[65536];
 	private static final Random RANDOM = new Random();
 	/**
-	 * Though it looks like an array, this is really more like a mapping. Key
-	 * (index of this array) is the upper 5 bits of the result of multiplying a
-	 * 32-bit unsigned integer by the B(2, 5) De Bruijn sequence 0x077CB531.
-	 * Value (value stored in the array) is the unique index (from the right) of
-	 * the leftmost one-bit in a 32-bit unsigned integer that can cause the
-	 * upper 5 bits to get that value. Used for highly optimized "find the
-	 * log-base-2 of this number" calculations.
+	 * Though it looks like an array, this is really more like a mapping. Key (index
+	 * of this array) is the upper 5 bits of the result of multiplying a 32-bit
+	 * unsigned integer by the B(2, 5) De Bruijn sequence 0x077CB531. Value (value
+	 * stored in the array) is the unique index (from the right) of the leftmost
+	 * one-bit in a 32-bit unsigned integer that can cause the upper 5 bits to get
+	 * that value. Used for highly optimized "find the log-base-2 of this number"
+	 * calculations.
 	 */
 	private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION;
 	private static final double FRAC_BIAS;
@@ -52,7 +52,7 @@ public class MathHelper {
 	}
 
 	public static float sqrt(float value) {
-		return (float) Math.sqrt((double) value);
+		return (float) Math.sqrt(value);
 	}
 
 	public static float sqrt(double value) {
@@ -64,7 +64,7 @@ public class MathHelper {
 	 */
 	public static int floor(float value) {
 		int i = (int) value;
-		return value < (float) i ? i - 1 : i;
+		return value < i ? i - 1 : i;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class MathHelper {
 	 */
 	public static int floor(double value) {
 		int i = (int) value;
-		return value < (double) i ? i - 1 : i;
+		return value < i ? i - 1 : i;
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class MathHelper {
 	 */
 	public static long lfloor(double value) {
 		long i = (long) value;
-		return value < (double) i ? i - 1L : i;
+		return value < i ? i - 1L : i;
 	}
 
 	public static int absFloor(double value) {
@@ -107,17 +107,17 @@ public class MathHelper {
 
 	public static int ceil(float value) {
 		int i = (int) value;
-		return value > (float) i ? i + 1 : i;
+		return value > i ? i + 1 : i;
 	}
 
 	public static int ceil(double value) {
 		int i = (int) value;
-		return value > (double) i ? i + 1 : i;
+		return value > i ? i + 1 : i;
 	}
 
 	/**
-	 * Returns the value of the first parameter, clamped to be within the lower
-	 * and upper limits given by the second and third parameters.
+	 * Returns the value of the first parameter, clamped to be within the lower and
+	 * upper limits given by the second and third parameters.
 	 */
 	public static int clamp(int num, int min, int max) {
 		if (num < min) {
@@ -128,8 +128,8 @@ public class MathHelper {
 	}
 
 	/**
-	 * Returns the value of the first parameter, clamped to be within the lower
-	 * and upper limits given by the second and third parameters
+	 * Returns the value of the first parameter, clamped to be within the lower and
+	 * upper limits given by the second and third parameters
 	 */
 	public static float clamp(float num, float min, float max) {
 		if (num < min) {
@@ -323,31 +323,30 @@ public class MathHelper {
 	}
 
 	/**
-	 * Uses a B(2, 5) De Bruijn sequence and a lookup table to efficiently
-	 * calculate the log-base-two of the given value. Optimized for cases where
-	 * the input value is a power-of-two. If the input value is not a
-	 * power-of-two, then subtract 1 from the return value.
+	 * Uses a B(2, 5) De Bruijn sequence and a lookup table to efficiently calculate
+	 * the log-base-two of the given value. Optimized for cases where the input
+	 * value is a power-of-two. If the input value is not a power-of-two, then
+	 * subtract 1 from the return value.
 	 */
 	public static int log2DeBruijn(int value) {
 		value = isPowerOfTwo(value) ? value : smallestEncompassingPowerOfTwo(value);
-		return MULTIPLY_DE_BRUIJN_BIT_POSITION[(int) ((long) value * 125613361L >> 27) & 31];
+		return MULTIPLY_DE_BRUIJN_BIT_POSITION[(int) (value * 125613361L >> 27) & 31];
 	}
 
 	/**
-	 * Efficiently calculates the floor of the base-2 log of an integer value.
-	 * This is effectively the index of the highest bit that is set. For
-	 * example, if the number in binary is 0...100101, this will return 5.
+	 * Efficiently calculates the floor of the base-2 log of an integer value. This
+	 * is effectively the index of the highest bit that is set. For example, if the
+	 * number in binary is 0...100101, this will return 5.
 	 */
 	public static int log2(int value) {
 		return log2DeBruijn(value) - (isPowerOfTwo(value) ? 0 : 1);
 	}
 
 	/**
-	 * Rounds the first parameter up to the next interval of the second
-	 * parameter.
+	 * Rounds the first parameter up to the next interval of the second parameter.
 	 * 
-	 * For instance, {@code roundUp(1, 4)} returns 4; {@code roundUp(0, 4)}
-	 * returns 0; and {@code roundUp(4, 4)} returns 4.
+	 * For instance, {@code roundUp(1, 4)} returns 4; {@code roundUp(0, 4)} returns
+	 * 0; and {@code roundUp(4, 4)} returns 4.
 	 */
 	public static int roundUp(int number, int interval) {
 		if (interval == 0) {
@@ -365,7 +364,7 @@ public class MathHelper {
 	}
 
 	public static long getCoordinateRandom(int x, int y, int z) {
-		long i = (long) (x * 3129871) ^ (long) z * 116129781L ^ (long) y;
+		long i = x * 3129871 ^ z * 116129781L ^ y;
 		i = i * i * 42317861L + i * 11L;
 		return i;
 	}
@@ -400,8 +399,8 @@ public class MathHelper {
 	}
 
 	/**
-	 * Gets the decimal portion of the given double. For instance,
-	 * {@code frac(5.5)} returns {@code .5}.
+	 * Gets the decimal portion of the given double. For instance, {@code frac(5.5)}
+	 * returns {@code .5}.
 	 */
 	public static double frac(double number) {
 		return number - Math.floor(number);
@@ -494,7 +493,7 @@ public class MathHelper {
 
 	public static int hsvToRGB(float hue, float saturation, float value) {
 		int i = (int) (hue * 6.0F) % 6;
-		float f = hue * 6.0F - (float) i;
+		float f = hue * 6.0F - i;
 		float f1 = value * (1.0F - saturation);
 		float f2 = value * (1.0F - f * saturation);
 		float f3 = value * (1.0F - (1.0F - f) * saturation);
@@ -555,7 +554,7 @@ public class MathHelper {
 
 	static {
 		for (int i = 0; i < 65536; ++i) {
-			SIN_TABLE[i] = (float) Math.sin((double) i * Math.PI * 2.0D / 65536.0D);
+			SIN_TABLE[i] = (float) Math.sin(i * Math.PI * 2.0D / 65536.0D);
 		}
 
 		MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[] { 0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27,
@@ -565,7 +564,7 @@ public class MathHelper {
 		COS_TAB = new double[257];
 
 		for (int j = 0; j < 257; ++j) {
-			double d0 = (double) j / 256.0D;
+			double d0 = j / 256.0D;
 			double d1 = Math.asin(d0);
 			COS_TAB[j] = Math.cos(d1);
 			ASINE_TAB[j] = d1;

@@ -83,30 +83,30 @@ public class SlideAnimation extends Animation {
 			throw new IllegalArgumentException("direction");
 		}
 	}
-	
+
 	@Override
 	public void onContainerResized() {
-		if(onend == ON_END_PUSH)
+		if (onend == ON_END_PUSH)
 			layer.onContainerResized();
 	}
 
 	@Override
 	public void onEnd() {
-			switch (onend) {
-			case ON_END_PUSH:
-				LayerRender.pushLayer(layer);
-				break;
-			case ON_END_POP:
-				LayerRender.popLayer(layer);
-				break;
-			case ON_END_NODO:
-				break;
-			default:
-				throw new IllegalArgumentException("onend");
-			}
-			if (onend_event != null) {
-				onend_event.run();
-			}
+		switch (onend) {
+		case ON_END_PUSH:
+			LayerRender.pushLayer(layer);
+			break;
+		case ON_END_POP:
+			LayerRender.popLayer(layer);
+			break;
+		case ON_END_NODO:
+			break;
+		default:
+			throw new IllegalArgumentException("onend");
+		}
+		if (onend_event != null) {
+			onend_event.run();
+		}
 	}
 
 }

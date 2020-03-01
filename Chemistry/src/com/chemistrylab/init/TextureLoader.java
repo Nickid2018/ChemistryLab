@@ -197,8 +197,8 @@ public class TextureLoader {
 				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showReloadProgress();
-				CommonRender.drawAsciiFont("Reloading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443, 16,
-						Color.black);
+				CommonRender.drawAsciiFont("Reloading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443,
+						16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
 			}

@@ -113,7 +113,7 @@ public class LayerRender {
 		boolean find = false;
 		for (int i = layers.size() - 1; i >= 0; i--) {
 			Layer l = layers.elementAt(i);
-			if (l.checkRange(xpos, ypos)&&!(l instanceof Background)) {
+			if (l.checkRange(xpos, ypos) && !(l instanceof Background)) {
 				l.onCursorPositionChanged(xpos, ypos);
 				if (l.isMouseEventStop())
 					break;

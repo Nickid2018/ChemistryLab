@@ -11,8 +11,7 @@ public interface EventBusListener {
 	/**
 	 * Return true if the listener will receive the event.
 	 * 
-	 * @param e
-	 *            The event to check
+	 * @param e The event to check
 	 * @return True if the listener will receive the event
 	 */
 	public default boolean receiveEvents(Event e) {
@@ -22,8 +21,7 @@ public interface EventBusListener {
 	/**
 	 * Receive an event.
 	 * 
-	 * @param e
-	 *            The event to receive
+	 * @param e The event to receive
 	 */
 	public void listen(Event e);
 }

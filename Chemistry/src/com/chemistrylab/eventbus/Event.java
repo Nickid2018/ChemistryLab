@@ -3,10 +3,10 @@ package com.chemistrylab.eventbus;
 import java.util.*;
 import com.chemistrylab.init.*;
 
-public abstract class Event implements Cloneable ,Comparable<Event>{
+public abstract class Event implements Cloneable, Comparable<Event> {
 
 	public static final Event NULL_EVENT = Event.createNewEvent("Null");
-	
+
 	protected final String name;
 	protected boolean canceled = false;
 	protected UUID eventId = MathHelper.getRandomUUID();
@@ -19,8 +19,7 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 	/**
 	 * Create a new event and register it.
 	 * 
-	 * @param name
-	 *            The name of the event
+	 * @param name The name of the event
 	 * @return A new event
 	 */
 	public static final Event createNewEvent(String name) {
@@ -48,10 +47,8 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 	/**
 	 * Put an extra information into the event.
 	 * 
-	 * @param id
-	 *            The ID of the object
-	 * @param obj
-	 *            An object to put
+	 * @param id  The ID of the object
+	 * @param obj An object to put
 	 */
 	public void putExtra(int id, Object obj) {
 		extras.put(id, obj);
@@ -60,8 +57,7 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 	/**
 	 * Get the extra information from the event.
 	 * 
-	 * @param id
-	 *            The ID of the object
+	 * @param id The ID of the object
 	 * @return An object of the ID.
 	 */
 	public Object getExtra(int id) {
@@ -95,8 +91,8 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 			return false;
 		return eventId.equals(((Event) obj).eventId);
 	}
-	
-	public boolean strictEquals(Object obj){
+
+	public boolean strictEquals(Object obj) {
 		return super.equals(obj);
 	}
 
@@ -112,7 +108,7 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 		}
 		return sb.toString();
 	}
-	
+
 	@Override
 	public int compareTo(Event o) {
 		return name.compareTo(o.name);
@@ -123,25 +119,26 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 	 * 
 	 * @return A new copy with the same UUID
 	 */
+	@Override
 	public abstract Event clone();
-	
-	public static class CompleteComparedEvent extends Event{
-		
+
+	public static class CompleteComparedEvent extends Event {
+
 		private Event ev;
-		
-		public CompleteComparedEvent(Event e){
+
+		public CompleteComparedEvent(Event e) {
 			super(e.name);
 			ev = e;
 			canceled = e.canceled;
 			eventId = e.eventId;
 			extras = e.extras;
 		}
-		
+
 		@Override
 		public int compareTo(Event o) {
 			return super.compareTo(o) + extras.hashCode() - o.extras.hashCode();
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			return ev.strictEquals(obj);
@@ -151,7 +148,7 @@ public abstract class Event implements Cloneable ,Comparable<Event>{
 		public Event clone() {
 			return null;
 		}
-		
+
 		@Override
 		public String toString() {
 			return ev.toString();

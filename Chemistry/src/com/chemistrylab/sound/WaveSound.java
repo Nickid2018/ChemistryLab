@@ -5,7 +5,7 @@ import java.nio.*;
 import org.lwjgl.openal.*;
 import javax.sound.sampled.*;
 
-public final class WaveSound extends Sound{
+public final class WaveSound extends Sound {
 
 	private WaveData waveFile;
 

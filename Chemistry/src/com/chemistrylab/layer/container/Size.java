@@ -1,7 +1,7 @@
 package com.chemistrylab.layer.container;
 
 public class Size {
-	
+
 	String name;
 	int volume;
 	int diameter;

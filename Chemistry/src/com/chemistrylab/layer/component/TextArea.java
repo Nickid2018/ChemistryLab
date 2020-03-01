@@ -32,7 +32,7 @@ public class TextArea extends Component {
 		slibarx.x1 = x1;
 		slibarx.y0 = y0;
 		slibarx.y1 = y1;
-		
+
 		slibary.x0 = x0;
 		slibary.x1 = x1;
 		slibary.y0 = y1 - barheight;
@@ -62,11 +62,11 @@ public class TextArea extends Component {
 	public void setTextColor(Color textc) {
 		this.textc = textc;
 	}
-	
+
 	public int getBarHeight() {
 		return barheight;
 	}
-	
+
 	public Color getBarcolor() {
 		return barcolor;
 	}
@@ -86,23 +86,23 @@ public class TextArea extends Component {
 		float adddrawY = winToOthHeight(size);
 		int skip = 0;
 		for (String s : lines) {
-			if(skip < xpostion){
+			if (skip < xpostion) {
 				skip++;
 				continue;
 			}
 			maxWidth = Math.max(maxWidth, s.length());
-			s = s.substring(xpostion, s.length() < xpostion?xpostion:s.length());
+			s = s.substring(xpostion, s.length() < xpostion ? xpostion : s.length());
 			float len = calcTextWidth(s, size);
 			if (len > range.x1 - range.x0) {
 				s = subTextWidth(s, size, range.x1 - range.x0);
 			}
 			drawFont(s, range.x0, lasty, size, textc);
 			lasty += adddrawY;
-			if(lasty > vertsize){
+			if (lasty > vertsize) {
 				break;
 			}
 		}
-		//Horizon
+		// Horizon
 		float shouldDrawx = maxWidth * size;
 		if (shouldDrawx > honzsize) {
 			float percent = honzsize / shouldDrawx;
@@ -116,13 +116,13 @@ public class TextArea extends Component {
 			// Bar
 			barcolor.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(drawup, range.y1 - barheight);
-				glVertex2f(drawdown, range.y1 - barheight);
-				glVertex2f(drawdown, range.y1);
-				glVertex2f(drawup, range.y1);
+			glVertex2f(drawup, range.y1 - barheight);
+			glVertex2f(drawdown, range.y1 - barheight);
+			glVertex2f(drawdown, range.y1);
+			glVertex2f(drawup, range.y1);
 			glEnd();
 		}
-		//Vertical
+		// Vertical
 		float shouldDrawy = lines.length * size;
 		if (shouldDrawy > vertsize) {
 			float percent = vertsize / shouldDrawy;
@@ -136,10 +136,10 @@ public class TextArea extends Component {
 			// Bar
 			barcolor.bind();
 			glBegin(GL_QUADS);
-				glVertex2f(range.x1 - barheight, drawup);
-				glVertex2f(range.x1 - barheight, drawdown);
-				glVertex2f(range.x1, drawdown);
-				glVertex2f(range.x1, drawup);
+			glVertex2f(range.x1 - barheight, drawup);
+			glVertex2f(range.x1 - barheight, drawdown);
+			glVertex2f(range.x1, drawdown);
+			glVertex2f(range.x1, drawup);
 			glEnd();
 		}
 	}

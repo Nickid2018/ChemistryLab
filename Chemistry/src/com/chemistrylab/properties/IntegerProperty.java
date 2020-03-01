@@ -4,6 +4,7 @@ public class IntegerProperty extends Property<Long> {
 
 	private long val;
 
+	@Override
 	public IntegerProperty setValue(Long i) {
 		val = i;
 		return this;

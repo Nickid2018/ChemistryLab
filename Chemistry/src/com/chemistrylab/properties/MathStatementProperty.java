@@ -37,7 +37,7 @@ public class MathStatementProperty extends Property<Double> {
 	public MathStatementProperty setValue(Double t) {
 		throw new RuntimeException();
 	}
-	
+
 	@Override
 	public String toString() {
 		return ms.toString();

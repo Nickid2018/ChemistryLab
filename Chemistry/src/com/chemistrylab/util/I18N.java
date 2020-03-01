@@ -16,7 +16,7 @@ public class I18N {
 	// Locales
 	private static final Properties langStrings = new Properties();
 	private static final Properties langNameStrings = new Properties();
-	
+
 	public static final Locale SYSTEM_DEFAULT = Locale.getDefault();
 	public static Locale NOW;
 

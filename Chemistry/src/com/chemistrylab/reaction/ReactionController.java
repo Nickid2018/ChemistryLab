@@ -31,7 +31,7 @@ public class ReactionController implements EventBusListener {
 	@Override
 	public void listen(Event e) {
 		if (e.equals(ChemicalMixture.CHEMICAL_CHANGED)) {
-			//Stop tick-update
+			// Stop tick-update
 			stopNow = true;
 			Object get;
 			if ((get = e.getExtra(ChemicalMixture.CHEMICAL_ADDED)) != null) {
@@ -39,7 +39,7 @@ public class ReactionController implements EventBusListener {
 				// Add Reactions
 				chem.foreach(r -> {
 					Set<ChemicalResource> reacts = r.reacts.keySet();
-					//Check Chemical
+					// Check Chemical
 					for (ChemicalResource c : reacts) {
 						if (c.equals(chem))
 							continue;
@@ -49,11 +49,11 @@ public class ReactionController implements EventBusListener {
 					reactions.add(r);
 				});
 			}
-			//Override shadow mixture
+			// Override shadow mixture
 			shadow.copy(mix);
 		} else if (e.equals(Ticker.NEXT_TICK)) {
-			//Tick update
-			//Destination Speed = 0.04s x Environment.speed
+			// Tick update
+			// Destination Speed = 0.04s x Environment.speed
 			for (Reaction r : reactions) {
 				if (stopNow) {
 					stopNow = false;
@@ -62,8 +62,8 @@ public class ReactionController implements EventBusListener {
 				}
 				r.doReaction(shadow);
 			}
-			if(stopNow){
-				//Override display mixture
+			if (stopNow) {
+				// Override display mixture
 				if (!shadow.equals(mix)) {
 					mix.copy(shadow);
 				}

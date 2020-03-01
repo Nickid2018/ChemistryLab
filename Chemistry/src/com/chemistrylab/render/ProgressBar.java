@@ -88,23 +88,23 @@ public final class ProgressBar {
 		glLineWidth(1);
 		edgecolor.bind();
 		glBegin(GL_LINE_LOOP);
-			glVertex2f(x, y);
-			glVertex2f(x + f, y);
-			glVertex2f(x + f, y + height);
-			glVertex2f(x, y + height);
+		glVertex2f(x, y);
+		glVertex2f(x + f, y);
+		glVertex2f(x + f, y + height);
+		glVertex2f(x, y + height);
 		glEnd();
 		fillcolor.bind();
 		glBegin(GL_QUADS);
-			glVertex2f(x, y);
-			glVertex2f(x + (float) f * (float) now / (float) max, y);
-			glVertex2f(x + (float) f * (float) now / (float) max, y + height - 1);
-			glVertex2f(x, y + height - 1);
+		glVertex2f(x, y);
+		glVertex2f(x + f * (float) now / (float) max, y);
+		glVertex2f(x + f * (float) now / (float) max, y + height - 1);
+		glVertex2f(x, y + height - 1);
 		glEnd();
 		if (maskenabled) {
 			maskcolor.bind();
 			glBegin(GL_LINE_STRIP);
-				glVertex2f(x + (float) f * (float) mask / (float) max, y);
-				glVertex2f(x + (float) f * (float) mask / (float) max, y + height - 1);
+			glVertex2f(x + f * (float) mask / (float) max, y);
+			glVertex2f(x + f * (float) mask / (float) max, y + height - 1);
 			glEnd();
 		}
 	}

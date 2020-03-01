@@ -4,7 +4,7 @@ import java.nio.*;
 import org.lwjgl.openal.*;
 
 public abstract class Sound {
-	
+
 	protected int index;
 	protected int source;
 	protected int address;

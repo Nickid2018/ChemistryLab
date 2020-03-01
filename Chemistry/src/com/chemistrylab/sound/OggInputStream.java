@@ -65,10 +65,8 @@ public class OggInputStream {
 	/**
 	 * Create a new stream to decode OGG data
 	 * 
-	 * @param input
-	 *            The input stream from which to read the OGG file
-	 * @throws IOException
-	 *             Indicates a failure to read from the supplied stream
+	 * @param input The input stream from which to read the OGG file
+	 * @throws IOException Indicates a failure to read from the supplied stream
 	 */
 	public OggInputStream(InputStream input) throws IOException {
 		this.input = input;
@@ -103,8 +101,7 @@ public class OggInputStream {
 	/**
 	 * Initialise the streams and thread involved in the streaming of OGG data
 	 * 
-	 * @throws IOException
-	 *             Indicates a failure to link up the streams
+	 * @throws IOException Indicates a failure to link up the streams
 	 */
 	private void init() throws IOException {
 		initVorbis();
@@ -278,8 +275,7 @@ public class OggInputStream {
 	/**
 	 * Decode the OGG file as shown in the jogg/jorbis examples
 	 * 
-	 * @throws IOException
-	 *             Indicates a failure to read from the supplied stream
+	 * @throws IOException Indicates a failure to read from the supplied stream
 	 */
 	private void readPCM() throws IOException {
 		boolean wrote = false;

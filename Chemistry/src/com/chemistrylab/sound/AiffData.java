@@ -27,12 +27,9 @@ public class AiffData {
 	/**
 	 * Creates a new AiffData
 	 * 
-	 * @param data
-	 *            actual Aiffdata
-	 * @param format
-	 *            format of Aiff data
-	 * @param samplerate
-	 *            sample rate of data
+	 * @param data       actual Aiffdata
+	 * @param format     format of Aiff data
+	 * @param samplerate sample rate of data
 	 */
 	private AiffData(ByteBuffer data, int format, int samplerate) {
 		this.data = data;
@@ -50,8 +47,7 @@ public class AiffData {
 	/**
 	 * Creates a AiffData container from the specified url
 	 * 
-	 * @param path
-	 *            URL to file
+	 * @param path URL to file
 	 * @return AiffData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -63,8 +59,7 @@ public class AiffData {
 	/**
 	 * Creates a AiffData container from the specified in the classpath
 	 * 
-	 * @param path
-	 *            path to file (relative, and in classpath)
+	 * @param path path to file (relative, and in classpath)
 	 * @return AiffData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -76,8 +71,7 @@ public class AiffData {
 	/**
 	 * Creates a AiffData container from the specified inputstream
 	 * 
-	 * @param is
-	 *            InputStream to read from
+	 * @param is InputStream to read from
 	 * @return AiffData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -89,8 +83,7 @@ public class AiffData {
 	/**
 	 * Creates a AiffData container from the specified bytes
 	 *
-	 * @param buffer
-	 *            array of bytes containing the complete Aiff file
+	 * @param buffer array of bytes containing the complete Aiff file
 	 * @return AiffData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -100,12 +93,11 @@ public class AiffData {
 	}
 
 	/**
-	 * Creates a AiffData container from the specified ByetBuffer. If the buffer
-	 * is backed by an array, it will be used directly, else the contents of the
-	 * buffer will be copied using get(byte[]).
+	 * Creates a AiffData container from the specified ByetBuffer. If the buffer is
+	 * backed by an array, it will be used directly, else the contents of the buffer
+	 * will be copied using get(byte[]).
 	 *
-	 * @param buffer
-	 *            ByteBuffer containing sound file
+	 * @param buffer ByteBuffer containing sound file
 	 * @return AiffData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -125,8 +117,7 @@ public class AiffData {
 	/**
 	 * Creates a AiffData container from the specified stream
 	 * 
-	 * @param ais
-	 *            AudioInputStream to read from
+	 * @param ais AudioInputStream to read from
 	 * @return AiffData containing data, or null if a failure occured
 	 * @throws IOException
 	 */
@@ -182,12 +173,9 @@ public class AiffData {
 	/**
 	 * Convert the audio bytes into the stream
 	 * 
-	 * @param format
-	 *            The audio format being decoded
-	 * @param audio_bytes
-	 *            The audio byts
-	 * @param two_bytes_data
-	 *            True if we using double byte data
+	 * @param format         The audio format being decoded
+	 * @param audio_bytes    The audio byts
+	 * @param two_bytes_data True if we using double byte data
 	 * @return The byte bufer of data
 	 */
 	private static ByteBuffer convertAudioBytes(AudioFormat format, byte[] audio_bytes, boolean two_bytes_data) {

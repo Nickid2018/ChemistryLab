@@ -21,11 +21,9 @@ public class OggData {
 	/**
 	 * Get the data out of an OGG file
 	 * 
-	 * @param input
-	 *            The input stream from which to read the OGG file
+	 * @param input The input stream from which to read the OGG file
 	 * @return The data describing the OGG thats been read
-	 * @throws IOException
-	 *             Indicaites a failure to read the OGG file
+	 * @throws IOException Indicaites a failure to read the OGG file
 	 */
 	public static OggData getData(InputStream input) throws IOException {
 		if (input == null) {

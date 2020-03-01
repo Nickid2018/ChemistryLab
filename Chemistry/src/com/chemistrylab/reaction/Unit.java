@@ -128,7 +128,7 @@ public class Unit implements EventBusListener {
 	@Override
 	public void listen(Event e) {
 		if (e.getExtra(Environment.ENVIRONMENT_CHANGE_ITEM).equals("gasmolv") && unit == UNIT_L) {
-			double old = (Double) ((DoubleProperty) (e.getExtra(Environment.ENVIRONMENT_OLD_VALUE))).getValue();
+			double old = ((DoubleProperty) (e.getExtra(Environment.ENVIRONMENT_OLD_VALUE))).getValue();
 			num = num / old * Environment.getGasMolV();
 		}
 	}

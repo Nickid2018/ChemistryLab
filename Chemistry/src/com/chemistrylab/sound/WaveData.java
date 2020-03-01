@@ -25,12 +25,9 @@ public class WaveData {
 	/**
 	 * Creates a new WaveData
 	 * 
-	 * @param data
-	 *            actual wavedata
-	 * @param format
-	 *            format of wave data
-	 * @param samplerate
-	 *            sample rate of data
+	 * @param data       actual wavedata
+	 * @param format     format of wave data
+	 * @param samplerate sample rate of data
 	 */
 	private WaveData(ByteBuffer data, int format, int samplerate) {
 		this.data = data;
@@ -48,8 +45,7 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified url
 	 * 
-	 * @param path
-	 *            URL to file
+	 * @param path URL to file
 	 * @return WaveData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -61,8 +57,7 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified in the classpath
 	 * 
-	 * @param path
-	 *            path to file (relative, and in classpath)
+	 * @param path path to file (relative, and in classpath)
 	 * @return WaveData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -74,8 +69,7 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified inputstream
 	 * 
-	 * @param is
-	 *            InputStream to read from
+	 * @param is InputStream to read from
 	 * @return WaveData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -87,8 +81,7 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified bytes
 	 *
-	 * @param buffer
-	 *            array of bytes containing the complete wave file
+	 * @param buffer array of bytes containing the complete wave file
 	 * @return WaveData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -98,12 +91,11 @@ public class WaveData {
 	}
 
 	/**
-	 * Creates a WaveData container from the specified ByetBuffer. If the buffer
-	 * is backed by an array, it will be used directly, else the contents of the
-	 * buffer will be copied using get(byte[]).
+	 * Creates a WaveData container from the specified ByetBuffer. If the buffer is
+	 * backed by an array, it will be used directly, else the contents of the buffer
+	 * will be copied using get(byte[]).
 	 *
-	 * @param buffer
-	 *            ByteBuffer containing sound file
+	 * @param buffer ByteBuffer containing sound file
 	 * @return WaveData containing data, or null if a failure occured
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
@@ -123,8 +115,7 @@ public class WaveData {
 	/**
 	 * Creates a WaveData container from the specified stream
 	 * 
-	 * @param ais
-	 *            AudioInputStream to read from
+	 * @param ais AudioInputStream to read from
 	 * @return WaveData containing data, or null if a failure occured
 	 */
 	public static WaveData create(AudioInputStream ais) {
@@ -168,8 +159,8 @@ public class WaveData {
 		// insert data into bytebuffer
 		ByteBuffer buffer = convertAudioBytes(buf, audioformat.getSampleSizeInBits() == 16);
 		/*
-		 * ByteBuffer buffer = ByteBuffer.allocateDirect(buf.length);
-		 * buffer.put(buf); buffer.rewind();
+		 * ByteBuffer buffer = ByteBuffer.allocateDirect(buf.length); buffer.put(buf);
+		 * buffer.rewind();
 		 */
 
 		// create our result
@@ -187,10 +178,8 @@ public class WaveData {
 	/**
 	 * Convert the audio bytes into the stream
 	 * 
-	 * @param audio_bytes
-	 *            The audio byts
-	 * @param two_bytes_data
-	 *            True if we using double byte data
+	 * @param audio_bytes    The audio byts
+	 * @param two_bytes_data True if we using double byte data
 	 * @return The byte bufer of data
 	 */
 	private static ByteBuffer convertAudioBytes(byte[] audio_bytes, boolean two_bytes_data) {

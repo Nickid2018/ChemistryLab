@@ -41,7 +41,7 @@ public class TextComponent extends Component {
 	public void setText(String s) {
 		this.s = s;
 	}
-	
+
 	@Override
 	public void onContainerResized() {
 	}
@@ -60,7 +60,8 @@ public class TextComponent extends Component {
 			if (aligncenter) {
 				start = (range.x1 + range.x0) / 2 - CommonRender.getFontLengthUNI(s, size) / 2.0f;
 			}
-			CommonRender.drawFontUNI(s, start, range.y0 / 2 + range.y1 / 2 - CommonRender.getFontHeightUNI(s, size) / 2.0f - 5, t, size);
+			CommonRender.drawFontUNI(s, start,
+					range.y0 / 2 + range.y1 / 2 - CommonRender.getFontHeightUNI(s, size) / 2.0f - 5, t, size);
 		}
 	}
 

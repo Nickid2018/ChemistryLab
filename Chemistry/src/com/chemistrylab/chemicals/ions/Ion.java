@@ -25,6 +25,7 @@ public class Ion extends Chemical {
 		return mess;
 	}
 
+	@Override
 	public boolean isActualMess() {
 		return true;
 	}

@@ -50,7 +50,7 @@ public class InitLoader {
 		CommonRender.drawAsciiFont(STATUS_MAP[status], 100, 383, 16, Color.black);
 		TextureLoader.drawLogo();
 	}
-	
+
 	public static void showReloadProgress() {
 		all_progress.setMax(4);
 		all_progress.setNow(3);

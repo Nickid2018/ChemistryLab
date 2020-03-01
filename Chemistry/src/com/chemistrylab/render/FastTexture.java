@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 import static com.chemistrylab.ChemistryLab.*;
 
-public class FastTexture implements VBOData{
+public class FastTexture implements VBOData {
 
 	public static final int POSTION_LEFT_UP = 0;
 	public static final int POSTION_LEFT_DOWN = 1;
@@ -185,16 +185,18 @@ public class FastTexture implements VBOData{
 	}
 
 	public static boolean shader_not_load = false;
-	
+
 	@Override
 	public void reload() {
-		//First:Shader
-		if(shader_not_load) {
+		// First:Shader
+		if (shader_not_load) {
 			shader_not_load = false;
 			try {
 				texture_pid = ShaderManager.MANAGER.createProgram();
-				texture_vsid = ShaderManager.MANAGER.attachVertexShader(texture_pid, "assets/shader/simple_texture.vsh");
-				texture_fsid = ShaderManager.MANAGER.attachFragmentShader(texture_pid, "assets/shader/simple_texture.fsh");
+				texture_vsid = ShaderManager.MANAGER.attachVertexShader(texture_pid,
+						"assets/shader/simple_texture.vsh");
+				texture_fsid = ShaderManager.MANAGER.attachFragmentShader(texture_pid,
+						"assets/shader/simple_texture.fsh");
 				// Position information will be attribute 0
 				glBindAttribLocation(texture_pid, 0, "in_Position");
 				// Color information will be attribute 1
@@ -210,7 +212,7 @@ public class FastTexture implements VBOData{
 				EventBus.postEvent(ev);
 			}
 		}
-		//Second:VBO
+		// Second:VBO
 		TextureVertex[] vertices = new TextureVertex[] { v0, v1, v2, v3 };
 		// Put each 'Vertex' in one FloatBuffer
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(4 * Vertex.sizeInBytes);

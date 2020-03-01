@@ -9,15 +9,17 @@ import java.net.*;
  * @author Nickid2018
  */
 public class ClasspathLocation implements ResourceLocation {
-	
+
+	@Override
 	public URL getResource(String ref) {
 		String cpRef = ref.replace('\\', '/');
 		return ClasspathLocation.class.getClassLoader().getResource(cpRef);
 	}
 
+	@Override
 	public InputStream getResourceAsStream(String ref) {
 		String cpRef = ref.replace('\\', '/');
-		return ClasspathLocation.class.getClassLoader().getResourceAsStream(cpRef);	
+		return ClasspathLocation.class.getClassLoader().getResourceAsStream(cpRef);
 	}
 
 	/*
@@ -29,4 +31,3 @@ public class ClasspathLocation implements ResourceLocation {
 	}
 
 }
-

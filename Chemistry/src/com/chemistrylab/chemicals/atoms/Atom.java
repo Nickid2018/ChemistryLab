@@ -18,6 +18,7 @@ public class Atom extends Chemical {
 		}
 	}
 
+	@Override
 	public double getMess() {
 		return mess;
 	}
@@ -26,6 +27,7 @@ public class Atom extends Chemical {
 		return valence;
 	}
 
+	@Override
 	public boolean isActualMess() {
 		return true;
 	}

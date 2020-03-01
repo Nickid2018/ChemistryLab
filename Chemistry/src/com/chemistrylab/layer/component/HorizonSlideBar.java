@@ -120,7 +120,7 @@ public class HorizonSlideBar extends Component {
 
 	@Override
 	public void onMouseEvent(int button, int action, int mods) {
-		if(action != GLFW.GLFW_PRESS)
+		if (action != GLFW.GLFW_PRESS)
 			return;
 		if (!isClickLegal(10))
 			return;
@@ -148,7 +148,7 @@ public class HorizonSlideBar extends Component {
 			}
 		}
 	}
-	
+
 	@Override
 	public void onScroll(double xoffset, double yoffset) {
 		float mysize = range.y1 - range.y0;

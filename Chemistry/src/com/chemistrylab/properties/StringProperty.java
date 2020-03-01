@@ -4,6 +4,7 @@ public class StringProperty extends Property<String> {
 
 	private String val;
 
+	@Override
 	public StringProperty setValue(String s) {
 		val = s;
 		return this;
