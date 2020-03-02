@@ -559,11 +559,11 @@ public class CommonRender {
 	}
 
 	public static float toRatioXPos(float x) {
-		return x / ChemistryLab.DREAM_WIDTH * ChemistryLab.nowWidth;
+		return x / 1280 * ChemistryLab.nowWidth;
 	}
 
 	public static float toRatioYPos(float y) {
-		return y / ChemistryLab.DREAM_HEIGHT * ChemistryLab.nowHeight;
+		return y / 720 * ChemistryLab.nowHeight;
 	}
 
 	public static float toGLX(float x) {

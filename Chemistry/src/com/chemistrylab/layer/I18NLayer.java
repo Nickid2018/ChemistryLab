@@ -17,8 +17,8 @@ public class I18NLayer extends Layer {
 
 	public I18NLayer() {
 		super(0, 0, nowWidth, nowHeight);
-		langs = new VerticalSlideBar(CommonRender.toRatioXPos(DREAM_WIDTH / 2 - 100), CommonRender.toRatioYPos(48),
-				CommonRender.toRatioXPos(DREAM_WIDTH / 2 + 300), CommonRender.toRatioYPos(DREAM_HEIGHT - 100), this,
+		langs = new VerticalSlideBar(CommonRender.toRatioXPos(nowWidth / 2 - 100), CommonRender.toRatioYPos(48),
+				CommonRender.toRatioXPos(nowWidth / 2 + 300), CommonRender.toRatioYPos(nowHeight - 100), this,
 				null, CommonRender.getFontHeightUNI("English", 32), 20);
 		langs.addEffect(new LineBorderEffect(3, Color.white));
 		flush();

@@ -845,7 +845,7 @@ public class ChemistryLab {
 			settings.load(is);
 			is.close();
 			DREAM_WIDTH = Integer.parseInt(settings.getProperty("width", "1280"));
-			DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "1280"));
+			DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "720"));
 			maxFPS = Integer.parseInt(settings.getProperty("maxfps", "100"));
 			DEFAULT_LOG_FILE = settings.getProperty("logdir", "logs");
 			String locale = settings.getProperty("locale", "default");
