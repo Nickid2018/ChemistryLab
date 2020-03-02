@@ -13,15 +13,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.APIUtil;
 import org.lwjgl.system.MemoryUtil;
 
-import com.chemistrylab.ChemistryLab;
-import com.chemistrylab.HotKeyMap;
-import com.chemistrylab.layer.LayerRender;
+import com.github.nickid2018.chemistrylab.layer.LayerRender;
 
 public class Window {
 	// Window State
 	public static boolean inited = false;
 	public static boolean recreateWindow = false;
-	
+
 	// Window Settings
 	public static float DREAM_WIDTH;
 	public static float DREAM_HEIGHT;
@@ -29,13 +27,15 @@ public class Window {
 	public static float nowHeight;
 	public static float oldWidth;
 	public static float oldHeight;
-	
 
 	// Callback Start!!
 
-	private static final GLFWErrorCallbackI error_callback = (error, description) -> ChemistryLab.logger.error("GLFW Error: "
-			+ APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000, null, GLFW.class).get(error)
-			+ "(0x" + Integer.toHexString(error) + ")-" + MemoryUtil.memUTF8(description));
+	private static final GLFWErrorCallbackI error_callback = (error,
+			description) -> ChemistryLab.logger
+					.error("GLFW Error: "
+							+ APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000, null,
+									GLFW.class).get(error)
+							+ "(0x" + Integer.toHexString(error) + ")-" + MemoryUtil.memUTF8(description));
 
 	private static final GLFWKeyCallbackI key_callback = (window, key, scancode, action, mods) -> {
 		HotKeyMap.activeKey(key, scancode, action, mods);
@@ -68,7 +68,7 @@ public class Window {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		LayerRender.windowResize();
 	};
-	
+
 	public static GLFWErrorCallbackI getErrorCallback() {
 		return error_callback;
 	}
