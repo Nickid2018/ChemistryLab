@@ -5,6 +5,7 @@ import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.util.concurrent.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.render.*;
 import com.chemistrylab.layer.component.*;
 
@@ -41,8 +42,8 @@ public abstract class Layer {
 	}
 
 	protected static final void doDefaultResize(Layer l) {
-		float ratioX = nowWidth / oldWidth;
-		float ratioY = nowHeight / oldHeight;
+		float ratioX = Window.nowWidth / Window.oldWidth;
+		float ratioY = Window.nowHeight / Window.oldHeight;
 		l.range.x0 *= ratioX;
 		l.range.x1 *= ratioX;
 		l.range.y0 *= ratioY;
@@ -133,8 +134,8 @@ public abstract class Layer {
 	}
 
 	public void onContainerResized() {
-		float ratioX = nowWidth / oldWidth;
-		float ratioY = nowHeight / oldHeight;
+		float ratioX = Window.nowWidth / Window.oldWidth;
+		float ratioY = Window.nowHeight / Window.oldHeight;
 		resizeSelf(ratioX, ratioY);
 		if (useComponent())
 			resizeComponents(ratioX, ratioY);

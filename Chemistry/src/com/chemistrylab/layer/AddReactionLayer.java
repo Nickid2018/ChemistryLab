@@ -4,6 +4,7 @@ import java.util.*;
 import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.render.*;
 import com.chemistrylab.reaction.*;
 import com.chemistrylab.chemicals.*;
@@ -22,9 +23,9 @@ public class AddReactionLayer extends Layer {
 	private TextComponent kl;
 
 	public AddReactionLayer() {
-		super(0, 0, nowWidth, nowHeight);
+		super(0, 0, Window.nowWidth, Window.nowHeight);
 		// UI
-		TextComponent title = new TextComponent(nowWidth / 2, CommonRender.toRatioYPos(50), nowWidth / 2,
+		TextComponent title = new TextComponent(Window.nowWidth / 2, CommonRender.toRatioYPos(50), Window.nowWidth / 2,
 				CommonRender.toRatioYPos(98), this, I18N.getString("addreact.title"), (button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
 		addComponent(title);
@@ -49,11 +50,11 @@ public class AddReactionLayer extends Layer {
 				}, 32, Color.white, true).setAlignCenter();
 		addComponent(labeld);
 		TextField reacts = new TextField(CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(128),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(160), this, 32);
+				CommonRender.toRatioXPos(Window.DREAM_WIDTH - 50), CommonRender.toRatioYPos(160), this, 32);
 		reacts.addEffect(new LineBorderEffect(1, Color.white));
 		addComponent(reacts);
 		TextField gets = new TextField(CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(188),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(220), this, 32);
+				CommonRender.toRatioXPos(Window.DREAM_WIDTH - 50), CommonRender.toRatioYPos(220), this, 32);
 		gets.addEffect(new LineBorderEffect(1, Color.white));
 		addComponent(gets);
 		TextField deltaHs = new TextField(CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(248),
@@ -65,12 +66,12 @@ public class AddReactionLayer extends Layer {
 		deltaSs.addEffect(new LineBorderEffect(1, Color.white));
 		addComponent(deltaSs);
 		TextComponent labele = new TextComponent(CommonRender.toRatioXPos(1000), CommonRender.toRatioYPos(240),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(288), this, "kJ/mol",
+				CommonRender.toRatioXPos(Window.DREAM_WIDTH - 50), CommonRender.toRatioYPos(288), this, "kJ/mol",
 				(button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
 		addComponent(labele);
 		TextComponent labelf = new TextComponent(CommonRender.toRatioXPos(1000), CommonRender.toRatioYPos(300),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(348), this, "J/(mol¡¤K)",
+				CommonRender.toRatioXPos(Window.DREAM_WIDTH - 50), CommonRender.toRatioYPos(348), this, "J/(mol¡¤K)",
 				(button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
 		addComponent(labelf);
@@ -78,7 +79,7 @@ public class AddReactionLayer extends Layer {
 				CommonRender.toRatioXPos(400), CommonRender.toRatioYPos(408), this, "K=", (button, action, mods) -> {
 				}, 32, Color.white, true).setAlignCenter();
 		ks = new TextField(CommonRender.toRatioXPos(400), CommonRender.toRatioYPos(368),
-				CommonRender.toRatioXPos(DREAM_WIDTH - 50), CommonRender.toRatioYPos(400), this, 32);
+				CommonRender.toRatioXPos(Window.DREAM_WIDTH - 50), CommonRender.toRatioYPos(400), this, 32);
 		ks.addEffect(new LineBorderEffect(1, Color.white));
 		rev = new TextComponent(CommonRender.toRatioXPos(50), CommonRender.toRatioYPos(360),
 				CommonRender.toRatioXPos(300), CommonRender.toRatioYPos(408), this,
@@ -98,8 +99,8 @@ public class AddReactionLayer extends Layer {
 				}, 32, Color.white, true).setAlignCenter();
 		rev.addEffect(new LineBorderEffect(3, Color.white));
 		addComponent(rev);
-		TextComponent ok = new TextComponent(CommonRender.toRatioXPos(DREAM_WIDTH / 5), CommonRender.toRatioYPos(500),
-				CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 2), CommonRender.toRatioYPos(548), this,
+		TextComponent ok = new TextComponent(CommonRender.toRatioXPos(Window.DREAM_WIDTH / 5), CommonRender.toRatioYPos(500),
+				CommonRender.toRatioXPos(Window.DREAM_WIDTH / 5 * 2), CommonRender.toRatioYPos(548), this,
 				I18N.getString("program.add"), (button, action, mods) -> {
 					if (button == 0 && action == GLFW.GLFW_PRESS) {
 						LayerRender.popLayer(this);
@@ -142,8 +143,8 @@ public class AddReactionLayer extends Layer {
 				}, 32, Color.white, true).setAlignCenter();
 		ok.addEffect(new LineBorderEffect(3, Color.white));
 		addComponent(ok);
-		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 3),
-				CommonRender.toRatioYPos(500), CommonRender.toRatioXPos(DREAM_WIDTH / 5 * 4),
+		TextComponent cancel = new TextComponent(CommonRender.toRatioXPos(Window.DREAM_WIDTH / 5 * 3),
+				CommonRender.toRatioYPos(500), CommonRender.toRatioXPos(Window.DREAM_WIDTH / 5 * 4),
 				CommonRender.toRatioYPos(548), this, I18N.getString("program.cancel"), (button, action, mods) -> {
 					if (action != GLFW.GLFW_PRESS)
 						return;
@@ -161,9 +162,9 @@ public class AddReactionLayer extends Layer {
 		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
-		glVertex2f(0, nowHeight);
-		glVertex2f(nowWidth, nowHeight);
-		glVertex2f(nowWidth, 0);
+		glVertex2f(0, Window.nowHeight);
+		glVertex2f(Window.nowWidth, Window.nowHeight);
+		glVertex2f(Window.nowWidth, 0);
 		glEnd();
 	}
 

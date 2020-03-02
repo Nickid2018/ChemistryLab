@@ -4,6 +4,7 @@ import java.util.*;
 import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.render.*;
 import com.chemistrylab.layer.effect.*;
 import com.chemistrylab.layer.component.*;
@@ -16,9 +17,9 @@ public class I18NLayer extends Layer {
 	private VerticalSlideBar langs;
 
 	public I18NLayer() {
-		super(0, 0, nowWidth, nowHeight);
-		langs = new VerticalSlideBar(CommonRender.toRatioXPos(nowWidth / 2 - 100), CommonRender.toRatioYPos(48),
-				CommonRender.toRatioXPos(nowWidth / 2 + 300), CommonRender.toRatioYPos(nowHeight - 100), this,
+		super(0, 0, Window.nowWidth, Window.nowHeight);
+		langs = new VerticalSlideBar(CommonRender.toRatioXPos(Window.nowWidth / 2 - 100), CommonRender.toRatioYPos(48),
+				CommonRender.toRatioXPos(Window.nowWidth / 2 + 300), CommonRender.toRatioYPos(Window.nowHeight - 100), this,
 				null, CommonRender.getFontHeightUNI("English", 32), 20);
 		langs.addEffect(new LineBorderEffect(3, Color.white));
 		flush();
@@ -67,9 +68,9 @@ public class I18NLayer extends Layer {
 		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
-		glVertex2f(0, nowHeight);
-		glVertex2f(nowWidth, nowHeight);
-		glVertex2f(nowWidth, 0);
+		glVertex2f(0, Window.nowHeight);
+		glVertex2f(Window.nowWidth, Window.nowHeight);
+		glVertex2f(Window.nowWidth, 0);
 		glEnd();
 	}
 

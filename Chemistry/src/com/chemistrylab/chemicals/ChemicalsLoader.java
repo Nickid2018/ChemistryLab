@@ -9,6 +9,7 @@ import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.render.*;
 
 public class ChemicalsLoader {
@@ -63,7 +64,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(1);
 				load_details.setNow(counter);
-				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
+				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading type class:" + ns, 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
@@ -96,7 +97,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(2);
 				load_details.setNow(counter);
-				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
+				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Atom[" + actualpath + "]", 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
@@ -118,7 +119,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(3);
 				load_details.setNow(counter);
-				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
+				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Ion[" + actualpath + "]", 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
@@ -141,7 +142,7 @@ public class ChemicalsLoader {
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(4);
 				load_details.setNow(counter);
-				load_details.render(100, 520, ChemistryLab.nowWidth - 200);
+				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Chemical[" + actualpath + "]", 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				ChemistryLab.flush();
@@ -151,7 +152,7 @@ public class ChemicalsLoader {
 
 	private static final void renderChemicalStatus(int i) {
 		load_chemical_status.setNow(i);
-		load_chemical_status.render(100, 460, ChemistryLab.nowWidth - 200);
+		load_chemical_status.render(100, 460, Window.nowWidth - 200);
 		CommonRender.drawAsciiFont(CHEMICAL_LOAD_STATUS[i - 1], 100, 443, 16, Color.black);
 	}
 

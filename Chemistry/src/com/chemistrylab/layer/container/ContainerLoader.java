@@ -8,6 +8,8 @@ import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
+
 import org.apache.commons.io.*;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -70,7 +72,7 @@ public class ContainerLoader {
 				ChemistryLab.clearFace();
 				ChemistryLab.QUAD.render();
 				load_con.setNow(i + 1);
-				load_con.render(100, 460, ChemistryLab.nowWidth - 200);
+				load_con.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
 				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);

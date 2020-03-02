@@ -6,6 +6,7 @@ import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import java.util.concurrent.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.init.*;
 import com.chemistrylab.render.*;
 
@@ -58,7 +59,7 @@ public class MessageBoard extends Layer {
 		message_list.removeAll(removes);
 		removes.clear();
 		range.x1 = 800;
-		range.y1 = ChemistryLab.nowHeight - 80;
+		range.y1 = Window.nowHeight - 80;
 		range.y0 = range.y1 - message_list.size() * 16;
 		// Update Vertex
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
@@ -88,7 +89,7 @@ public class MessageBoard extends Layer {
 		message_list.removeAll(removes);
 		removes.clear();
 		range.x1 = 800;
-		range.y1 = ChemistryLab.nowHeight - 80;
+		range.y1 = Window.nowHeight - 80;
 		range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
 		// Update Vertex
 		quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
@@ -105,7 +106,7 @@ public class MessageBoard extends Layer {
 	public void onContainerResized() {
 		doDefaultResize(this);
 		range.x1 = 800;
-		range.y1 = ChemistryLab.nowHeight - 80;
+		range.y1 = Window.nowHeight - 80;
 		if (ChemistryLab.f3) {
 			range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
 			// Update Vertex

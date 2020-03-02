@@ -3,6 +3,7 @@ package com.chemistrylab.layer;
 import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.render.*;
 import com.chemistrylab.layer.animation.*;
 import com.chemistrylab.layer.component.*;
@@ -12,10 +13,10 @@ import static com.chemistrylab.ChemistryLab.*;
 
 public class SideBar extends Layer {
 
-	public static final FastQuad SIDEBAR_QUAD = new FastQuad(0, 0, 0, nowHeight, new Color(150, 150, 150, 75), true);
+	public static final FastQuad SIDEBAR_QUAD = new FastQuad(0, 0, 0, Window.nowHeight, new Color(150, 150, 150, 75), true);
 
 	public SideBar() {
-		super(0, 0, 200, nowHeight);
+		super(0, 0, 200, Window.nowHeight);
 		addComponent(new TextComponent(12, 0, 200, 64, this, I18N.getString("sidebar.language.settings"),
 				(button, action, mods) -> {
 					if (button == 0 && action == GLFW.GLFW_PRESS) {
@@ -65,7 +66,7 @@ public class SideBar extends Layer {
 
 	@Override
 	public void onContainerResized() {
-		range.y1 = nowHeight;
+		range.y1 = Window.nowHeight;
 		SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_DOWN,
 				SIDEBAR_QUAD.getVertex(FastQuad.POSTION_RIGHT_DOWN).setXYZ(CommonRender.toGLX(200), -1, 0));
 		SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_UP,

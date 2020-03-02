@@ -15,6 +15,7 @@ import org.hyperic.sigar.*;
 import org.apache.log4j.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.init.*;
 import java.lang.management.*;
 import com.chemistrylab.layer.*;
@@ -32,14 +33,6 @@ public class ChemistryLab {
 
 	// Logger Of Main Thread
 	public static final Logger logger = Logger.getLogger("Main Looper");
-
-	// Window Settings
-	public static float DREAM_WIDTH;
-	public static float DREAM_HEIGHT;
-	public static float nowWidth;
-	public static float nowHeight;
-	public static float oldWidth;
-	public static float oldHeight;
 
 	public static String DEFAULT_LOG_FILE;
 
@@ -68,10 +61,6 @@ public class ChemistryLab {
 	// FPS Limit (P.S. The FPS often over the number -_||)
 	public static int maxFPS;
 
-	// Window State
-	private static boolean inited = false;
-	private static boolean recreateWindow = false;
-
 	// FPS and UPS
 	private static int fps;
 	private static int fpsCount;
@@ -81,44 +70,6 @@ public class ChemistryLab {
 	// Mouse Click
 	private static long lastTime;
 	private static long lastClick = -1;
-
-	// Callback Start!!
-
-	private static final GLFWErrorCallbackI error_callback = (error, description) -> logger.error("GLFW Error: "
-			+ APIUtil.apiClassTokens((field, value) -> 0x10000 < value && value < 0x20000, null, GLFW.class).get(error)
-			+ "(0x" + Integer.toHexString(error) + ")-" + MemoryUtil.memUTF8(description));
-
-	private static final GLFWKeyCallbackI key_callback = (window, key, scancode, action, mods) -> {
-		HotKeyMap.activeKey(key, scancode, action, mods);
-		LayerRender.postKey(key, scancode, action, mods);
-	};
-
-	private static final GLFWCharCallbackI char_callback = (window, codepoint) -> LayerRender.postCharInput(codepoint);
-
-	private static final GLFWCharModsCallbackI char_mod_callback = (window, codepoint, mods) -> LayerRender
-			.postModCharInput(codepoint, mods);
-
-	private static final GLFWMouseButtonCallbackI mouse_callback = (window, button, action, mods) -> LayerRender
-			.postMouse(button, action, mods);
-
-	private static final GLFWCursorPosCallbackI cursor_posi_callback = (window, xpos, ypos) -> LayerRender
-			.postCursorPos(xpos, ypos);
-
-	private static final GLFWScrollCallbackI scroll_callback = (window, xoffset, yoffset) -> LayerRender
-			.postScroll(xoffset, yoffset);
-
-	private static final GLFWFramebufferSizeCallbackI resize_callback = (window, width, height) -> {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GL11.glOrtho(0, width, height, 0, 1, -1);
-		GL11.glViewport(0, 0, width, height);
-		oldWidth = nowWidth;
-		oldHeight = nowHeight;
-		nowWidth = width;
-		nowHeight = height;
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		LayerRender.windowResize();
-	};
 
 	// Window Handle
 	public static long window;
@@ -132,10 +83,10 @@ public class ChemistryLab {
 		System.setProperty("org.lwjgl.librarypath", ".");
 		// Slick Library must use this to adapt LWJGL3.2.3
 		Renderer.setRenderer(new GLRender());
-		glfwSetErrorCallback(error_callback);
+		glfwSetErrorCallback(Window.getErrorCallback());
 		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
 			System.gc();
-			if (inited) {
+			if (Window.inited) {
 				Event error = THREAD_FATAL.clone();
 				error.putExtra(0, e);
 				error.putExtra(1, t);
@@ -161,19 +112,19 @@ public class ChemistryLab {
 			logger.info("GLFW Version:" + glfwGetVersionString());
 			LayerRender.logger.info("Creating window...");
 			glfwDefaultWindowHints();
-			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, "Chemistry Lab", NULL, NULL);
+			window = glfwCreateWindow((int) Window.DREAM_WIDTH, (int) Window.DREAM_HEIGHT, "Chemistry Lab", NULL, NULL);
 			if (window == NULL) {
 				glfwTerminate();
 				logger.error("Failed to create the GLFW window");
 				return;
 			}
-			glfwSetFramebufferSizeCallback(window, resize_callback);
-			glfwSetKeyCallback(window, key_callback);
-			glfwSetCharCallback(window, char_callback);
-			glfwSetCharModsCallback(window, char_mod_callback);
-			glfwSetMouseButtonCallback(window, mouse_callback);
-			glfwSetCursorPosCallback(window, cursor_posi_callback);
-			glfwSetScrollCallback(window, scroll_callback);
+			glfwSetFramebufferSizeCallback(window, Window.getResizeCallback());
+			glfwSetKeyCallback(window, Window.getKeyCallback());
+			glfwSetCharCallback(window, Window.getCharCallback());
+			glfwSetCharModsCallback(window, Window.getCharModCallback());
+			glfwSetMouseButtonCallback(window, Window.getMouseCallback());
+			glfwSetCursorPosCallback(window, Window.getCursorPosiCallback());
+			glfwSetScrollCallback(window, Window.getScrollCallback());
 			glfwMakeContextCurrent(window);
 
 			// Cursor
@@ -185,9 +136,9 @@ public class ChemistryLab {
 			GL.createCapabilities();
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
-			GL11.glOrtho(0, nowWidth, nowHeight, 0, 1, -1);
+			GL11.glOrtho(0, Window.nowWidth, Window.nowHeight, 0, 1, -1);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
-			GL11.glViewport(0, 0, (int) nowWidth, (int) nowHeight);
+			GL11.glViewport(0, 0, (int) Window.nowWidth, (int) Window.nowHeight);
 
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -211,8 +162,8 @@ public class ChemistryLab {
 				if (action != GLFW.GLFW_PRESS)
 					return;
 				GL11.glReadBuffer(GL11.GL_FRONT);
-				int width = (int) nowWidth;
-				int height = (int) nowHeight;
+				int width = (int) Window.nowWidth;
+				int height = (int) Window.nowHeight;
 				int bpp = 4; // Assuming a 32-bit display with a byte each for
 								// red, green, blue, and alpha.
 				ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
@@ -263,7 +214,7 @@ public class ChemistryLab {
 				// P.S. Recreate cannot be run to callback
 				fullScreen = !fullScreen;
 				logger.info("Fullscreen:" + (fullScreen ? "on" : "off"));
-				recreateWindow = true;
+				Window.recreateWindow = true;
 			});
 
 			// Init program
@@ -286,7 +237,7 @@ public class ChemistryLab {
 			LayerRender.pushLayer(MessageBoard.INSTANCE);
 			LayerRender.pushLayer(new ExpandBar());
 
-			inited = true;
+			Window.inited = true;
 
 			// Test Start Please From This(For Resource Needing)
 
@@ -304,8 +255,8 @@ public class ChemistryLab {
 				}
 
 				// Recreate Screen
-				if (recreateWindow) {
-					recreateWindow = false;
+				if (Window.recreateWindow) {
+					Window.recreateWindow = false;
 					// Recreate Window
 					swapFullScreen();
 				}
@@ -368,7 +319,7 @@ public class ChemistryLab {
 					IOUtils.write(asStack(en.getValue()) + l, w);
 				}
 				IOUtils.write("=== E V E N T B U S ===" + l, w);
-				if (inited) {
+				if (Window.inited) {
 					IOUtils.write("Active Events:" + l, w);
 					for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
 						IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
@@ -395,14 +346,14 @@ public class ChemistryLab {
 			}
 
 			// Error Screen
-			while (!glfwWindowShouldClose(window) && inited) {
+			while (!glfwWindowShouldClose(window) && Window.inited) {
 
 				clearFace();
 
 				// Cover Surface
 				QUAD.render();
 				CommonRender.drawFont("Program Crashed!",
-						nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
+						Window.nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
 				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
 						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
 				CommonRender.drawItaticFont(
@@ -510,18 +461,18 @@ public class ChemistryLab {
 		PointerBuffer pb = fullScreen ? glfwGetMonitors() : null;
 		long recreate = pb == null ? NULL : pb.get(0);
 		glfwDefaultWindowHints();
-		oldWidth = nowWidth;
-		oldHeight = nowHeight;
+		Window.oldWidth = Window.nowWidth;
+		Window.oldHeight = Window.nowHeight;
 		if (fullScreen) {
 			window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
 					CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate, NULL);
-			nowWidth = CommonRender.TOOLKIT.getScreenSize().width;
-			nowHeight = CommonRender.TOOLKIT.getScreenSize().height;
+			Window.nowWidth = CommonRender.TOOLKIT.getScreenSize().width;
+			Window.nowHeight = CommonRender.TOOLKIT.getScreenSize().height;
 		} else {
-			window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, I18N.getString("window.title"), recreate,
+			window = glfwCreateWindow((int) Window.DREAM_WIDTH, (int) Window.DREAM_HEIGHT, I18N.getString("window.title"), recreate,
 					NULL);
-			nowWidth = DREAM_WIDTH;
-			nowHeight = DREAM_HEIGHT;
+			Window.nowWidth = Window.DREAM_WIDTH;
+			Window.nowHeight = Window.DREAM_HEIGHT;
 		}
 		if (window == NULL) {
 			glfwTerminate();
@@ -529,19 +480,19 @@ public class ChemistryLab {
 			return;
 		}
 		// Callback re-bind
-		glfwSetFramebufferSizeCallback(window, resize_callback);
-		glfwSetKeyCallback(window, key_callback);
-		glfwSetCharCallback(window, char_callback);
-		glfwSetMouseButtonCallback(window, mouse_callback);
-		glfwSetScrollCallback(window, scroll_callback);
+		glfwSetFramebufferSizeCallback(window, Window.getResizeCallback());
+		glfwSetKeyCallback(window, Window.getKeyCallback());
+		glfwSetCharCallback(window, Window.getCharCallback());
+		glfwSetMouseButtonCallback(window, Window.getMouseCallback());
+		glfwSetScrollCallback(window, Window.getScrollCallback());
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		// Re-initialize OpenGL
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, nowWidth, nowHeight, 0, 1, -1);
+		GL11.glOrtho(0, Window.nowWidth, Window.nowHeight, 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glViewport(0, 0, (int) nowWidth, (int) nowHeight);
+		GL11.glViewport(0, 0, (int) Window.nowWidth, (int) Window.nowHeight);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Cursors
@@ -612,7 +563,7 @@ public class ChemistryLab {
 	 */
 	public static void release() {
 		logger.info("Stopping!");
-		if (inited)
+		if (Window.inited)
 			try {
 				Environment.saveSettings();
 			} catch (Exception e) {
@@ -630,13 +581,13 @@ public class ChemistryLab {
 		VertexDataManager.MANAGER.releaseResource();
 		ShaderManager.MANAGER.releaseResource();
 		glfwDestroyWindow(window);
-		if (inited) {
+		if (Window.inited) {
 			SoundSystem.stopProgram();
 			EventBus.releaseEventBus();
 		}
 		logger.info("Program stopped.Releasing resources used " + (getTime() - tt) + " milliseconds.");
 		glfwTerminate();
-		if (inited) {
+		if (Window.inited) {
 			// Wait Sound System Run Over
 			while (SoundSystem.isAlive()) {
 				try {
@@ -789,7 +740,7 @@ public class ChemistryLab {
 				IOUtils.write(asStack(en.getValue()) + l, w);
 			}
 			IOUtils.write("=== E V E N T B U S ===" + l, w);
-			if (inited) {
+			if (Window.inited) {
 				IOUtils.write("Active Events:" + l, w);
 				for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
 					IOUtils.write(en.getKey() + " " + en.getValue() + l, w);
@@ -844,8 +795,8 @@ public class ChemistryLab {
 			InputStream is = new FileInputStream("config/window.properties");
 			settings.load(is);
 			is.close();
-			DREAM_WIDTH = Integer.parseInt(settings.getProperty("width", "1280"));
-			DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "720"));
+			Window.DREAM_WIDTH = Integer.parseInt(settings.getProperty("width", "1280"));
+			Window.DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "720"));
 			maxFPS = Integer.parseInt(settings.getProperty("maxfps", "100"));
 			DEFAULT_LOG_FILE = settings.getProperty("logdir", "logs");
 			String locale = settings.getProperty("locale", "default");
@@ -853,10 +804,10 @@ public class ChemistryLab {
 				I18N.NOW = I18N.SYSTEM_DEFAULT;
 			else
 				I18N.NOW = Locale.forLanguageTag(locale);
-			nowWidth = DREAM_WIDTH;
-			nowHeight = DREAM_HEIGHT;
-			oldWidth = DREAM_WIDTH;
-			oldHeight = DREAM_HEIGHT;
+			Window.nowWidth = Window.DREAM_WIDTH;
+			Window.nowHeight = Window.DREAM_HEIGHT;
+			Window.oldWidth = Window.DREAM_WIDTH;
+			Window.oldHeight = Window.DREAM_HEIGHT;
 		} catch (Exception e1) {
 			logger.error("QAQ, the program crashed!", e1);
 			// Can't make window, use AWT

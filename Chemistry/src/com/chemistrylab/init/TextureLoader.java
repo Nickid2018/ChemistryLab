@@ -7,6 +7,7 @@ import org.apache.log4j.*;
 import com.chemistrylab.*;
 import org.newdawn.slick.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.render.*;
 import org.newdawn.slick.opengl.*;
 
@@ -29,7 +30,7 @@ public class TextureLoader {
 		// Initialize texture container
 		textureMap = new Textures();
 
-		ChemistryLab.QUAD = new FastQuad(0, 0, ChemistryLab.DREAM_WIDTH, ChemistryLab.DREAM_HEIGHT, Color.white);
+		ChemistryLab.QUAD = new FastQuad(0, 0, Window.DREAM_WIDTH, Window.DREAM_HEIGHT, Color.white);
 
 		// Pre Draw
 		ChemistryLab.clearFace();
@@ -71,7 +72,7 @@ public class TextureLoader {
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
 				ChemistryLab.QUAD.render();
-				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
+				load_text.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(1);
 				CommonRender.drawAsciiFont("Loading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
@@ -103,7 +104,7 @@ public class TextureLoader {
 				ChemistryLab.clearFace();
 				ChemistryLab.QUAD.render();
 				load_text.setNow(i + 1);
-				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
+				load_text.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
 				CommonRender.drawAsciiFont("Loading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443, 16,
@@ -165,7 +166,7 @@ public class TextureLoader {
 			if (ChemistryLab.getTime() - lastTime > 16) {
 				ChemistryLab.clearFace();
 				ChemistryLab.QUAD.render();
-				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
+				load_text.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showReloadProgress();
 				CommonRender.drawAsciiFont("Reloading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
@@ -194,7 +195,7 @@ public class TextureLoader {
 				ChemistryLab.clearFace();
 				ChemistryLab.QUAD.render();
 				load_text.setNow(i + 1);
-				load_text.render(100, 460, ChemistryLab.nowWidth - 200);
+				load_text.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showReloadProgress();
 				CommonRender.drawAsciiFont("Reloading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443,

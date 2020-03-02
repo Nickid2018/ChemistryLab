@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import org.newdawn.slick.*;
 import com.chemistrylab.init.*;
 import com.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.Window;
 import com.chemistrylab.layer.*;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -139,7 +140,7 @@ public class VerticalSlideBar extends Component {
 			float shouldDraw = cons.size() * vertsize;
 			float percent = mysize / shouldDraw;
 			float barlength = (percent > 1 ? 1 : percent) * mysize;
-			postion = (float) ((ChemistryLab.nowHeight - why - range.y0 - barlength / 2) / (mysize - barlength));
+			postion = (float) ((Window.nowHeight - why - range.y0 - barlength / 2) / (mysize - barlength));
 			postion = postion > 1 ? 1 : postion;
 			postion = postion < 0 ? 0 : postion;
 		} else {
