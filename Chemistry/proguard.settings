@@ -9,8 +9,12 @@
 -libraryjars libs\org\apache\commons\io-2.6\commons-io-2.6.jar
 -libraryjars libs\org\apache\log4j-1.2.17\log4j-1.2.17.jar
 -libraryjars libs\org\hyperic\sigar.jar
--libraryjars libs\org\lwjgl-2.9.3\lwjgl.jar
 -libraryjars libs\org\newdawn\slick.jar
+-libraryjars libs\org\lwjgl-3.2.3\lwjgl-glfw.jar
+-libraryjars libs\org\lwjgl-3.2.3\lwjgl-openal.jar
+-libraryjars libs\org\lwjgl-3.2.3\lwjgl-opengl.jar
+-libraryjars libs\org\lwjgl-3.2.3\lwjgl.jar
+-libraryjars libs\com\jcraft\jogg.jar
 
 -printmapping obfuscate.txt
 -ignorewarnings
@@ -27,11 +31,11 @@
 }
 
 -keep class com.chemistrylab.layer.container.AbstractContainer {
-    *** <init>(...);
+    <init>(...);
 }
 
 -keep class * extends com.chemistrylab.layer.container.AbstractContainer {
-    *** <init>(...);
+    <init>(...);
 }
 
 # Keep - Applications. Keep all application classes, along with their 'main' methods.

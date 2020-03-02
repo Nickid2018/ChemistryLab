@@ -293,8 +293,9 @@ public class ChemistryLab {
 			// Test End
 
 			// Main loop of program
-			long targetTime = 1000L / maxFPS;
 			while (!glfwWindowShouldClose(window)) {
+
+				long targetTime = 1000L / maxFPS;
 
 				// Status Changed
 				if (i18n_reload) {
@@ -381,9 +382,12 @@ public class ChemistryLab {
 				IOUtils.write(
 						"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l,
 						w);
-				IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
-				IOUtils.write("LWJGL Version:" + Version.getVersion() + l, w);
-				IOUtils.write("OpenGL Version:" + GL11.glGetString(GL11.GL_VERSION) + l, w);
+				IOUtils.write("Library Path: " + System.getProperty("java.library.path").replaceAll(";", l) + l, w);
+				IOUtils.write("LWJGL Version: " + Version.getVersion() + l, w);
+				IOUtils.write("GLFW Version: " + GLFW.glfwGetVersionString() + l, w);
+				IOUtils.write("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION) + l, w);
+				IOUtils.write(
+						"OpenAL Version: " + SoundSystem.getALVersion() + " ALC " + SoundSystem.getALCVersion() + l, w);
 				w.flush();
 				w.close();
 			} catch (IOException e2) {
@@ -401,7 +405,8 @@ public class ChemistryLab {
 						nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32, Color.red);
 				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
 						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
-				CommonRender.drawItaticFont("Please report this crash report to https://github.com/Nickid2018/", 20,
+				CommonRender.drawItaticFont(
+						"Please report this crash report to https://github.com/Nickid2018/ChemistryLab/", 20,
 						(int) (40 + CommonRender.winToOthHeight(CommonRender.formatSize(48))), 16, Color.blue, .32f);
 				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)),
 						16, Color.red);
@@ -797,9 +802,11 @@ public class ChemistryLab {
 					+ " " + System.getProperty("os.arch") + l, w);
 			IOUtils.write(
 					"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l, w);
-			IOUtils.write("Library Path:" + System.getProperty("java.library.path") + l, w);
+			IOUtils.write("Library Path:" + System.getProperty("java.library.path").replaceAll(";", l) + l, w);
 			IOUtils.write("LWJGL Version:" + Version.getVersion() + l, w);
-			IOUtils.write("OpenGL Version:Haven't been loaded" + l, w);
+			IOUtils.write("GLFW Version: Haven't been loaded" + l, w);
+			IOUtils.write("OpenGL Version: Haven't been loaded" + l, w);
+			IOUtils.write("OpenAL Version: Haven't been loaded" + l, w);
 			w.flush();
 			w.close();
 		} catch (IOException e2) {
