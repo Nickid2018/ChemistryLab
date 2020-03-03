@@ -10,7 +10,7 @@ import org.newdawn.slick.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.render.*;
-import com.github.nickid2018.chemistrylab.util.Mouse;
+import com.github.nickid2018.chemistrylab.window.Mouse;
 
 import java.awt.datatransfer.*;
 

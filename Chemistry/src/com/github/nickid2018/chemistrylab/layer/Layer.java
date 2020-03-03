@@ -5,6 +5,8 @@ import org.newdawn.slick.*;
 import java.util.concurrent.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Mouse;
+import com.github.nickid2018.chemistrylab.window.Window;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.layer.component.*;
 

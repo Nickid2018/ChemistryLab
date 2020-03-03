@@ -11,6 +11,7 @@ import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Mouse;
 
 public abstract class AbstractContainer extends Layer {
 

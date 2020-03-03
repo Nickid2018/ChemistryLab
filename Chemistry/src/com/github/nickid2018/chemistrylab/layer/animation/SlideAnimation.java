@@ -2,6 +2,7 @@ package com.github.nickid2018.chemistrylab.layer.animation;
 
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 public class SlideAnimation extends Animation {
 

@@ -4,6 +4,7 @@ import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.animation.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import static org.lwjgl.opengl.GL11.*;
 

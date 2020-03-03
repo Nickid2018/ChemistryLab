@@ -7,6 +7,9 @@ import org.newdawn.slick.*;
 
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.window.Cursor;
+import com.github.nickid2018.chemistrylab.window.Mouse;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 public class Message implements Cloneable {
 
@@ -101,12 +104,12 @@ public class Message implements Cloneable {
 
 	public void onCursorIn() {
 		if (haveEvent) {
-			GLFW.glfwSetCursor(ChemistryLab.window, ChemistryLab.HAND_CURSOR);
+			GLFW.glfwSetCursor(Window.window, Cursor.HAND_CURSOR);
 		}
 	}
 
 	public void onCursorOut() {
-		GLFW.glfwSetCursor(ChemistryLab.window, ChemistryLab.ARROW_CURSOR);
+		GLFW.glfwSetCursor(Window.window, Cursor.ARROW_CURSOR);
 	}
 
 	@Override

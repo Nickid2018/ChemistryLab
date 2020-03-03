@@ -1,4 +1,4 @@
-package com.github.nickid2018.chemistrylab;
+package com.github.nickid2018.chemistrylab.util;
 
 import java.util.*;
 import org.lwjgl.glfw.*;

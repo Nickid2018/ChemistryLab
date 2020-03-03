@@ -9,6 +9,7 @@ import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import org.apache.commons.io.*;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -68,7 +69,7 @@ public class ContainerLoader {
 				fails++;
 			}
 			if (ChemistryLab.getTime() - lastTime > 20) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				load_con.setNow(i + 1);
 				load_con.render(100, 460, Window.nowWidth - 200);
@@ -76,7 +77,7 @@ public class ContainerLoader {
 				InitLoader.showAllProgress(2);
 				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 		if (fails == 0) {

@@ -20,6 +20,9 @@ public class I18N {
 
 	public static final Locale SYSTEM_DEFAULT = Locale.getDefault();
 	public static Locale NOW;
+	
+	// Status
+	public static boolean i18nReload = false;
 
 	// Load I18N file(s)
 	public static void load() throws Exception {

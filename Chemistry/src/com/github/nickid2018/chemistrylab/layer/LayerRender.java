@@ -6,6 +6,7 @@ import org.apache.log4j.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.animation.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Mouse;
 
 import java.util.concurrent.*;
 
@@ -142,7 +143,7 @@ public class LayerRender {
 
 	public static void render() {
 		for (Layer l : layers) {
-			if (ChemistryLab.f3)
+			if (HotKeys.f3)
 				l.debugRender();
 			else if (l.useComponent())
 				l.compoRender();

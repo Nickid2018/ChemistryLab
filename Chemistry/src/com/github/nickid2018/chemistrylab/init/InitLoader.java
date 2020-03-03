@@ -7,6 +7,7 @@ import com.github.nickid2018.chemistrylab.layer.container.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import org.apache.log4j.*;
 import org.newdawn.slick.*;

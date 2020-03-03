@@ -3,11 +3,11 @@ package com.github.nickid2018.chemistrylab.layer;
 import org.lwjgl.glfw.*;
 import org.newdawn.slick.*;
 
-import com.github.nickid2018.chemistrylab.Window;
 import com.github.nickid2018.chemistrylab.layer.animation.*;
 import com.github.nickid2018.chemistrylab.layer.component.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import static com.github.nickid2018.chemistrylab.ChemistryLab.*;
 import static org.lwjgl.opengl.GL11.*;

@@ -8,6 +8,8 @@ import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Mouse;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import java.util.concurrent.*;
 
@@ -108,7 +110,7 @@ public class MessageBoard extends Layer {
 		doDefaultResize(this);
 		range.x1 = 800;
 		range.y1 = Window.nowHeight - 80;
-		if (ChemistryLab.f3) {
+		if (HotKeys.f3) {
 			range.y0 = range.y1 - Math.min(message_all.size(), 30) * 16;
 			// Update Vertex
 			quad.updateVertex(FastQuad.POSTION_LEFT_UP, quad.getVertex(FastQuad.POSTION_LEFT_UP).setXYZ(-1,
@@ -141,7 +143,7 @@ public class MessageBoard extends Layer {
 		double y = Mouse.getY();
 		int rep = MathHelper.floor((range.y1 - y) / 16);
 		try {
-			if (ChemistryLab.f3)
+			if (HotKeys.f3)
 				message_all.get(message_all.size() - rep - 1 - start).onMouseEvent(button, action, mods);
 			else
 				message_list.get(message_list.size() - rep - 1).onMouseEvent(button, action, mods);
@@ -161,7 +163,7 @@ public class MessageBoard extends Layer {
 		int rep = MathHelper.floor((range.y1 - ypos) / 16);
 		try {
 			Message now;
-			if (ChemistryLab.f3)
+			if (HotKeys.f3)
 				now = message_all.get(message_all.size() - rep - 1 - start);
 			else
 				now = message_list.get(message_list.size() - rep - 1);

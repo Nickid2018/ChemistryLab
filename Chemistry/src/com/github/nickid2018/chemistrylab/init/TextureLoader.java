@@ -10,6 +10,7 @@ import org.newdawn.slick.opengl.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -33,11 +34,11 @@ public class TextureLoader {
 		ChemistryLab.QUAD = new FastQuad(0, 0, Window.DREAM_WIDTH, Window.DREAM_HEIGHT, Color.white);
 
 		// Pre Draw
-		ChemistryLab.clearFace();
+		Window.clearFace();
 		ChemistryLab.QUAD.render();
 		InitLoader.showAllProgress(0);
 		CommonRender.showMemoryUsed();
-		ChemistryLab.flush();
+		Window.flush();
 
 		// Logo
 		Texture logo = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
@@ -70,14 +71,14 @@ public class TextureLoader {
 			}
 			load_text.setNow(++i);
 			if (ChemistryLab.getTime() - lastTime > 16) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				load_text.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(1);
 				CommonRender.drawAsciiFont("Loading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 		CommonRender.loadUnicodes(fonts);
@@ -101,7 +102,7 @@ public class TextureLoader {
 				textureMap.put(res[1], texture);
 			}
 			if (ChemistryLab.getTime() - lastTime > 20) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				load_text.setNow(i + 1);
 				load_text.render(100, 460, Window.nowWidth - 200);
@@ -110,7 +111,7 @@ public class TextureLoader {
 				CommonRender.drawAsciiFont("Loading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443, 16,
 						Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 		logger.info("Successfully loaded UI Textures.Used " + (ChemistryLab.getTime() - last_time) + " milliseconds.");
@@ -118,7 +119,7 @@ public class TextureLoader {
 
 	public void reloadTexture() throws Exception {
 
-		GLFW.glfwSetWindowTitle(ChemistryLab.window, "Reloading Textures, please wait a minute");
+		GLFW.glfwSetWindowTitle(Window.window, "Reloading Textures, please wait a minute");
 
 		// Initialize texture container
 		textureMap.releaseAll();
@@ -128,11 +129,11 @@ public class TextureLoader {
 				ResourceManager.getResourceAsStream("assets/textures/font/ascii.png"), GL_NEAREST);
 		textureMap.put("font.ascii.page", CommonRender.asciifont);
 
-		ChemistryLab.clearFace();
+		Window.clearFace();
 		ChemistryLab.QUAD.render();
 		InitLoader.showReloadProgress();
 		CommonRender.showMemoryUsed();
-		ChemistryLab.flush();
+		Window.flush();
 
 		// Logo
 		Texture logo = org.newdawn.slick.opengl.TextureLoader.getTexture("PNG",
@@ -164,14 +165,14 @@ public class TextureLoader {
 			}
 			load_text.setNow(++i);
 			if (ChemistryLab.getTime() - lastTime > 16) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				load_text.render(100, 460, Window.nowWidth - 200);
 				CommonRender.showMemoryUsed();
 				InitLoader.showReloadProgress();
 				CommonRender.drawAsciiFont("Reloading unicode font page[" + resource + "]", 100, 443, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 		CommonRender.loadUnicodes(fonts);
@@ -192,7 +193,7 @@ public class TextureLoader {
 				textureMap.put(res[1], texture);
 			}
 			if (ChemistryLab.getTime() - lastTime > 20) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				load_text.setNow(i + 1);
 				load_text.render(100, 460, Window.nowWidth - 200);
@@ -201,11 +202,11 @@ public class TextureLoader {
 				CommonRender.drawAsciiFont("Reloading GUI textures[assets/textures/gui/" + res[0] + ".png]", 100, 443,
 						16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 		logger.info("Successfully reloaded textures.Used " + (ChemistryLab.getTime() - last_time) + " milliseconds.");
-		GLFW.glfwSetWindowTitle(ChemistryLab.window, I18N.getString("window.title"));
+		GLFW.glfwSetWindowTitle(Window.window, I18N.getString("window.title"));
 	}
 
 	public static final void drawLogo() {

@@ -21,6 +21,7 @@ import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.sound.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 import static com.github.nickid2018.chemistrylab.ChemistryLab.*;
 import static com.github.nickid2018.chemistrylab.chemicals.ChemicalsLoader.*;
@@ -44,7 +45,7 @@ public class Background extends Layer {
 		tex.render();
 
 		// Debug Render Layer
-		if (f3) {
+		if (HotKeys.f3) {
 			float next = CommonRender.winToOthHeight(CommonRender.formatSize(16));
 
 			// Left part
@@ -106,7 +107,7 @@ public class Background extends Layer {
 					next * 11, 16, Color.white, true);
 
 			// With SHIFT---A mem & fps version
-			if (f3_with_shift) {
+			if (HotKeys.f3_with_shift) {
 				CommonRender.drawFont("FPS Infos:", 0, next * 6, 16, Color.white, true, new Color(255, 10, 10, 100));
 				Color.white.bind();
 				glBegin(GL_LINE_STRIP);
@@ -121,10 +122,10 @@ public class Background extends Layer {
 				new Color(255, 10, 10, 150).bind();
 				fpss.forEach(i -> {
 					glBegin(GL_QUADS);
-					glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+					glVertex2f(10 + count, next * 7 + 154 - 150.0f * i / FPS.maxFPS * 0.8f);
 					glVertex2f(10 + count, next * 7 + 154);
 					glVertex2f(10 + count + 1, next * 7 + 154);
-					glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / maxFPS * 0.8f);
+					glVertex2f(10 + count + 1, next * 7 + 154 - 150.0f * i / FPS.maxFPS * 0.8f);
 					glEnd();
 					count++;
 				});

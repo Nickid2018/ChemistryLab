@@ -4,6 +4,7 @@ import org.newdawn.slick.*;
 
 import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.ButtonClick;
 
 public class SlideTextComponent extends TextComponent implements Slidable {
 

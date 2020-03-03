@@ -10,6 +10,7 @@ import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 public class ChemicalsLoader {
 
@@ -57,7 +58,7 @@ public class ChemicalsLoader {
 			counter++;
 			// Show Time!
 			if (ChemistryLab.getTime() - lastTime > 16) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
@@ -66,7 +67,7 @@ public class ChemicalsLoader {
 				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading type class:" + ns, 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		});
 
@@ -90,7 +91,7 @@ public class ChemicalsLoader {
 			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
@@ -99,7 +100,7 @@ public class ChemicalsLoader {
 				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Atom[" + actualpath + "]", 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 	}
@@ -112,7 +113,7 @@ public class ChemicalsLoader {
 			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
@@ -121,7 +122,7 @@ public class ChemicalsLoader {
 				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Ion[" + actualpath + "]", 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 	}
@@ -135,7 +136,7 @@ public class ChemicalsLoader {
 			chemicals.put(sps[sps.length - 1], new ChemicalResource(actualpath, sps[sps.length - 1]).preInit());
 			counter++;
 			if (ChemistryLab.getTime() - lastTime > 16) {
-				ChemistryLab.clearFace();
+				Window.clearFace();
 				ChemistryLab.QUAD.render();
 				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
@@ -144,7 +145,7 @@ public class ChemicalsLoader {
 				load_details.render(100, 520, Window.nowWidth - 200);
 				CommonRender.drawAsciiFont("Loading Chemical[" + actualpath + "]", 100, 503, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
-				ChemistryLab.flush();
+				Window.flush();
 			}
 		}
 	}

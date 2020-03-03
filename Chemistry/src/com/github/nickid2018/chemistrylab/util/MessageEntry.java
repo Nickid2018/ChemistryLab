@@ -2,6 +2,8 @@ package com.github.nickid2018.chemistrylab.util;
 
 import org.newdawn.slick.*;
 
+import com.github.nickid2018.chemistrylab.window.ButtonClick;
+
 public class MessageEntry {
 
 	private String text = "";

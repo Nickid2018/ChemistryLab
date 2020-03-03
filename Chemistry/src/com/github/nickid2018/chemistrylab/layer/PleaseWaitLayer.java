@@ -8,6 +8,7 @@ import org.newdawn.slick.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.eventbus.*;
 import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.window.Window;
 
 public final class PleaseWaitLayer extends Layer {
 

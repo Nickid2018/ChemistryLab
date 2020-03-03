@@ -1,4 +1,4 @@
-package com.github.nickid2018.chemistrylab.util;
+package com.github.nickid2018.chemistrylab.window;
 
 import java.nio.*;
 import org.lwjgl.*;
@@ -12,16 +12,19 @@ public class Mouse {
 	private static DoubleBuffer ypos = BufferUtils.createDoubleBuffer(1);
 	private static double lastX = 0;
 	private static double lastY = 0;
+	// Mouse Click
+	public static long lastTime;
+	public static long lastClick = -1;
 
 	public static double getX() {
-		GLFW.glfwGetCursorPos(ChemistryLab.window, xpos, ypos);
+		GLFW.glfwGetCursorPos(Window.window, xpos, ypos);
 		double ret = xpos.get();
 		xpos.clear();
 		return ret;
 	}
 
 	public static double getY() {
-		GLFW.glfwGetCursorPos(ChemistryLab.window, xpos, ypos);
+		GLFW.glfwGetCursorPos(Window.window, xpos, ypos);
 		double ret = ypos.get();
 		ypos.clear();
 		return ret;

@@ -1,4 +1,4 @@
-package com.github.nickid2018.chemistrylab.util;
+package com.github.nickid2018.chemistrylab.window;
 
 @FunctionalInterface
 public interface ButtonClick {

@@ -6,6 +6,8 @@ import java.net.*;
 import org.apache.log4j.*;
 import org.apache.commons.io.*;
 import java.util.concurrent.locks.*;
+import java.util.function.Function;
+
 import org.apache.commons.io.filefilter.*;
 
 /**
@@ -129,25 +131,20 @@ public class ResourceManager {
 	 * @return A URL from which the resource can be read
 	 */
 	public static URL getResource(String ref) {
-		reloadLock.lock();
-		for (ResourceLocation location : locations) {
-			URL url = location.getResource(ref);
-			if (url != null) {
-				reloadLock.unlock();
-				return url;
-			}
-		}
-		reloadLock.unlock();
-		throw new RuntimeException("Resource not found: " + ref);
+		return (URL) getFile(ref, (loction) -> {return loction.getResource(ref);});
 	}
 
 	public static OutputStream getOutputStream(String ref) {
+		return (OutputStream) getFile(ref, (loction) -> {return loction.getOutputStream(ref);});
+	}
+	
+	public static Object getFile(String ref, Function<ResourceLocation, Object> function) {
 		reloadLock.lock();
 		for (ResourceLocation location : locations) {
-			OutputStream out = location.getOutputStream(ref);
-			if (out != null) {
+			Object obj =  function.apply(location);
+			if (obj != null) {
 				reloadLock.unlock();
-				return out;
+				return obj;
 			}
 		}
 		reloadLock.unlock();
@@ -178,7 +175,7 @@ public class ResourceManager {
 		locations.add(new ClasspathLocation());
 		locations.add(new AbsoluteLocation());
 		locations.add(new FileSystemLocation(new File(".")));
-		File resources = new File("resource");
+		File resources = new File("resources");
 		if (resources.isDirectory()) {
 			File[] files = resources.listFiles((FilenameFilter) new SuffixFileFilter("zip", IOCase.SYSTEM));
 			for (File f : files) {
@@ -196,22 +193,7 @@ public class ResourceManager {
 	public static final void reloadPacks() {
 		reloadLock.lock();
 		removeAllResourceLocations();
-		locations.add(new ClasspathLocation());
-		locations.add(new AbsoluteLocation());
-		locations.add(new FileSystemLocation(new File(".")));
-		File resources = new File("resource");
-		if (resources.isDirectory()) {
-			File[] files = resources.listFiles((FilenameFilter) new SuffixFileFilter("zip", IOCase.SYSTEM));
-			for (File f : files) {
-				String namespace = f.getName().split("\\.")[0];
-				try {
-					locations.add(new ZipFileLocation(namespace));
-					respacks.add(namespace);
-				} catch (IOException e) {
-					ResourceManager.logger.warn("Failed to load resource package " + namespace + ":" + e.getMessage());
-				}
-			}
-		}
+		loadPacks();
 		reloadLock.unlock();
 	}
 }
