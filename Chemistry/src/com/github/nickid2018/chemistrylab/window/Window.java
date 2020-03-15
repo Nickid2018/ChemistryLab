@@ -216,7 +216,7 @@ public class Window {
 		// Reload Resource
 		VertexDataManager.MANAGER.reload();
 		InitLoader.getTextureLoader().reloadTexture();
-		CommonRender.reloadFontUNI();
+//		CommonRender.reloadFontUNI();
 		// Send Resize
 		LayerRender.windowResize();
 	}

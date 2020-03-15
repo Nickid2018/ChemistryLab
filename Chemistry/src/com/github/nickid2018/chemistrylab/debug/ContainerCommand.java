@@ -3,12 +3,9 @@ package com.github.nickid2018.chemistrylab.debug;
 import java.util.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
-
-import org.newdawn.slick.Color;
-
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.layer.container.*;
 
 public class ContainerCommand extends Command {
 
@@ -60,15 +57,15 @@ public class ContainerCommand extends Command {
 				String model0 = split[1];
 				Map<String, Size> sizes0 = LOADER.getSizes(model0);
 				Message[] ms_r = new Message[sizes0.size() + 2];
-				ms_r[0] = new Message().addMessageEntry(
-						new MessageEntry(String.format(I18N.getString("command.container.model"), split[1]))
-								.setColor(Color.yellow));
+//				ms_r[0] = new Message().addMessageEntry(
+//						new MessageEntry(String.format(I18N.getString("command.container.model"), split[1]))
+//								.setColor(Color.yellow));
 				int i = 1;
 				for (Map.Entry<String, Size> en : sizes0.entrySet()) {
 					ms_r[i++] = new Message().addMessageEntry(new MessageEntry(en.getValue() + ""));
 				}
-				ms_r[i] = new Message()
-						.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
+//				ms_r[i] = new Message()
+//						.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 				return ms_r;
 			}
 		} catch (Exception e) {

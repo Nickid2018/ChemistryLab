@@ -1,7 +1,6 @@
 package com.github.nickid2018.chemistrylab.layer;
 
 import java.util.*;
-import org.newdawn.slick.*;
 import java.util.concurrent.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
@@ -32,13 +31,13 @@ public abstract class Layer {
 		range.y1 = y1;
 	}
 
-	public static final boolean checkRange(Range range, double x, double y) {
-		return CommonRender.othToWinWidth(range.x0) < x && CommonRender.othToWinWidth(range.x1) > x
-				&& CommonRender.othToWinHeight(range.y0) < y && CommonRender.othToWinHeight(range.y1) > y;
-	}
+//	public static final boolean checkRange(Range range, double x, double y) {
+//		return CommonRender.othToWinWidth(range.x0) < x && CommonRender.othToWinWidth(range.x1) > x
+//				&& CommonRender.othToWinHeight(range.y0) < y && CommonRender.othToWinHeight(range.y1) > y;
+//	}
 
 	public final boolean checkRange(double x, double y) {
-		return checkRange(range, x, y);
+		return /*checkRange(range, x, y)*/true;
 	}
 
 	protected static final void doDefaultResize(Layer l) {
@@ -59,7 +58,7 @@ public abstract class Layer {
 			compoRender();
 		else
 			render();
-		Color.red.bind();
+//		Color.red.bind();
 		glBegin(GL_LINE_LOOP);
 		glVertex2f(range.x0, range.y0);
 		glVertex2f(range.x1, range.y0);

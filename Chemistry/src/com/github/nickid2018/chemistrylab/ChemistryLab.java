@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import java.nio.*;
 import org.lwjgl.*;
-import javax.swing.*;
 import org.lwjgl.glfw.*;
 import javax.imageio.*;
 import java.awt.image.*;
@@ -12,21 +11,17 @@ import java.awt.Desktop;
 import org.lwjgl.opengl.*;
 import org.hyperic.sigar.*;
 import org.apache.log4j.*;
-import org.newdawn.slick.*;
 import java.lang.management.*;
 import org.apache.commons.io.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Cursor;
-import com.github.nickid2018.chemistrylab.window.Mouse;
-import com.github.nickid2018.chemistrylab.window.Window;
 import com.github.nickid2018.chemistrylab.layer.*;
-import org.newdawn.slick.opengl.renderer.Renderer;
 import com.github.nickid2018.chemistrylab.sound.*;
 import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.window.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.eventbus.*;
-import com.github.nickid2018.chemistrylab.exception.DefaultUncaughtExceptionHandler;
+import com.github.nickid2018.chemistrylab.exception.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -54,8 +49,6 @@ public class ChemistryLab {
 		Thread.currentThread().setName("Render Thread");
 
 		System.setProperty("org.lwjgl.librarypath", ".");
-		// Slick Library must use this to adapt LWJGL3.2.3
-		Renderer.setRenderer(new GLRender());
 		glfwSetErrorCallback(Window.getErrorCallback());
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler());
 
@@ -74,7 +67,8 @@ public class ChemistryLab {
 			logger.info("GLFW Version:" + glfwGetVersionString());
 			LayerRender.logger.info("Creating window...");
 			glfwDefaultWindowHints();
-			Window.window = glfwCreateWindow((int) Window.DREAM_WIDTH, (int) Window.DREAM_HEIGHT, "Chemistry Lab", NULL, NULL);
+			Window.window = glfwCreateWindow((int) Window.DREAM_WIDTH, (int) Window.DREAM_HEIGHT, "Chemistry Lab", NULL,
+					NULL);
 			if (Window.window == NULL) {
 				glfwTerminate();
 				logger.error("Failed to create the GLFW window");
@@ -164,8 +158,8 @@ public class ChemistryLab {
 													}
 												})));
 					} catch (Exception e) {
-						MessageBoard.INSTANCE.addMessage(new Message().addMessageEntry(
-								new MessageEntry(I18N.getString("screenshot.failed")).setColor(Color.red)));
+//						MessageBoard.INSTANCE.addMessage(new Message().addMessageEntry(
+//								new MessageEntry(I18N.getString("screenshot.failed")).setColor(Color.red)));
 					}
 				});
 			});
@@ -314,18 +308,18 @@ public class ChemistryLab {
 
 				// Cover Surface
 				QUAD.render();
-				CommonRender.drawFont("Program Crashed!",
-						Window.nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32,
-						Color.red);
-				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
-						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
-				CommonRender.drawItaticFont(
-						"Please report this crash report to https://github.com/Nickid2018/ChemistryLab/", 20,
-						(int) (40 + CommonRender.winToOthHeight(CommonRender.formatSize(48))), 16, Color.blue, .32f);
-				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)),
-						16, Color.red);
-				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16,
-						Color.yellow.darker(0.3f));
+//				CommonRender.drawFont("Program Crashed!",
+//						Window.nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32,
+//						Color.red);
+//				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
+//						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
+//				CommonRender.drawItaticFont(
+//						"Please report this crash report to https://github.com/Nickid2018/ChemistryLab/", 20,
+//						(int) (40 + CommonRender.winToOthHeight(CommonRender.formatSize(48))), 16, Color.blue, .32f);
+//				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)),
+//						16, Color.red);
+//				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16,
+//						Color.yellow.darker(0.3f));
 
 				checkGLError();
 				// Update Window
@@ -458,8 +452,8 @@ public class ChemistryLab {
 		}
 		long tt = getTime();
 		logger.info("Releasing resources.");
-		if (getTextures() != null)
-			getTextures().releaseAll();
+//		if (getTextures() != null)
+//			getTextures().releaseAll();
 		VertexDataManager.MANAGER.releaseResource();
 		ShaderManager.MANAGER.releaseResource();
 		glfwDestroyWindow(Window.window);
@@ -593,7 +587,7 @@ public class ChemistryLab {
 	public static final double getTotalMemory() {
 		return RUNTIME.maxMemory();
 	}
-	
+
 	static {
 		// Configure Log4j
 		// Warning: Do Not Use Resource Loader!

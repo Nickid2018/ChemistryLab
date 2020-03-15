@@ -1,17 +1,15 @@
 package com.github.nickid2018.chemistrylab.layer.container;
 
 import java.util.*;
-
-import org.lwjgl.glfw.GLFW;
-
+import org.lwjgl.glfw.*;
 import com.alibaba.fastjson.*;
-import com.github.nickid2018.chemistrylab.eventbus.*;
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.layer.*;
-import com.github.nickid2018.chemistrylab.reaction.*;
-import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Mouse;
+import com.github.nickid2018.chemistrylab.layer.*;
+import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.window.*;
+import com.github.nickid2018.chemistrylab.reaction.*;
+import com.github.nickid2018.chemistrylab.eventbus.*;
 
 public abstract class AbstractContainer extends Layer {
 
@@ -31,11 +29,11 @@ public abstract class AbstractContainer extends Layer {
 	@Override
 	public void render() {
 		// Back of container
-		layer_0.drawTexture(range.x0, range.y0, range.x1, range.y1);
+//		layer_0.drawTexture(range.x0, range.y0, range.x1, range.y1);
 		// Mixture
 
 		// Front of container
-		layer_1.drawTexture(range.x0, range.y0, range.x1, range.y1);
+//		layer_1.drawTexture(range.x0, range.y0, range.x1, range.y1);
 	}
 
 	public UUID getUUID() {

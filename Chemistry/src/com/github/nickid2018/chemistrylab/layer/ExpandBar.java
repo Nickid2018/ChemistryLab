@@ -1,7 +1,6 @@
 package com.github.nickid2018.chemistrylab.layer;
 
 import org.lwjgl.glfw.*;
-import org.newdawn.slick.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.animation.*;
 import com.github.nickid2018.chemistrylab.window.Window;
@@ -17,14 +16,14 @@ public class ExpandBar extends Layer {
 	@Override
 	public void render() {
 		// This block will be replaced by picture
-		new Color(150, 150, 150, 75).bind();
+//		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
 		glVertex2f(0, Window.nowHeight / 2 - 20);
 		glVertex2f(21, Window.nowHeight / 2 - 20);
 		glVertex2f(21, Window.nowHeight / 2 + 20);
 		glVertex2f(0, Window.nowHeight / 2 + 20);
 		glEnd();
-		new Color(255, 255, 255, 128).bind();
+//		new Color(255, 255, 255, 128).bind();
 		glBegin(GL_QUADS);
 		glVertex2f(1, Window.nowHeight / 2 - 19);
 		glVertex2f(4, Window.nowHeight / 2 - 19);

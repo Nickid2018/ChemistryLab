@@ -1,7 +1,5 @@
 package com.github.nickid2018.chemistrylab.layer.effect;
 
-import org.newdawn.slick.*;
-
 import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.layer.component.*;
 
@@ -10,12 +8,12 @@ import static org.lwjgl.opengl.GL11.*;
 public class LineBorderEffect implements Effect {
 
 	private int width;
-	private Color col;
+//	private Color col;
 
-	public LineBorderEffect(int width, Color col) {
-		this.width = width;
-		this.col = col;
-	}
+//	public LineBorderEffect(int width, Color col) {
+//		this.width = width;
+//		this.col = col;
+//	}
 
 	public int getWidth() {
 		return width;
@@ -25,18 +23,18 @@ public class LineBorderEffect implements Effect {
 		this.width = width;
 	}
 
-	public Color getColor() {
-		return col;
-	}
+//	public Color getColor() {
+//		return col;
+//	}
 
-	public void setColor(Color col) {
-		this.col = col;
-	}
+//	public void setColor(Color col) {
+//		this.col = col;
+//	}
 
 	@Override
 	public void effect(Component c) {
 		Range r = c.getRange();
-		col.bind();
+//		col.bind();
 		glLineWidth(width);
 		glBegin(GL_LINE_LOOP);
 		glVertex2f(r.x0, r.y0);

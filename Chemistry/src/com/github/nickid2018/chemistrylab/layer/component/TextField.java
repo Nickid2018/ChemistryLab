@@ -4,9 +4,6 @@ import java.io.*;
 import org.lwjgl.glfw.*;
 import java.awt.Toolkit;
 import java.util.function.*;
-
-import org.newdawn.slick.*;
-
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.render.*;
@@ -25,8 +22,8 @@ public class TextField extends Component {
 	private int selpostionstart = 0;
 	private int selpostionend = 0;
 	private int start_to_sel = 0;
-	private Color color = Color.white;
-	private Color selcolor = new Color(20, 20, 255, 150);
+//	private Color color = Color.white;
+//	private Color selcolor = new Color(20, 20, 255, 150);
 	private Consumer<String> fire_enter;
 
 	private static final Clipboard CLIP = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -66,13 +63,13 @@ public class TextField extends Component {
 		this.postion = postion;
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
-	}
+//	public Color getColor() {
+//		return color;
+//	}
+//
+//	public void setColor(Color color) {
+//		this.color = color;
+//	}
 
 	public Consumer<String> getEnterEvent() {
 		return fire_enter;
@@ -100,9 +97,9 @@ public class TextField extends Component {
 			if (started)
 				started_split = true;
 			else {
-				float len = CommonRender.winToOthWidth((float) Mouse.getX());
-				String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
-				postion = startpaint + s.length();
+//				float len = CommonRender.winToOthWidth((float) Mouse.getX());
+//				String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
+//				postion = startpaint + s.length();
 				selpostionstart = selpostionend = start_to_sel = 0;
 			}
 		}
@@ -112,9 +109,9 @@ public class TextField extends Component {
 	public void onCursorPositionChanged(double xpos, double ypos) {
 		if (!focus_on)
 			return;
-		float len = CommonRender.winToOthWidth((float) xpos);
-		String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
-		postion = startpaint + s.length();
+//		float len = CommonRender.winToOthWidth((float) xpos);
+//		String s = CommonRender.subTextWidth(pa.substring(startpaint), size, len - range.x0);
+//		postion = startpaint + s.length();
 		if (focus_on) {
 			if (started && !started_split) {
 				if (postion >= start_to_sel) {
@@ -178,21 +175,21 @@ public class TextField extends Component {
 			}
 			if (postion < startpaint) {
 				String sub = pa.substring(postion);
-				int lim = CommonRender.subTextWidth(sub, size, range.x1 - range.x0).length();
-				if (lim == sub.length()) {
-					StringBuilder bi = new StringBuilder(pa);
-					startpaint = pa.length()
-							- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
-				} else {
-					startpaint = postion;
-				}
+//				int lim = CommonRender.subTextWidth(sub, size, range.x1 - range.x0).length();
+//				if (lim == sub.length()) {
+//					StringBuilder bi = new StringBuilder(pa);
+//					startpaint = pa.length()
+//							- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
+//				} else {
+//					startpaint = postion;
+//				}
 			}
 			return;
 		}
 		// right
 		if (key == GLFW.GLFW_KEY_RIGHT) {
-			if (postion == startpaint + CommonRender.subTextWidth(pa.substring(startpaint), size, range.x1).length())
-				startpaint = startpaint <= pa.length() - 1 ? startpaint + 1 : startpaint;
+//			if (postion == startpaint + CommonRender.subTextWidth(pa.substring(startpaint), size, range.x1).length())
+//				startpaint = startpaint <= pa.length() - 1 ? startpaint + 1 : startpaint;
 			postion = postion <= pa.length() - 1 ? postion + 1 : postion;
 			if (shift_on) {
 				if (started) {
@@ -214,8 +211,8 @@ public class TextField extends Component {
 			if (postion > startpaint) {
 				String todeal = pa.substring(0, postion);
 				StringBuilder bi = new StringBuilder(todeal);
-				startpaint = postion
-						- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
+//				startpaint = postion
+//						- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
 			}
 			return;
 		}
@@ -237,14 +234,14 @@ public class TextField extends Component {
 			}
 			if (postion < startpaint) {
 				String sub = pa.substring(postion);
-				int lim = CommonRender.subTextWidth(sub, size, range.x1 - range.x0).length();
-				if (lim == sub.length()) {
-					StringBuilder bi = new StringBuilder(pa);
-					startpaint = pa.length()
-							- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
-				} else {
-					startpaint = postion;
-				}
+//				int lim = CommonRender.subTextWidth(sub, size, range.x1 - range.x0).length();
+//				if (lim == sub.length()) {
+//					StringBuilder bi = new StringBuilder(pa);
+//					startpaint = pa.length()
+//							- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
+//				} else {
+//					startpaint = postion;
+//				}
 			}
 			return;
 		}
@@ -270,8 +267,8 @@ public class TextField extends Component {
 			if (postion > startpaint) {
 				String todeal = pa.substring(0, postion);
 				StringBuilder bi = new StringBuilder(todeal);
-				startpaint = postion
-						- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
+//				startpaint = postion
+//						- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
 			}
 			return;
 		}
@@ -288,18 +285,18 @@ public class TextField extends Component {
 				}
 			}
 			StringBuilder bi = new StringBuilder(pa);
-			int last_p = CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
-			if (postion >= pa.length() - last_p) {
-				startpaint = pa.length() - last_p;
-			}
+//			int last_p = CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
+//			if (postion >= pa.length() - last_p) {
+//				startpaint = pa.length() - last_p;
+//			}
 			if (postion < startpaint) {
 				String sub = pa.substring(postion);
-				int lim = CommonRender.subTextWidth(sub, size, range.x1 - range.x0).length();
-				if (lim == sub.length()) {
-					startpaint = pa.length() - last_p;
-				} else {
-					startpaint = postion;
-				}
+//				int lim = CommonRender.subTextWidth(sub, size, range.x1 - range.x0).length();
+//				if (lim == sub.length()) {
+//					startpaint = pa.length() - last_p;
+//				} else {
+//					startpaint = postion;
+//				}
 			}
 			return;
 		}
@@ -326,8 +323,8 @@ public class TextField extends Component {
 		if (postion > startpaint) {
 			String todeal = pa.substring(0, postion);
 			StringBuilder bi = new StringBuilder(todeal);
-			startpaint = postion
-					- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
+//			startpaint = postion
+//					- CommonRender.subTextWidth(bi.reverse().toString(), size, range.x1 - range.x0).length();
 		}
 	}
 
@@ -338,56 +335,56 @@ public class TextField extends Component {
 		boolean pt_pos = now_t % 1000 < 500;
 		float honzsize = range.x1 - range.x0;
 		float vertsize = range.y1 - range.y0;
-		float hei = CommonRender.winToOthHeight(size);
-		float nexty = range.y0 + vertsize / 2 - hei / 2;
-		float all_length = CommonRender.calcTextWidth(pa, size);
+//		float hei = CommonRender.winToOthHeight(size);
+//		float nexty = range.y0 + vertsize / 2 - hei / 2;
+//		float all_length = CommonRender.calcTextWidth(pa, size);
 		glLineWidth(1);
-		if (all_length < honzsize) {
-			CommonRender.drawFont(pa, range.x0, nexty, size, color);
-			float pos = CommonRender.calcTextWidth(pa.substring(0, postion), size) + range.x0;
-			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
-				glBegin(GL_LINE_STRIP);
-				glVertex2f(pos, range.y0);
-				glVertex2f(pos, range.y1);
-				glEnd();
-			}
+//		if (all_length < honzsize) {
+//			CommonRender.drawFont(pa, range.x0, nexty, size, color);
+//			float pos = CommonRender.calcTextWidth(pa.substring(0, postion), size) + range.x0;
+//			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
+//				glBegin(GL_LINE_STRIP);
+//				glVertex2f(pos, range.y0);
+//				glVertex2f(pos, range.y1);
+//				glEnd();
+//			}
 			if (selpostionstart == selpostionend)
 				return;
-			float sl_start = CommonRender.calcTextWidth(pa.substring(0, selpostionstart), size) + range.x0;
-			float sl_end = CommonRender.calcTextWidth(pa.substring(0, selpostionend), size) + range.x0;
-			selcolor.bind();
+//			float sl_start = CommonRender.calcTextWidth(pa.substring(0, selpostionstart), size) + range.x0;
+//			float sl_end = CommonRender.calcTextWidth(pa.substring(0, selpostionend), size) + range.x0;
+//			selcolor.bind();
 			glBegin(GL_QUADS);
-			glVertex2f(sl_start, range.y0);
-			glVertex2f(sl_end, range.y0);
-			glVertex2f(sl_end, range.y1);
-			glVertex2f(sl_start, range.y1);
+//			glVertex2f(sl_start, range.y0);
+//			glVertex2f(sl_end, range.y0);
+//			glVertex2f(sl_end, range.y1);
+//			glVertex2f(sl_start, range.y1);
 			glEnd();
-		} else {
-			String topaint = CommonRender.subTextWidth(pa.substring(startpaint), size, honzsize);
-			float tx = CommonRender.drawFont(topaint, range.x0, nexty, size, color);
-			float pos = CommonRender.calcTextWidth(pa.substring(startpaint, postion), size) + range.x0;
-			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
-				glBegin(GL_LINE_STRIP);
-				glVertex2f(pos, range.y0);
-				glVertex2f(pos, range.y1);
-				glEnd();
-			}
+//		} else {
+//			String topaint = CommonRender.subTextWidth(pa.substring(startpaint), size, honzsize);
+//			float tx = CommonRender.drawFont(topaint, range.x0, nexty, size, color);
+//			float pos = CommonRender.calcTextWidth(pa.substring(startpaint, postion), size) + range.x0;
+//			if (parent.isFocus(this) && pos <= range.x1 && pt_pos) {
+//				glBegin(GL_LINE_STRIP);
+//				glVertex2f(pos, range.y0);
+//				glVertex2f(pos, range.y1);
+//				glEnd();
+//			}
 			if (selpostionstart == selpostionend)
 				return;
-			float sl_start = (startpaint < selpostionstart
-					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionstart), size)
-					: 0) + range.x0;
-			float sl_end = (selpostionend - startpaint < topaint.length()
-					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionend), size)
-					: tx - range.x0) + range.x0;
-			selcolor.bind();
+//			float sl_start = (startpaint < selpostionstart
+//					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionstart), size)
+//					: 0) + range.x0;
+//			float sl_end = (selpostionend - startpaint < topaint.length()
+//					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionend), size)
+//					: tx - range.x0) + range.x0;
+//			selcolor.bind();
 			glBegin(GL_QUADS);
-			glVertex2f(sl_start, range.y0);
-			glVertex2f(sl_end, range.y0);
-			glVertex2f(sl_end, range.y1);
-			glVertex2f(sl_start, range.y1);
+//			glVertex2f(sl_start, range.y0);
+//			glVertex2f(sl_end, range.y0);
+//			glVertex2f(sl_end, range.y1);
+//			glVertex2f(sl_start, range.y1);
 			glEnd();
-		}
+//		}
 	}
 
 }

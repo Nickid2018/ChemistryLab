@@ -1,16 +1,12 @@
 package com.github.nickid2018.chemistrylab.layer.component;
 
 import java.util.*;
-
-import org.lwjgl.glfw.GLFW;
-import org.newdawn.slick.*;
-
+import org.lwjgl.glfw.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Mouse;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.layer.*;
+import com.github.nickid2018.chemistrylab.window.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -20,7 +16,7 @@ public class VerticalSlideBar extends Component {
 	private final int barheight;
 	private final Range slibar = new Range();
 	private ArrayList<Slidable> cons;
-	private Color barcolor = Color.darkGray;
+//	private Color barcolor = Color.darkGray;
 	// Warning:This is a percent.
 	private float postion = 0;
 
@@ -50,7 +46,7 @@ public class VerticalSlideBar extends Component {
 			slibar.y0 = (int) drawup;
 			slibar.y1 = (int) drawdown;
 			// Bar
-			barcolor.bind();
+//			barcolor.bind();
 			glBegin(GL_QUADS);
 			glVertex2f(range.x1 - barheight, drawup);
 			glVertex2f(range.x1 - barheight, drawdown);
@@ -92,7 +88,7 @@ public class VerticalSlideBar extends Component {
 			slibar.y0 = (int) drawup;
 			slibar.y1 = (int) drawdown;
 			// Bar
-			barcolor.bind();
+//			barcolor.bind();
 			glBegin(GL_QUADS);
 			glVertex2f(range.x1 - barheight, drawup);
 			glVertex2f(range.x1 - barheight, drawdown);
@@ -132,7 +128,7 @@ public class VerticalSlideBar extends Component {
 		if (ChemistryLab.getTime() - last_focus > 20) {
 			focus_on = false;
 		}
-		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
+//		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
 			if (button != 0)
 				return;
 			focus_on = true;
@@ -145,13 +141,13 @@ public class VerticalSlideBar extends Component {
 			postion = (float) ((Window.nowHeight - why - range.y0 - barlength / 2) / (mysize - barlength));
 			postion = postion > 1 ? 1 : postion;
 			postion = postion < 0 ? 0 : postion;
-		} else {
+//		} else {
 			for (Slidable s : cons) {
 				if (s.checkRange(Mouse.getX(), Mouse.getY())) {
 					s.onMouseEvent(button, action, mods);
 				}
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -177,13 +173,13 @@ public class VerticalSlideBar extends Component {
 		return barheight;
 	}
 
-	public Color getBarcolor() {
-		return barcolor;
-	}
-
-	public void setBarcolor(Color barcolor) {
-		this.barcolor = barcolor;
-	}
+//	public Color getBarcolor() {
+//		return barcolor;
+//	}
+//
+//	public void setBarcolor(Color barcolor) {
+//		this.barcolor = barcolor;
+//	}
 
 	public float getPostion() {
 		return postion;

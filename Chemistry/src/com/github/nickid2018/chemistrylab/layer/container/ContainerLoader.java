@@ -3,16 +3,13 @@ package com.github.nickid2018.chemistrylab.layer.container;
 import java.util.*;
 import java.lang.reflect.*;
 import org.apache.log4j.*;
-import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
+import org.apache.commons.io.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Window;
-
-import org.apache.commons.io.*;
-import org.newdawn.slick.opengl.TextureLoader;
+import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.window.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -48,8 +45,8 @@ public class ContainerLoader {
 					float y0 = Float.parseFloat(layer_info[2]);
 					float x1 = Float.parseFloat(layer_info[3]);
 					float y1 = Float.parseFloat(layer_info[4]);
-					layers[j] = new RangeTexture(TextureLoader.getTexture("PNG",
-							ResourceManager.getResourceAsStream(layer_info[0]), GL_LINEAR), x0, y0, x1, y1);
+//					layers[j] = new RangeTexture(TextureLoader.getTexture("PNG",
+//							ResourceManager.getResourceAsStream(layer_info[0]), GL_LINEAR), x0, y0, x1, y1);
 				}
 				tex_layers.put(cls, layers);
 				JSONArray array = obj.getJSONArray("sizes");
@@ -73,9 +70,9 @@ public class ContainerLoader {
 				ChemistryLab.QUAD.render();
 				load_con.setNow(i + 1);
 				load_con.render(100, 460, Window.nowWidth - 200);
-				CommonRender.showMemoryUsed();
+//				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
-				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);
+//				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);
 				lastTime = ChemistryLab.getTime();
 				Window.flush();
 			}

@@ -1,18 +1,16 @@
 package com.github.nickid2018.chemistrylab.util;
 
-import org.newdawn.slick.*;
-
-import com.github.nickid2018.chemistrylab.window.ButtonClick;
+import com.github.nickid2018.chemistrylab.window.*;
 
 public class MessageEntry {
 
 	private String text = "";
-	private Color color = Color.white;
+//	private Color color = Color.white;
 	private float shear = 0.35f;
 	private ButtonClick clickEvent = null;
 	private boolean itatic = false;
 	private boolean underline = false;
-	private Color underlinecolor = Color.white;
+//	private Color underlinecolor = Color.white;
 
 	public MessageEntry(String text) {
 		this.text = text;
@@ -27,14 +25,14 @@ public class MessageEntry {
 		return this;
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public MessageEntry setColor(Color color) {
-		this.color = color;
-		return this;
-	}
+//	public Color getColor() {
+//		return color;
+//	}
+//
+//	public MessageEntry setColor(Color color) {
+//		this.color = color;
+//		return this;
+//	}
 
 	public boolean isItatic() {
 		return itatic;
@@ -63,14 +61,14 @@ public class MessageEntry {
 		return this;
 	}
 
-	public Color getUnderlineColor() {
-		return underlinecolor;
-	}
-
-	public MessageEntry setUnderlineColor(Color underlinecolor) {
-		this.underlinecolor = underlinecolor;
-		return this;
-	}
+//	public Color getUnderlineColor() {
+//		return underlinecolor;
+//	}
+//
+//	public MessageEntry setUnderlineColor(Color underlinecolor) {
+//		this.underlinecolor = underlinecolor;
+//		return this;
+//	}
 
 	public ButtonClick getClickEvent() {
 		return clickEvent;

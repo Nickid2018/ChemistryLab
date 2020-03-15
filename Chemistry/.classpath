@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="config"/>
-	<classpathentry kind="src" path="crash-reports"/>
-	<classpathentry kind="src" path="logs"/>
-	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="src" path="screenshot"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="libs/com/alibaba/fastjson-1.2.58/fastjson-1.2.58.jar">
 		<attributes>
@@ -20,7 +15,6 @@
 			<attribute name="javadoc_location" value="jar:file:/D:/cj/Ext/hyperic-sigar-1.6.4.zip!/hyperic-sigar-1.6.4/docs/javadoc"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/org/newdawn/slick.jar" sourcepath="D:/cj/LWJGL/slick-util-lib/slick.zip"/>
 	<classpathentry kind="lib" path="libs/com/cj/jmcl-1.0/jmcl-1.0.jar" sourcepath="/JMCL/src"/>
 	<classpathentry kind="lib" path="libs/com/cj/rdt-1.0/rdt-1.0.jar" sourcepath="/RDT"/>
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl-glfw.jar" sourcepath="D:/cj/LWJGL/lwjgl-3.2.3/lwjgl-glfw-sources.jar"/>
@@ -28,5 +22,10 @@
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl-opengl.jar" sourcepath="D:/cj/LWJGL/lwjgl-3.2.3/lwjgl-opengl-sources.jar"/>
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl.jar" sourcepath="D:/cj/LWJGL/lwjgl-3.2.3/lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="libs/com/jcraft/jogg.jar" sourcepath="D:/cj/Ext/jogg.jar"/>
+	<classpathentry kind="lib" path="libs/com/github/mmc1234/minigoldengine/minigoldengine.jar"/>
+	<classpathentry kind="lib" path="libs/com/google/guava-26.0/guava-26.0-jre.jar"/>
+	<classpathentry kind="lib" path="libs/org/apache/commons/math3-3.6.1/commons-math3-3.6.1.jar"/>
+	<classpathentry kind="lib" path="libs/org/objectweb/asm-6.0-BETA/asm-debug-all-6.0_BETA.jar"/>
+	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl-stb.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,13 +3,9 @@ package com.github.nickid2018.chemistrylab.util;
 import java.util.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import org.newdawn.slick.*;
-
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.render.*;
-import com.github.nickid2018.chemistrylab.window.Cursor;
-import com.github.nickid2018.chemistrylab.window.Mouse;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.window.*;
 
 public class Message implements Cloneable {
 
@@ -71,12 +67,12 @@ public class Message implements Cloneable {
 		double x = Mouse.getX();
 		int l = 0;
 		for (MessageEntry en : entries) {
-			l += CommonRender.calcTextWidth(en.getText(), 16);
-			if (l > x && haveEvent) {
-				if (en.getClickEvent() != null)
-					en.getClickEvent().click(button, action, mods);
-				break;
-			}
+//			l += CommonRender.calcTextWidth(en.getText(), 16);
+//			if (l > x && haveEvent) {
+//				if (en.getClickEvent() != null)
+//					en.getClickEvent().click(button, action, mods);
+//				break;
+//			}
 		}
 	}
 
@@ -85,13 +81,13 @@ public class Message implements Cloneable {
 		float lastx = 0;
 		float percent = Math.min(-(ChemistryLab.getTime() - spawnTime - surviveTime) / (float) disappearTime, 1);
 		for (MessageEntry en : entries) {
-			Color nowa = en.getColor();
-			Color now = new Color(nowa.r, nowa.g, nowa.b, percent * nowa.a);
-			if (en.isItatic()) {
-				x = CommonRender.drawItaticFont(en.getText(), x, y, 16, now, en.getShear());
-			} else {
-				x = CommonRender.drawFont(en.getText(), x, y, 16, now);
-			}
+//			Color nowa = en.getColor();
+//			Color now = new Color(nowa.r, nowa.g, nowa.b, percent * nowa.a);
+//			if (en.isItatic()) {
+//				x = CommonRender.drawItaticFont(en.getText(), x, y, 16, now, en.getShear());
+//			} else {
+//				x = CommonRender.drawFont(en.getText(), x, y, 16, now);
+//			}
 			if (en.isUnderline()) {
 				GL11.glBegin(GL11.GL_LINE_STRIP);
 				GL11.glVertex2f(lastx, y + 16);

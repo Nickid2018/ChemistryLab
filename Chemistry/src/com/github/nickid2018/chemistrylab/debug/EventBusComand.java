@@ -2,7 +2,6 @@ package com.github.nickid2018.chemistrylab.debug;
 
 import java.util.*;
 import java.awt.Toolkit;
-import org.newdawn.slick.*;
 import com.alibaba.fastjson.*;
 import com.github.nickid2018.chemistrylab.eventbus.*;
 import com.github.nickid2018.chemistrylab.util.*;
@@ -30,8 +29,8 @@ public class EventBusComand extends Command {
 			// Format: eventbus reg-events
 			Collection<Event> events = EventBus.getRegisteredEvents();
 			Message[] ms_r = new Message[events.size() + 2];
-			ms_r[0] = new Message().addMessageEntry(
-					new MessageEntry((I18N.getString("command.eventbus.regevents"))).setColor(Color.yellow));
+//			ms_r[0] = new Message().addMessageEntry(
+//					new MessageEntry((I18N.getString("command.eventbus.regevents"))).setColor(Color.yellow));
 			int i0 = 1;
 			for (Event e : events) {
 				ms_r[i0++] = new Message().addMessageEntry(new MessageEntry(e.getName() + " : "))
@@ -42,21 +41,21 @@ public class EventBusComand extends Command {
 							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
 						}).setUnderline(true));
 			}
-			ms_r[i0] = new Message()
-					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
+//			ms_r[i0] = new Message()
+//					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 			return ms_r;
 		case "now-events":
 			// Format: eventbus now-events
 			Map<Event.CompleteComparedEvent, Integer> evsnap = EventBus.getNowActiveEvents();
 			Message[] ms = new Message[evsnap.size() + 2];
-			ms[0] = new Message().addMessageEntry(
-					new MessageEntry(I18N.getString("command.eventbus.nowevents")).setColor(Color.yellow));
+//			ms[0] = new Message().addMessageEntry(
+//					new MessageEntry(I18N.getString("command.eventbus.nowevents")).setColor(Color.yellow));
 			int i = 1;
 			for (Map.Entry<Event.CompleteComparedEvent, Integer> en : evsnap.entrySet()) {
 				ms[i++] = new Message().addMessageEntry(new MessageEntry(en.getKey() + " : " + en.getValue()));
 			}
-			ms[i] = new Message()
-					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
+//			ms[i] = new Message()
+//					.addMessageEntry(new MessageEntry(I18N.getString("command.end")).setColor(Color.yellow));
 			return ms;
 		}
 		String[] sps = info.split(" ", 3);

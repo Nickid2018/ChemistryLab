@@ -1,16 +1,12 @@
 package com.github.nickid2018.chemistrylab.layer.component;
 
 import java.util.*;
-
-import org.lwjgl.glfw.GLFW;
-import org.newdawn.slick.*;
-
+import org.lwjgl.glfw.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Mouse;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.layer.*;
+import com.github.nickid2018.chemistrylab.window.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -22,7 +18,7 @@ public class HorizonSlideBar extends Component {
 	// Warning:This is a percent.
 	private float postion;
 	private Range slibar = new Range();
-	private Color barcolor = Color.darkGray;
+//	private Color barcolor = Color.darkGray;
 
 	public HorizonSlideBar(float x0, float y0, float x1, float y1, Layer l, ArrayList<Slidable> cons, int honzsize,
 			int barheight) {
@@ -50,7 +46,7 @@ public class HorizonSlideBar extends Component {
 			slibar.x0 = (int) drawup;
 			slibar.x1 = (int) drawdown;
 			// Bar
-			barcolor.bind();
+//			barcolor.bind();
 			glBegin(GL_QUADS);
 			glVertex2f(drawup, range.y1 - barheight);
 			glVertex2f(drawdown, range.y1 - barheight);
@@ -91,7 +87,7 @@ public class HorizonSlideBar extends Component {
 			slibar.x0 = (int) drawup;
 			slibar.x1 = (int) drawdown;
 			// Bar
-			barcolor.bind();
+//			barcolor.bind();
 			glBegin(GL_QUADS);
 			glVertex2f(drawup, range.y1 - barheight);
 			glVertex2f(drawdown, range.y1 - barheight);
@@ -130,7 +126,7 @@ public class HorizonSlideBar extends Component {
 		if (ChemistryLab.getTime() - last_focus > 20) {
 			focus_on = false;
 		}
-		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
+//		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
 			if (button != 0)
 				return;
 			focus_on = true;
@@ -143,13 +139,13 @@ public class HorizonSlideBar extends Component {
 			postion = (float) ((Window.nowHeight - why - range.x0 - barlength / 2) / (mysize - barlength));
 			postion = postion > 1 ? 1 : postion;
 			postion = postion < 0 ? 0 : postion;
-		} else {
+//		} else {
 			for (Slidable s : cons) {
 				if (s.checkRange((int) Mouse.getX(), (int) Mouse.getY())) {
 					s.onMouseEvent(button, action, mods);
 				}
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -179,13 +175,13 @@ public class HorizonSlideBar extends Component {
 		return barheight;
 	}
 
-	public Color getBarcolor() {
-		return barcolor;
-	}
-
-	public void setBarcolor(Color barcolor) {
-		this.barcolor = barcolor;
-	}
+//	public Color getBarcolor() {
+//		return barcolor;
+//	}
+//
+//	public void setBarcolor(Color barcolor) {
+//		this.barcolor = barcolor;
+//	}
 
 	public float getPostion() {
 		return postion;

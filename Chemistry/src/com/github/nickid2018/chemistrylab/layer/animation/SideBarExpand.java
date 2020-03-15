@@ -11,11 +11,11 @@ public class SideBarExpand extends Animation {
 
 	@Override
 	public void render(int fp) {
-		SideBar.SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_DOWN, SideBar.SIDEBAR_QUAD
-				.getVertex(FastQuad.POSTION_RIGHT_DOWN).setXYZ(CommonRender.toGLX((fp + 1) * 20), -1, 0));
-		SideBar.SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_UP, SideBar.SIDEBAR_QUAD
-				.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(CommonRender.toGLX((fp + 1) * 20), 1, 0));
-		SideBar.SIDEBAR_QUAD.render();
+//		SideBar.SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_DOWN, SideBar.SIDEBAR_QUAD
+//				.getVertex(FastQuad.POSTION_RIGHT_DOWN).setXYZ(CommonRender.toGLX((fp + 1) * 20), -1, 0));
+//		SideBar.SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_UP, SideBar.SIDEBAR_QUAD
+//				.getVertex(FastQuad.POSTION_RIGHT_UP).setXYZ(CommonRender.toGLX((fp + 1) * 20), 1, 0));
+//		SideBar.SIDEBAR_QUAD.render();
 	}
 
 	@Override
