@@ -2,8 +2,9 @@ package com.github.nickid2018.chemistrylab.util;
 
 import java.util.*;
 import org.lwjgl.glfw.*;
+import com.google.common.eventbus.*;
+import com.github.mmc1234.minigoldengine.event.*;
 
-//Called in Key Callback
 public class HotKeyMap {
 
 	@FunctionalInterface
@@ -24,6 +25,11 @@ public class HotKeyMap {
 
 	public static void replaceHotKey(int key, HotKeyReference ref) {
 		keymap.replace(key, ref);
+	}
+
+	@Subscribe
+	public static void keyActive(EventKey key) {
+		activeKey(key.getKey(), key.getScancode(), key.getAction(), key.getMods());
 	}
 
 	public static void activeKey(int key, int scancode, int action, int mods) {

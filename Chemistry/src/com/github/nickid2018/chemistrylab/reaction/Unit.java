@@ -1,10 +1,12 @@
 package com.github.nickid2018.chemistrylab.reaction;
 
+import com.google.common.eventbus.*;
+import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
-import com.github.nickid2018.chemistrylab.eventbus.*;
 import com.github.nickid2018.chemistrylab.properties.*;
+import com.github.nickid2018.chemistrylab.layer.container.*;
 
-public class Unit implements EventBusListener {
+public class Unit {
 
 	/** Unit: mol */
 	public static final int UNIT_MOLE = 0x0;
@@ -14,6 +16,7 @@ public class Unit implements EventBusListener {
 	public static final int UNIT_L = 0x2;
 
 	private final ChemicalResource chemical;
+	private boolean isListen = true;
 	private final int unit;
 	private double num;
 
@@ -26,7 +29,7 @@ public class Unit implements EventBusListener {
 		this.unit = unit;
 		checkUnit();
 		this.num = num;
-		EventBus.registerListener(this);
+		AbstractContainer.CHEMICAL_BUS.register(this);
 	}
 
 	public static final int unitFromString(String v) {
@@ -57,7 +60,8 @@ public class Unit implements EventBusListener {
 	}
 
 	public Unit setNotListen() {
-		EventBus.removeListener(this);
+		AbstractContainer.CHEMICAL_BUS.unregister(this);
+		isListen = false;
 		return this;
 	}
 
@@ -115,21 +119,19 @@ public class Unit implements EventBusListener {
 		return this;
 	}
 
+	public boolean isListen() {
+		return isListen;
+	}
+
 	@Override
 	public String toString() {
 		return chemical.getName() + ":" + num + unitToString(unit);
 	}
 
-	@Override
-	public boolean receiveEvents(Event e) {
-		return e.equals(Environment.ENVIRONMENT_CHANGED);
-	}
-
-	@Override
-	public void listen(Event e) {
-		if (e.getExtra(Environment.ENVIRONMENT_CHANGE_ITEM).equals("gasmolv") && unit == UNIT_L) {
-			double old = ((DoubleProperty) (e.getExtra(Environment.ENVIRONMENT_OLD_VALUE))).getValue();
-			num = num / old * Environment.getGasMolV();
+	@Subscribe
+	public void listen(EnvironmentEvent e) {
+		if (e.changedItem.equals("gasmolv") && unit == UNIT_L) {
+			num = num / ((DoubleProperty) e.oldValue).getValue() * Environment.getGasMolV();
 		}
 	}
 

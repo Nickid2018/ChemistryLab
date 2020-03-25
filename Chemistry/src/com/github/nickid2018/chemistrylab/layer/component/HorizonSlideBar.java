@@ -123,28 +123,28 @@ public class HorizonSlideBar extends Component {
 			return;
 		if (!isClickLegal(10))
 			return;
-		if (ChemistryLab.getTime() - last_focus > 20) {
+		if (TimeUtils.getTime() - last_focus > 20) {
 			focus_on = false;
 		}
 //		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
-			if (button != 0)
-				return;
-			focus_on = true;
-			last_focus = ChemistryLab.getTime();
-			double why = Mouse.getX();
-			float mysize = range.x1 - range.x0;
-			float shouldDraw = cons.size() * honzsize;
-			float percent = mysize / shouldDraw;
-			float barlength = (percent > 1 ? 1 : percent) * mysize;
-			postion = (float) ((Window.nowHeight - why - range.x0 - barlength / 2) / (mysize - barlength));
-			postion = postion > 1 ? 1 : postion;
-			postion = postion < 0 ? 0 : postion;
+		if (button != 0)
+			return;
+		focus_on = true;
+		last_focus = TimeUtils.getTime();
+		double why = Mouse.getX();
+		float mysize = range.x1 - range.x0;
+		float shouldDraw = cons.size() * honzsize;
+		float percent = mysize / shouldDraw;
+		float barlength = (percent > 1 ? 1 : percent) * mysize;
+		postion = (float) ((MainWindow.nowHeight - why - range.x0 - barlength / 2) / (mysize - barlength));
+		postion = postion > 1 ? 1 : postion;
+		postion = postion < 0 ? 0 : postion;
 //		} else {
-			for (Slidable s : cons) {
-				if (s.checkRange((int) Mouse.getX(), (int) Mouse.getY())) {
-					s.onMouseEvent(button, action, mods);
-				}
+		for (Slidable s : cons) {
+			if (s.checkRange((int) Mouse.getX(), (int) Mouse.getY())) {
+				s.onMouseEvent(button, action, mods);
 			}
+		}
 //		}
 	}
 

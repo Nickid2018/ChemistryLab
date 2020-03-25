@@ -4,7 +4,7 @@ import java.util.*;
 import org.lwjgl.glfw.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.window.MainWindow;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
@@ -22,7 +22,7 @@ public class AddReactionLayer extends Layer {
 	private TextComponent kl;
 
 	public AddReactionLayer() {
-		super(0, 0, Window.nowWidth, Window.nowHeight);
+		super(0, 0, MainWindow.nowWidth, MainWindow.nowHeight);
 		// UI
 //		TextComponent title = new TextComponent(Window.nowWidth / 2, CommonRender.toRatioYPos(50), Window.nowWidth / 2,
 //				CommonRender.toRatioYPos(98), this, I18N.getString("addreact.title"), (button, action, mods) -> {
@@ -161,9 +161,9 @@ public class AddReactionLayer extends Layer {
 //		new Color(150, 150, 150, 75).bind();
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
-		glVertex2f(0, Window.nowHeight);
-		glVertex2f(Window.nowWidth, Window.nowHeight);
-		glVertex2f(Window.nowWidth, 0);
+		glVertex2f(0, MainWindow.nowHeight);
+		glVertex2f(MainWindow.nowWidth, MainWindow.nowHeight);
+		glVertex2f(MainWindow.nowWidth, 0);
 		glEnd();
 	}
 

@@ -20,11 +20,11 @@ public class ContainerLoader {
 
 	private final Map<String, Constructor<? extends AbstractContainer>> mapping = new HashMap<>();
 	private final Map<String, TreeMap<String, Size>> sizes = new TreeMap<>();
-	private final Map<Class<?>, RangeTexture[]> tex_layers = new HashMap<>();
+//	private final Map<Class<?>, RangeTexture[]> tex_layers = new HashMap<>();
 	private ProgressBar load_con = new ProgressBar(containers.size(), 20);
 
 	public void loadContainer() {
-		long lastTime = ChemistryLab.getTime();
+		long lastTime = TimeUtils.getTime();
 		int fails = 0;
 		for (int i = 0; i < containers.size(); i++) {
 			String res = "assets/models/containers/" + containers.get(i) + ".json";
@@ -37,7 +37,7 @@ public class ContainerLoader {
 						.getConstructor(int.class, int.class, Size.class);
 				mapping.put("container." + containers.get(i) + ".model", con);
 				JSONArray layer_arr = obj.getJSONArray("layers");
-				RangeTexture[] layers = new RangeTexture[layer_arr.size()];
+//				RangeTexture[] layers = new RangeTexture[layer_arr.size()];
 				for (int j = 0; j < layer_arr.size(); j++) {
 					String rp = layer_arr.getString(j);
 					String[] layer_info = rp.split(",");
@@ -48,7 +48,7 @@ public class ContainerLoader {
 //					layers[j] = new RangeTexture(TextureLoader.getTexture("PNG",
 //							ResourceManager.getResourceAsStream(layer_info[0]), GL_LINEAR), x0, y0, x1, y1);
 				}
-				tex_layers.put(cls, layers);
+//				tex_layers.put(cls, layers);
 				JSONArray array = obj.getJSONArray("sizes");
 				TreeMap<String, Size> sss = new TreeMap<>();
 				for (int j = 0; j < array.size(); j++) {
@@ -65,16 +65,15 @@ public class ContainerLoader {
 				logger.warn("Can't load container " + containers.get(i));
 				fails++;
 			}
-			if (ChemistryLab.getTime() - lastTime > 20) {
-				Window.clearFace();
-				ChemistryLab.QUAD.render();
+			if (TimeUtils.getTime() - lastTime > 20) {
+				MainWindow.clearFace();
 				load_con.setNow(i + 1);
-				load_con.render(100, 460, Window.nowWidth - 200);
+				load_con.render(100, 460, MainWindow.nowWidth - 200);
 //				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(2);
 //				CommonRender.drawAsciiFont("Loading Container[" + res + "]", 100, 443, 16, Color.black);
-				lastTime = ChemistryLab.getTime();
-				Window.flush();
+				lastTime = TimeUtils.getTime();
+				MainWindow.flush();
 			}
 		}
 		if (fails == 0) {
@@ -92,10 +91,10 @@ public class ContainerLoader {
 		return sizes.get(model);
 	}
 
-	public RangeTexture[] getLayers() {
-		Class<?> cls = ChemistryLab.getCallerClass();
-		return tex_layers.get(cls);
-	}
+//	public RangeTexture[] getLayers() {
+//		Class<?> cls = ClassUtils.getCallerClass();
+//		return tex_layers.get(cls);
+//	}
 
 	static {
 		containers.add("beaker");

@@ -1,4 +1,5 @@
 {
+	"type":"simple",
 	"classes":["atom/nonmetal","simple"],
 	"name":"H",
 	"unlocalizedName":"chemicals.atoms.H",

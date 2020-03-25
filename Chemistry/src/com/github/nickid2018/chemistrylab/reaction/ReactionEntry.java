@@ -2,10 +2,10 @@ package com.github.nickid2018.chemistrylab.reaction;
 
 import java.io.*;
 import java.util.*;
-import com.cj.rdt.*;
-import com.cj.jmcl.*;
-import com.cj.rdt.tag.*;
-import com.cj.rdt.versions.*;
+import com.github.nickid2018.rdt.*;
+import com.github.nickid2018.jmcl.*;
+import com.github.nickid2018.rdt.tag.*;
+import com.github.nickid2018.rdt.versions.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 public class ReactionEntry extends RDTTagBase {
@@ -15,8 +15,9 @@ public class ReactionEntry extends RDTTagBase {
 
 	private Reaction toWrite;
 
-	public void setToWrite(Reaction toWrite) {
+	public ReactionEntry setToWrite(Reaction toWrite) {
 		this.toWrite = toWrite;
+		return this;
 	}
 
 	@Override
@@ -32,7 +33,7 @@ public class ReactionEntry extends RDTTagBase {
 		Map<ChemicalResource, Integer> react = new HashMap<>();
 		ArrayList<TagPair> reactss = reacts.getTags();
 		for (TagPair p : reactss) {
-			react.put(ChemicalsLoader.chemicals.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
+			react.put(ChemicalsLoader.CHEMICALS.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
 		}
 		// Things to get
 		inp.readByte();
@@ -42,18 +43,19 @@ public class ReactionEntry extends RDTTagBase {
 		Map<ChemicalResource, Integer> get = new HashMap<>();
 		ArrayList<TagPair> getss = gets.getTags();
 		for (TagPair p : getss) {
-			get.put(ChemicalsLoader.chemicals.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
+			get.put(ChemicalsLoader.CHEMICALS.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
 		}
 		// Conditions (K,deltaH,deltaS)
 		double dH = inp.readDouble();
 		double dS = inp.readDouble();
 		if (sign == 1) {
+			String k = inp.readUTF();
 			String K = inp.readUTF();
 			ReversibleReaction re;
 			ReversibleReaction res;
 			try {
-				re = new ReversibleReaction(react, get, dH, dS, K);
-				res = re.reserve();
+				re = new ReversibleReaction(react, get, dH, dS, K, k);
+				res = re.reverse();
 			} catch (MathException e) {
 				throw new IOException(e);
 			}
@@ -65,7 +67,13 @@ public class ReactionEntry extends RDTTagBase {
 			}
 			os.put(re.computeSign(), re);
 		} else {
-			NonReversibleReaction re = new NonReversibleReaction(react, get, dH, dS);
+			String k = inp.readUTF();
+			NonReversibleReaction re;
+			try {
+				re = new NonReversibleReaction(react, get, dH, dS, k);
+			} catch (MathException e) {
+				throw new IOException(e);
+			}
 			for (ChemicalResource r : react.keySet()) {
 				r.addReaction(re);
 			}
@@ -101,6 +109,7 @@ public class ReactionEntry extends RDTTagBase {
 		get.writeTag(oup, o);
 		oup.writeDouble(toWrite.getdH());
 		oup.writeDouble(toWrite.getdS());
+		oup.writeUTF(toWrite.strk);
 		if (toWrite instanceof ReversibleReaction) {
 			oup.writeUTF(((ReversibleReaction) toWrite).getStrK());
 		}

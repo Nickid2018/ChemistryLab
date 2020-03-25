@@ -1,7 +1,7 @@
 package com.github.nickid2018.chemistrylab.reaction;
 
-import com.cj.rdt.*;
-import com.cj.rdt.versions.*;
+import com.github.nickid2018.rdt.*;
+import com.github.nickid2018.rdt.versions.*;
 import com.github.nickid2018.chemistrylab.util.*;
 
 public class ReactionLoader {

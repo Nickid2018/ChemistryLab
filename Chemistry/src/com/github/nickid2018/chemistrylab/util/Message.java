@@ -9,7 +9,7 @@ import com.github.nickid2018.chemistrylab.window.*;
 
 public class Message implements Cloneable {
 
-	private final long spawnTime = ChemistryLab.getTime();
+	private final long spawnTime = TimeUtils.getTime();
 	private final ArrayList<MessageEntry> entries;
 	private long surviveTime;
 	private long disappearTime = 5000;
@@ -58,7 +58,7 @@ public class Message implements Cloneable {
 	}
 
 	public boolean isValid() {
-		return ChemistryLab.getTime() - spawnTime < surviveTime;
+		return TimeUtils.getTime() - spawnTime < surviveTime;
 	}
 
 	public void onMouseEvent(int button, int action, int mods) {
@@ -79,7 +79,7 @@ public class Message implements Cloneable {
 	public void render(float y) {
 		float x = 0;
 		float lastx = 0;
-		float percent = Math.min(-(ChemistryLab.getTime() - spawnTime - surviveTime) / (float) disappearTime, 1);
+		float percent = Math.min(-(TimeUtils.getTime() - spawnTime - surviveTime) / (float) disappearTime, 1);
 		for (MessageEntry en : entries) {
 //			Color nowa = en.getColor();
 //			Color now = new Color(nowa.r, nowa.g, nowa.b, percent * nowa.a);
@@ -100,12 +100,12 @@ public class Message implements Cloneable {
 
 	public void onCursorIn() {
 		if (haveEvent) {
-			GLFW.glfwSetCursor(Window.window, Cursor.HAND_CURSOR);
+			GLFW.glfwSetCursor(MainWindow.window, Cursor.HAND_CURSOR);
 		}
 	}
 
 	public void onCursorOut() {
-		GLFW.glfwSetCursor(Window.window, Cursor.ARROW_CURSOR);
+		GLFW.glfwSetCursor(MainWindow.window, Cursor.ARROW_CURSOR);
 	}
 
 	@Override

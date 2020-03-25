@@ -1,7 +1,7 @@
 package com.github.nickid2018.chemistrylab.properties;
 
 import java.util.*;
-import com.cj.jmcl.*;
+import com.github.nickid2018.jmcl.*;
 
 public class MathStatementProperty extends Property<Double> {
 

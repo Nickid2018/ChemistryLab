@@ -1,4 +1,5 @@
 {
+	"type":"chemical",
 	"classes":["chemical/H2O"],
 	"name":"H`2`O",
 	"unlocalizedName":"chemicals.oxide.H2O",

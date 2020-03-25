@@ -131,17 +131,21 @@ public class ResourceManager {
 	 * @return A URL from which the resource can be read
 	 */
 	public static URL getResource(String ref) {
-		return (URL) getFile(ref, (loction) -> {return loction.getResource(ref);});
+		return (URL) getFile(ref, (loction) -> {
+			return loction.getResource(ref);
+		});
 	}
 
 	public static OutputStream getOutputStream(String ref) {
-		return (OutputStream) getFile(ref, (loction) -> {return loction.getOutputStream(ref);});
+		return (OutputStream) getFile(ref, (loction) -> {
+			return loction.getOutputStream(ref);
+		});
 	}
-	
+
 	public static Object getFile(String ref, Function<ResourceLocation, Object> function) {
 		reloadLock.lock();
 		for (ResourceLocation location : locations) {
-			Object obj =  function.apply(location);
+			Object obj = function.apply(location);
 			if (obj != null) {
 				reloadLock.unlock();
 				return obj;

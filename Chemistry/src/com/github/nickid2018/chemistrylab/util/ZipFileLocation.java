@@ -15,7 +15,7 @@ public class ZipFileLocation implements ResourceLocation {
 
 	public ZipFileLocation(String file) throws IOException {
 		this.file = file;
-		zipFile = new ZipFile("resource/" + file + ".zip");
+		zipFile = new ZipFile("resources/" + file + ".zip");
 	}
 
 	@Override

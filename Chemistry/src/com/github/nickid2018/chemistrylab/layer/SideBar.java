@@ -16,7 +16,7 @@ public class SideBar extends Layer {
 //			true);
 
 	public SideBar() {
-		super(0, 0, 200, Window.nowHeight);
+		super(0, 0, 200, MainWindow.nowHeight);
 //		addComponent(new TextComponent(12, 0, 200, 64, this, I18N.getString("sidebar.language.settings"),
 //				(button, action, mods) -> {
 //					if (button == 0 && action == GLFW.GLFW_PRESS) {
@@ -66,7 +66,7 @@ public class SideBar extends Layer {
 
 	@Override
 	public void onContainerResized() {
-		range.y1 = Window.nowHeight;
+		range.y1 = MainWindow.nowHeight;
 //		SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_DOWN,
 //				SIDEBAR_QUAD.getVertex(FastQuad.POSTION_RIGHT_DOWN).setXYZ(CommonRender.toGLX(200), -1, 0));
 //		SIDEBAR_QUAD.updateVertex(FastQuad.POSTION_RIGHT_UP,

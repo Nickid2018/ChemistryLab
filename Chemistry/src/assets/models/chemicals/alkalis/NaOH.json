@@ -1,4 +1,5 @@
 {
+	"type":"chemical",
 	"classes":["alkali/strong"],
 	"name":"NaOH",
 	"unlocalizedName":"chemicals.alkali.NaOH",

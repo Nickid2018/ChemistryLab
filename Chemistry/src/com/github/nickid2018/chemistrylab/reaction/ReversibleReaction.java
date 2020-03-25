@@ -1,17 +1,19 @@
 package com.github.nickid2018.chemistrylab.reaction;
 
 import java.util.*;
-import com.cj.jmcl.*;
+import com.github.nickid2018.jmcl.*;
+import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 public class ReversibleReaction extends Reaction {
 
-	private MathStatement K;
-	private String strK;
+	// Constant of equilibrium
+	private final MathStatement K;
+	private final String strK;
 
 	public ReversibleReaction(Map<ChemicalResource, Integer> reacts, Map<ChemicalResource, Integer> gets, double dH,
-			double dS, String K) throws MathException {
-		super(reacts, gets, dH, dS);
+			double dS, String K, String k) throws MathException {
+		super(reacts, gets, dH, dS, k);
 		strK = K;
 		this.K = MathStatement.format(K);
 	}
@@ -20,17 +22,26 @@ public class ReversibleReaction extends Reaction {
 		return strK;
 	}
 
+	private Map<String, Double> args = new HashMap<>();
+
 	@Override
 	public void doReaction(ChemicalMixture mix) {
-
+		// Chemical Equilibrium
+		args.clear();
+		args.put("T", mix.getTemperature());
+		double nowK = MathHelper.eplison(K.calc(args), 10);
+		double react = 1;
+		reacts.forEach((c, i) -> {
+			
+		});
 	}
 
-	public MathStatement getMathStatement() {
+	public MathStatement getK() {
 		return K;
 	}
 
-	public ReversibleReaction reserve() throws MathException {
+	public ReversibleReaction reverse() throws MathException {
 		String strk = "1/(" + strK + ")";
-		return new ReversibleReaction(gets, reacts, -dH, -dS, strk);
+		return new ReversibleReaction(gets, reacts, -dH, -dS, strk, this.strk);
 	}
 }

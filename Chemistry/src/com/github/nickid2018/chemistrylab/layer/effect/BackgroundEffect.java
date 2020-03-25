@@ -8,7 +8,6 @@ import com.github.nickid2018.chemistrylab.layer.component.*;
 public class BackgroundEffect implements Effect {
 
 //	private Color bg;
-	private FastQuad quad;
 
 //	public BackgroundEffect(Color bg, Component c) {
 //		this.bg = bg;
@@ -25,7 +24,7 @@ public class BackgroundEffect implements Effect {
 
 	@Override
 	public void effect(Component c) {
-		quad.render();
+
 	}
 
 }

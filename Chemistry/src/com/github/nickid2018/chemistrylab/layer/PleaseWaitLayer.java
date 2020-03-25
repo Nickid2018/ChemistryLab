@@ -2,9 +2,10 @@ package com.github.nickid2018.chemistrylab.layer;
 
 import org.lwjgl.glfw.*;
 import com.github.nickid2018.chemistrylab.*;
+import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.util.ThreadManger;
 import com.github.nickid2018.chemistrylab.window.*;
-import com.github.nickid2018.chemistrylab.eventbus.*;
 
 import static com.github.nickid2018.chemistrylab.ChemistryLab.*;
 
@@ -22,19 +23,19 @@ public final class PleaseWaitLayer extends Layer {
 //	private static final FastQuad show;
 
 	static {
-		float center_x = Window.nowWidth / 2;
-		float center_y = Window.nowHeight / 2;
+		float center_x = MainWindow.nowWidth / 2;
+		float center_y = MainWindow.nowHeight / 2;
 //		show = new FastQuad(center_x - 300, center_y - 100, center_x + 300, center_y + 100, Color.white);
 	}
 
 	public PleaseWaitLayer(String info, Runnable wtd) {
-		super(0, 0, Window.nowWidth, Window.nowHeight);
+		super(0, 0, MainWindow.nowWidth, MainWindow.nowHeight);
 		this.info = info;
 		whattodo = wtd;
 //		CommonRender.loadFontUNI(info, 32);
 //		dealing.startToBind(this);
-		float center_x = Window.nowWidth / 2;
-		float center_y = Window.nowHeight / 2;
+		float center_x = MainWindow.nowWidth / 2;
+		float center_y = MainWindow.nowHeight / 2;
 //		tex = new FastTexture(center_x - 224, center_y - 24, center_x - 176, center_y + 24, 0, 0, 1, 1, dealing);
 	}
 
@@ -43,10 +44,10 @@ public final class PleaseWaitLayer extends Layer {
 			try {
 				whattodo.run();
 			} catch (Throwable e) {
-				Event error = ChemistryLab.THREAD_FATAL.clone();
-				error.putExtra(0, e);
-				error.putExtra(1, Thread.currentThread());
-				EventBus.postEvent(error);
+//				Event error = ChemistryLab.THREAD_FATAL.clone();
+//				error.putExtra(0, e);
+//				error.putExtra(1, Thread.currentThread());
+//				EventBus.postEvent(error);
 			}
 			if (error == null && success == null)
 				LayerRender.popLayer(this);
@@ -59,8 +60,8 @@ public final class PleaseWaitLayer extends Layer {
 	public void render() {
 //		CommonRender.TABLE.render();
 //		show.render();
-		float center_x = Window.nowWidth / 2;
-		float center_y = Window.nowHeight / 2;
+		float center_x = MainWindow.nowWidth / 2;
+		float center_y = MainWindow.nowHeight / 2;
 		if (error != null) {
 //			CommonRender.drawFontUNI(error, center_x - 170, center_y - 24, Color.red, 32);
 		} else if (success != null) {

@@ -5,6 +5,7 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 
 import com.github.nickid2018.chemistrylab.*;
+import com.github.nickid2018.chemistrylab.util.TimeUtils;
 
 public class Mouse {
 
@@ -17,14 +18,14 @@ public class Mouse {
 	public static long lastClick = -1;
 
 	public static double getX() {
-		GLFW.glfwGetCursorPos(Window.window, xpos, ypos);
+		GLFW.glfwGetCursorPos(MainWindow.window, xpos, ypos);
 		double ret = xpos.get();
 		xpos.clear();
 		return ret;
 	}
 
 	public static double getY() {
-		GLFW.glfwGetCursorPos(Window.window, xpos, ypos);
+		GLFW.glfwGetCursorPos(MainWindow.window, xpos, ypos);
 		double ret = ypos.get();
 		ypos.clear();
 		return ret;
@@ -40,5 +41,13 @@ public class Mouse {
 		double ret = getY() - lastY;
 		lastY = ret + lastY;
 		return ret;
+	}
+
+	// Check Click Legal
+	public static boolean isSystemClickLegal(long del) {
+		boolean b = TimeUtils.getTime() - lastClick > del;
+		if (b)
+			lastClick = TimeUtils.getTime();
+		return b;
 	}
 }

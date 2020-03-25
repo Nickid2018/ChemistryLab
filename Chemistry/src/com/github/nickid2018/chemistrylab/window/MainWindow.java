@@ -1,57 +1,22 @@
-	package com.github.nickid2018.chemistrylab.window;
+package com.github.nickid2018.chemistrylab.window;
 
-import static org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
-import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
-import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
-import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
-import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetCharCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.system.MemoryUtil.NULL;
+import java.io.*;
+import java.util.*;
+import org.lwjgl.*;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
+import com.github.nickid2018.chemistrylab.*;
+import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.init.*;
+import com.github.nickid2018.chemistrylab.layer.*;
+import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.exception.*;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Locale;
-import java.util.Properties;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCharCallbackI;
-import org.lwjgl.glfw.GLFWCharModsCallbackI;
-import org.lwjgl.glfw.GLFWCursorPosCallbackI;
-import org.lwjgl.glfw.GLFWErrorCallbackI;
-import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
-import org.lwjgl.glfw.GLFWKeyCallbackI;
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
-import org.lwjgl.glfw.GLFWScrollCallbackI;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.APIUtil;
-import org.lwjgl.system.MemoryUtil;
-
-import com.github.nickid2018.chemistrylab.ChemistryLab;
-import com.github.nickid2018.chemistrylab.FPS;
-import com.github.nickid2018.chemistrylab.HotKeys;
-import com.github.nickid2018.chemistrylab.exception.DefaultUncaughtExceptionHandler;
-import com.github.nickid2018.chemistrylab.init.InitLoader;
-import com.github.nickid2018.chemistrylab.layer.LayerRender;
-import com.github.nickid2018.chemistrylab.render.CommonRender;
-import com.github.nickid2018.chemistrylab.render.ShaderManager;
-import com.github.nickid2018.chemistrylab.render.VertexDataManager;
-import com.github.nickid2018.chemistrylab.util.HotKeyMap;
-import com.github.nickid2018.chemistrylab.util.I18N;
-
-public class Window {
+public class MainWindow {
 	// Window State
 	public static boolean inited = false;
 	public static boolean recreateWindow = false;
@@ -63,7 +28,7 @@ public class Window {
 	public static float nowHeight;
 	public static float oldWidth;
 	public static float oldHeight;
-	
+
 	// Window Handle
 	public static long window;
 
@@ -100,10 +65,10 @@ public class Window {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, width, height, 0, 1, -1);
 		GL11.glViewport(0, 0, width, height);
-		Window.oldWidth = Window.nowWidth;
-		Window.oldHeight = Window.nowHeight;
-		Window.nowWidth = width;
-		Window.nowHeight = height;
+		MainWindow.oldWidth = MainWindow.nowWidth;
+		MainWindow.oldHeight = MainWindow.nowHeight;
+		MainWindow.nowWidth = width;
+		MainWindow.nowHeight = height;
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		LayerRender.windowResize();
 	};
@@ -151,27 +116,21 @@ public class Window {
 	 * Flush Window
 	 */
 	public static void flush() {
-		ChemistryLab.checkClose();
-		ChemistryLab.updateFPS();
-		ChemistryLab.checkGLError();
-		glfwSwapBuffers(Window.window);
-		ChemistryLab.updateUPS();
+		EngineChemistryLab.checkGLError();
+		glfwSwapBuffers(MainWindow.window);
 		glfwPollEvents();
-		ChemistryLab.update();
 	}
 
 	/**
 	 * Swap Window
 	 * 
-	 * @throws Exception
+	 * @throws Throwable
 	 */
-	public static void swapFullScreen() throws Exception {
-		glfwSetWindowShouldClose(Window.window, true);
+	public static void swapFullScreen() throws Throwable {
+		glfwSetWindowShouldClose(MainWindow.window, true);
 		glfwPollEvents();
 		// Release Resource, or the program will break down!
-		VertexDataManager.MANAGER.releaseResource();
-		ShaderManager.MANAGER.releaseResource();
-		glfwDestroyWindow(Window.window);
+		glfwDestroyWindow(MainWindow.window);
 		// Get Monitor Info
 		PointerBuffer pb = HotKeys.fullScreen ? glfwGetMonitors() : null;
 		long recreate = pb == null ? NULL : pb.get(0);
@@ -179,28 +138,28 @@ public class Window {
 		oldWidth = nowWidth;
 		oldHeight = nowHeight;
 		if (HotKeys.fullScreen) {
-			Window.window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
+			MainWindow.window = glfwCreateWindow(CommonRender.TOOLKIT.getScreenSize().width,
 					CommonRender.TOOLKIT.getScreenSize().height, I18N.getString("window.title"), recreate, NULL);
 			nowWidth = CommonRender.TOOLKIT.getScreenSize().width;
 			nowHeight = CommonRender.TOOLKIT.getScreenSize().height;
 		} else {
-			Window.window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT,
-					I18N.getString("window.title"), recreate, NULL);
+			MainWindow.window = glfwCreateWindow((int) DREAM_WIDTH, (int) DREAM_HEIGHT, I18N.getString("window.title"),
+					recreate, NULL);
 			nowWidth = DREAM_WIDTH;
 			nowHeight = DREAM_HEIGHT;
 		}
-		if (Window.window == NULL) {
+		if (MainWindow.window == NULL) {
 			glfwTerminate();
 			ChemistryLab.logger.error("Failed to recreate the GLFW window");
 			return;
 		}
 		// Callback re-bind
-		glfwSetFramebufferSizeCallback(Window.window, getResizeCallback());
-		glfwSetKeyCallback(Window.window, getKeyCallback());
-		glfwSetCharCallback(Window.window, getCharCallback());
-		glfwSetMouseButtonCallback(Window.window, getMouseCallback());
-		glfwSetScrollCallback(Window.window, getScrollCallback());
-		glfwMakeContextCurrent(Window.window);
+		glfwSetFramebufferSizeCallback(MainWindow.window, getResizeCallback());
+		glfwSetKeyCallback(MainWindow.window, getKeyCallback());
+		glfwSetCharCallback(MainWindow.window, getCharCallback());
+		glfwSetMouseButtonCallback(MainWindow.window, getMouseCallback());
+		glfwSetScrollCallback(MainWindow.window, getScrollCallback());
+		glfwMakeContextCurrent(MainWindow.window);
 		GL.createCapabilities();
 		// Re-initialize OpenGL
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -214,13 +173,12 @@ public class Window {
 		Cursor.ARROW_CURSOR = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 		Cursor.HAND_CURSOR = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
 		// Reload Resource
-		VertexDataManager.MANAGER.reload();
-		InitLoader.getTextureLoader().reloadTexture();
+		TextureLoader.reloadTexture();
 //		CommonRender.reloadFontUNI();
 		// Send Resize
 		LayerRender.windowResize();
 	}
-	
+
 	public static void readProperties() {
 		// Read window properties
 		try {
@@ -228,19 +186,19 @@ public class Window {
 			InputStream is = new FileInputStream("config/window.properties");
 			settings.load(is);
 			is.close();
-			Window.DREAM_WIDTH = Integer.parseInt(settings.getProperty("width", "1280"));
-			Window.DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "720"));
+			MainWindow.DREAM_WIDTH = Integer.parseInt(settings.getProperty("width", "1280"));
+			MainWindow.DREAM_HEIGHT = Integer.parseInt(settings.getProperty("height", "720"));
 			FPS.maxFPS = Integer.parseInt(settings.getProperty("maxfps", "100"));
-			ChemistryLab.DEFAULT_LOG_FILE = settings.getProperty("logdir", "logs");
+			LogUtils.DEFAULT_LOG_FILE = settings.getProperty("logdir", "logs");
 			String locale = settings.getProperty("locale", "default");
 			if (locale.equals("default"))
 				I18N.NOW = I18N.SYSTEM_DEFAULT;
 			else
 				I18N.NOW = Locale.forLanguageTag(locale);
-			Window.nowWidth = Window.DREAM_WIDTH;
-			Window.nowHeight = Window.DREAM_HEIGHT;
-			Window.oldWidth = Window.DREAM_WIDTH;
-			Window.oldHeight = Window.DREAM_HEIGHT;
+			MainWindow.nowWidth = MainWindow.DREAM_WIDTH;
+			MainWindow.nowHeight = MainWindow.DREAM_HEIGHT;
+			MainWindow.oldWidth = MainWindow.DREAM_WIDTH;
+			MainWindow.oldHeight = MainWindow.DREAM_HEIGHT;
 		} catch (Exception e1) {
 			ChemistryLab.logger.error("QAQ, the program crashed!", e1);
 			// Can't make window, use AWT

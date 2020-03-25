@@ -3,19 +3,20 @@ package com.github.nickid2018.chemistrylab.layer.container;
 import java.util.*;
 import org.lwjgl.glfw.*;
 import com.alibaba.fastjson.*;
+import com.google.common.eventbus.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.layer.*;
-import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.window.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
-import com.github.nickid2018.chemistrylab.eventbus.*;
 
 public abstract class AbstractContainer extends Layer {
 
+	public static final EventBus CHEMICAL_BUS = new EventBus("ChemicalBus");
+
 	protected ChemicalMixture mix;
-	protected RangeTexture layer_0;
-	protected RangeTexture layer_1;
+//	protected RangeTexture layer_0;
+//	protected RangeTexture layer_1;
 	protected final Size size;
 	protected UUID uuid = MathHelper.getRandomUUID();
 	protected boolean broken = false;
@@ -53,7 +54,8 @@ public abstract class AbstractContainer extends Layer {
 	}
 
 	public void remove() {
-		EventBus.removeListener(mix.getController());
+		CHEMICAL_BUS.unregister(mix.getController());
+		Ticker.TICK_EVENT_BUS.unregister(mix.getController());
 	}
 
 	public JSONObject specials(String json) {
@@ -68,7 +70,7 @@ public abstract class AbstractContainer extends Layer {
 	}
 
 	public void addChemical(Unit u) {
-		mix.put(u.getChemical(), u);
+		mix.put(u.getChemical().getDefaultItem(), u);
 	}
 
 	@Override

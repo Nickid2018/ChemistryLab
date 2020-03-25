@@ -1,4 +1,5 @@
 {
+	"type":"simple",
 	"classes":["atom/metal"],
 	"name":"Na",
 	"unlocalizedName":"chemicals.atoms.Na",

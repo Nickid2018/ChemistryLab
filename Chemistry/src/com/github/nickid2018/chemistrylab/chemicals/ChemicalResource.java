@@ -5,19 +5,40 @@ import java.util.*;
 import java.lang.reflect.*;
 import java.util.function.*;
 import com.alibaba.fastjson.*;
-import com.github.nickid2018.chemistrylab.reaction.*;
-import com.github.nickid2018.chemistrylab.util.*;
-
 import org.apache.commons.io.*;
+import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.reaction.*;
 
 public class ChemicalResource {
+
+	public static enum ChemicalType {
+		/**
+		 * For a chemical whose type is atom
+		 */
+		ATOM,
+		/**
+		 * For an ion
+		 */
+		ION,
+		/**
+		 * For a simple subtance
+		 */
+		SIMPLE,
+		/**
+		 * For a simple chemical
+		 */
+		CHEMICAL
+	}
 
 	protected final String resourcePath;
 	protected final String fname;
 	protected final Map<String, Chemical> clazz = new HashMap<>();
+	protected ChemicalType type;
 	protected String name;
 	protected String unlocalizedName;
 	protected String cas;
+	protected double melting = Double.MAX_VALUE;
+	protected double boiling = Double.MAX_VALUE;
 	protected final List<Reaction> reacts = new ArrayList<>();
 
 	public ChemicalResource(String respath, String name) {
@@ -32,6 +53,7 @@ public class ChemicalResource {
 		name = object.getString("name");
 		unlocalizedName = object.getString("unlocalizedName");
 		cas = object.getString("cas");
+		type = ChemicalType.valueOf(object.getString("type").toUpperCase());
 		JSONArray classes = object.getJSONArray("classes");
 		classes.forEach((o) -> {
 			String cl = (String) o;
@@ -43,7 +65,7 @@ public class ChemicalResource {
 			} catch (Exception e) {
 				ChemicalsLoader.logger.warn("Chemical Load Error at " + resourcePath + " in type " + cl
 						+ ((e instanceof NullPointerException) ? ",because this type wasn't loaded." : "."));
-				ChemicalsLoader.chemicals.addFailed();
+				ChemicalsLoader.CHEMICALS.addFailed();
 			}
 		});
 		return this;
@@ -84,6 +106,19 @@ public class ChemicalResource {
 				return true;
 		}
 		return false;
+	}
+
+	public ChemicalType getType() {
+		return type;
+	}
+
+	public ChemicalState getState(double temperature) {
+		return temperature < melting ? ChemicalState.SOLID
+				: (temperature > boiling ? ChemicalState.GAS : ChemicalState.LIQUID);
+	}
+
+	public ChemicalItem getDefaultItem() {
+		return new ChemicalItem(this, getState(Environment.getTemperature()));
 	}
 
 	public void addReaction(Reaction r) {

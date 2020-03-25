@@ -7,27 +7,33 @@ import org.apache.log4j.*;
 import com.alibaba.fastjson.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.chemicals.ions.*;
+import com.github.nickid2018.chemistrylab.chemicals.alkalis.*;
+import com.github.nickid2018.chemistrylab.chemicals.atoms.*;
+import com.github.nickid2018.chemistrylab.chemicals.oxides.*;
+import com.github.nickid2018.chemistrylab.window.MainWindow;
 
 public class ChemicalsLoader {
-
+	
+	// Registry
+	public static final Map<String, Class<?>> REGISTER = new HashMap<>();
+	public static final Set<String> REGISTRY_ATOM = new TreeSet<>();
+	public static final Set<String> REGISTRY_ION = new TreeSet<>();
+	public static final Set<String> REGISTRY_CHEMICAL = new TreeSet<>();
+	
+	public static final Chemicals CHEMICALS = new Chemicals();
+	
 	// Mapping of constructors of Chemical decompiling class
 	public static final Map<String, Constructor<?>> mapping = new HashMap<>();
-	public static final Chemicals chemicals = new Chemicals();
-
-	// Registry
-	public static final Set<String> atoms = new TreeSet<>();
-	public static final Set<String> ions = new TreeSet<>();
-	public static final Set<String> chemical = new TreeSet<>();
-
+	
 	// Logger
 	public static final Logger logger = Logger.getLogger("Chemical Loader");
 
 	// Counters
 	private static int failedClasses = 0;
-	private static long lastTime = ChemistryLab.getTime();
+	private static long lastTime = TimeUtils.getTime();
 	private static int counter = 0;
 
 	// Status to paint
@@ -40,33 +46,14 @@ public class ChemicalsLoader {
 
 	// Load Chemical Decompilers and resource
 	public static final void loadChemicals() throws Exception {
-		Properties pro = new Properties();
-		InputStream is = ResourceManager.getResourceAsStream("assets/models/chemicals/class.map", true);
-		pro.load(is);
-		load_details.setMax(pro.size());
-		pro.forEach((n, c) -> {
-			String ns = (String) n;
+
+		REGISTER.forEach((s, c) -> {
 			try {
-				Class<?> cls = Class.forName((String) c);
-				Constructor<?> con = cls.getConstructor(JSONObject.class, ChemicalResource.class);
-				mapping.put(ns, con);
+				Constructor<?> ctor = c.getConstructor(JSONObject.class, ChemicalResource.class);
+				mapping.put(s, ctor);
 			} catch (Exception e) {
-				logger.warn("Failed to load TYPE CLASS:" + ns + "(Class name:" + c + ").");
+				logger.warn("Failed to load TYPE CLASS:" + s + "(Class name:" + c + ").");
 				failedClasses++;
-			}
-			counter++;
-			// Show Time!
-			if (ChemistryLab.getTime() - lastTime > 16) {
-				Window.clearFace();
-				ChemistryLab.QUAD.render();
-//				CommonRender.showMemoryUsed();
-				InitLoader.showAllProgress(3);
-				renderChemicalStatus(1);
-				load_details.setNow(counter);
-				load_details.render(100, 520, Window.nowWidth - 200);
-//				CommonRender.drawAsciiFont("Loading type class:" + ns, 100, 503, 16, Color.black);
-				lastTime = ChemistryLab.getTime();
-				Window.flush();
 			}
 		});
 
@@ -74,98 +61,107 @@ public class ChemicalsLoader {
 		loadIons();
 		loadChemical();
 
-		if (failedClasses == 0 && chemicals.getFailedPartLoad() == 0) {
+		if (failedClasses == 0 && CHEMICALS.getFailedPartLoad() == 0) {
 			logger.info("Successfully loaded all chemicals.");
 		} else {
 			logger.warn("Successfully loaded all chemicals.But failed to load " + failedClasses + " type(s),so "
-					+ chemicals.getFailedPartLoad() + " chemical(s) loaded partly.");
+					+ CHEMICALS.getFailedPartLoad() + " chemical(s) loaded partly.");
 		}
 	}
 
 	private static final void loadAtoms() throws Exception {
 		counter = 0;
-		load_details.setMax(atoms.size());
-		for (String path : atoms) {
+		load_details.setMax(REGISTRY_ATOM.size());
+		for (String path : REGISTRY_ATOM) {
 			String actualpath = "assets/models/chemicals/atoms/" + path + ".json";
-			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
+			CHEMICALS.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
-			if (ChemistryLab.getTime() - lastTime > 16) {
-				Window.clearFace();
-				ChemistryLab.QUAD.render();
+			if (TimeUtils.getTime() - lastTime > 16) {
+				MainWindow.clearFace();
 //				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(2);
 				load_details.setNow(counter);
-				load_details.render(100, 520, Window.nowWidth - 200);
+				load_details.render(100, 520, MainWindow.nowWidth - 200);
 //				CommonRender.drawAsciiFont("Loading Atom[" + actualpath + "]", 100, 503, 16, Color.black);
-				lastTime = ChemistryLab.getTime();
-				Window.flush();
+				lastTime = TimeUtils.getTime();
+				MainWindow.flush();
 			}
 		}
 	}
 
 	private static final void loadIons() throws Exception {
 		counter = 0;
-		load_details.setMax(ions.size());
-		for (String path : ions) {
+		load_details.setMax(REGISTRY_ION.size());
+		for (String path : REGISTRY_ION) {
 			String actualpath = "assets/models/chemicals/ions/" + path + ".json";
-			chemicals.put(path, new ChemicalResource(actualpath, path).preInit());
+			CHEMICALS.put(path, new ChemicalResource(actualpath, path).preInit());
 			counter++;
-			if (ChemistryLab.getTime() - lastTime > 16) {
-				Window.clearFace();
-				ChemistryLab.QUAD.render();
+			if (TimeUtils.getTime() - lastTime > 16) {
+				MainWindow.clearFace();
 //				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(3);
 				load_details.setNow(counter);
-				load_details.render(100, 520, Window.nowWidth - 200);
+				load_details.render(100, 520, MainWindow.nowWidth - 200);
 //				CommonRender.drawAsciiFont("Loading Ion[" + actualpath + "]", 100, 503, 16, Color.black);
-				lastTime = ChemistryLab.getTime();
-				Window.flush();
+				lastTime = TimeUtils.getTime();
+				MainWindow.flush();
 			}
 		}
 	}
 
 	private static final void loadChemical() throws Exception {
 		counter = 0;
-		load_details.setMax(chemical.size());
-		for (String path : chemical) {
+		load_details.setMax(REGISTRY_CHEMICAL.size());
+		for (String path : REGISTRY_CHEMICAL) {
 			String[] sps = path.split("/");
 			String actualpath = "assets/models/chemicals/" + path + ".json";
-			chemicals.put(sps[sps.length - 1], new ChemicalResource(actualpath, sps[sps.length - 1]).preInit());
+			CHEMICALS.put(sps[sps.length - 1], new ChemicalResource(actualpath, sps[sps.length - 1]).preInit());
 			counter++;
-			if (ChemistryLab.getTime() - lastTime > 16) {
-				Window.clearFace();
-				ChemistryLab.QUAD.render();
+			if (TimeUtils.getTime() - lastTime > 16) {
+				MainWindow.clearFace();
 //				CommonRender.showMemoryUsed();
 				InitLoader.showAllProgress(3);
 				renderChemicalStatus(4);
 				load_details.setNow(counter);
-				load_details.render(100, 520, Window.nowWidth - 200);
+				load_details.render(100, 520, MainWindow.nowWidth - 200);
 //				CommonRender.drawAsciiFont("Loading Chemical[" + actualpath + "]", 100, 503, 16, Color.black);
-				lastTime = ChemistryLab.getTime();
-				Window.flush();
+				lastTime = TimeUtils.getTime();
+				MainWindow.flush();
 			}
 		}
 	}
 
 	private static final void renderChemicalStatus(int i) {
 		load_chemical_status.setNow(i);
-		load_chemical_status.render(100, 460, Window.nowWidth - 200);
+		load_chemical_status.render(100, 460, MainWindow.nowWidth - 200);
 //		CommonRender.drawAsciiFont(CHEMICAL_LOAD_STATUS[i - 1], 100, 443, 16, Color.black);
 	}
 
+	private static final void registerChemDecomper(String name, Class<?> cls) {
+		REGISTER.put(name, cls);
+	}
+
 	static {
+		registerChemDecomper("atom/nonmetal",NonMentalAtom.class);
+		registerChemDecomper("atom/metal",MentalAtom.class);
+		registerChemDecomper("simple",SimpleSubstanceA.class);
+		registerChemDecomper("ion/H",IonH.class);
+		registerChemDecomper("ion/OH",IonOH.class);
+		registerChemDecomper("ion/strong",IonStrong.class);
+		registerChemDecomper("alkali/strong",AlkaliStrong.class);
+		registerChemDecomper("chemical/H2O",H2O.class);
 		// Atoms
-		atoms.add("H");
-		atoms.add("O");
-		atoms.add("Na");
+		REGISTRY_ATOM.add("H");
+		REGISTRY_ATOM.add("O");
+		REGISTRY_ATOM.add("Na");
 		// Ions
-		ions.add("H_1p");
-		ions.add("OH_1n");
-		ions.add("Na_1p");
+		REGISTRY_ION.add("H_1p");
+		REGISTRY_ION.add("OH_1n");
+		REGISTRY_ION.add("Na_1p");
 		// Chemicals
-		chemical.add("alkalis/NaOH");
-		chemical.add("oxides/H2O");
+		REGISTRY_CHEMICAL.add("alkalis/NaOH");
+		REGISTRY_CHEMICAL.add("oxides/H2O");
 	}
 }

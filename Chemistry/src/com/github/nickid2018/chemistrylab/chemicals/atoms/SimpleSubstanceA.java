@@ -32,10 +32,10 @@ public class SimpleSubstanceA extends Chemical {
 				} catch (Exception e) {
 					ChemicalsLoader.logger.warn("Chemical Load Error at " + r.getResourcePath() + count + " in type "
 							+ cl + ((e instanceof NullPointerException) ? ",because this type wasn't loaded." : "."));
-					ChemicalsLoader.chemicals.addFailed();
+					ChemicalsLoader.CHEMICALS.addFailed();
 				}
 			});
-			ChemicalsLoader.chemicals.put(r.getFinalName() + count, sb);
+			ChemicalsLoader.CHEMICALS.put(r.getFinalName() + count, sb);
 		}
 	}
 

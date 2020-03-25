@@ -4,15 +4,12 @@ import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
 
-import com.github.nickid2018.chemistrylab.eventbus.*;
+import com.github.nickid2018.chemistrylab.event.*;
 
 public class I18N {
 
 	// Logger
 	public static final Logger logger = Logger.getLogger("Internationalization Manager");
-
-	// Event
-	public static final Event I18N_RELOADED = Event.createNewEvent("I18N_reloaded");
 
 	// Locales
 	private static final Properties langStrings = new Properties();
@@ -20,7 +17,7 @@ public class I18N {
 
 	public static final Locale SYSTEM_DEFAULT = Locale.getDefault();
 	public static Locale NOW;
-	
+
 	// Status
 	public static boolean i18nReload = false;
 
@@ -60,7 +57,6 @@ public class I18N {
 		}
 		langStrings.load(ir);
 		logger.info("Successfully loaded Language " + I18N.getNowLanguage() + ".");
-		EventBus.postEvent(I18N_RELOADED);
 	}
 
 	// Reload with name

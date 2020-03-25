@@ -125,28 +125,28 @@ public class VerticalSlideBar extends Component {
 			return;
 		if (!isClickLegal(10))
 			return;
-		if (ChemistryLab.getTime() - last_focus > 20) {
+		if (TimeUtils.getTime() - last_focus > 20) {
 			focus_on = false;
 		}
 //		if (checkRange(slibar, Mouse.getX(), Mouse.getY()) || focus_on) {
-			if (button != 0)
-				return;
-			focus_on = true;
-			last_focus = ChemistryLab.getTime();
-			double why = Mouse.getY();
-			float mysize = range.y1 - range.y0;
-			float shouldDraw = cons.size() * vertsize;
-			float percent = mysize / shouldDraw;
-			float barlength = (percent > 1 ? 1 : percent) * mysize;
-			postion = (float) ((Window.nowHeight - why - range.y0 - barlength / 2) / (mysize - barlength));
-			postion = postion > 1 ? 1 : postion;
-			postion = postion < 0 ? 0 : postion;
+		if (button != 0)
+			return;
+		focus_on = true;
+		last_focus = TimeUtils.getTime();
+		double why = Mouse.getY();
+		float mysize = range.y1 - range.y0;
+		float shouldDraw = cons.size() * vertsize;
+		float percent = mysize / shouldDraw;
+		float barlength = (percent > 1 ? 1 : percent) * mysize;
+		postion = (float) ((MainWindow.nowHeight - why - range.y0 - barlength / 2) / (mysize - barlength));
+		postion = postion > 1 ? 1 : postion;
+		postion = postion < 0 ? 0 : postion;
 //		} else {
-			for (Slidable s : cons) {
-				if (s.checkRange(Mouse.getX(), Mouse.getY())) {
-					s.onMouseEvent(button, action, mods);
-				}
+		for (Slidable s : cons) {
+			if (s.checkRange(Mouse.getX(), Mouse.getY())) {
+				s.onMouseEvent(button, action, mods);
 			}
+		}
 //		}
 	}
 

@@ -1,5 +1,8 @@
 package com.github.nickid2018.chemistrylab.render;
 
+import com.github.mmc1234.minigoldengine.util.*;
+import com.github.mmc1234.minigoldengine.render.shader.*;
+
 import static org.lwjgl.opengl.GL11.*;
 
 public final class ProgressBar {
@@ -8,10 +11,12 @@ public final class ProgressBar {
 	private double now = 0;
 	private double mask = 0;
 	private int height;
-//	private Color edgecolor = Color.darkGray;
-//	private Color fillcolor = Color.green;
-//	private Color maskcolor = Color.red;
+	private Color edgecolor = Color.BLACK;
+	private Color fillcolor = Color.GREEN;
+	private Color maskcolor = Color.RED;
 	private boolean maskenabled = false;
+
+	private VBO vbo;
 
 	public ProgressBar(double max, int width) {
 		this.max = max;
@@ -42,29 +47,29 @@ public final class ProgressBar {
 		this.height = width;
 	}
 
-//	public Color getEdgeColor() {
-//		return edgecolor;
-//	}
-//
-//	public void setEdgeColor(Color edgecolor) {
-//		this.edgecolor = edgecolor;
-//	}
-//
-//	public Color getFillColor() {
-//		return fillcolor;
-//	}
-//
-//	public void setFillColor(Color fillcolor) {
-//		this.fillcolor = fillcolor;
-//	}
-//
-//	public Color getMaskColor() {
-//		return maskcolor;
-//	}
-//
-//	public void setMaskColor(Color maskcolor) {
-//		this.maskcolor = maskcolor;
-//	}
+	public Color getEdgeColor() {
+		return edgecolor;
+	}
+
+	public void setEdgeColor(Color edgecolor) {
+		this.edgecolor = edgecolor;
+	}
+
+	public Color getFillColor() {
+		return fillcolor;
+	}
+
+	public void setFillColor(Color fillcolor) {
+		this.fillcolor = fillcolor;
+	}
+
+	public Color getMaskColor() {
+		return maskcolor;
+	}
+
+	public void setMaskColor(Color maskcolor) {
+		this.maskcolor = maskcolor;
+	}
 
 	public boolean isMaskEnabled() {
 		return maskenabled;

@@ -2,7 +2,7 @@ package com.github.nickid2018.chemistrylab.layer.animation;
 
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.*;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.window.MainWindow;
 
 public class SlideAnimation extends Animation {
 
@@ -41,15 +41,15 @@ public class SlideAnimation extends Animation {
 		this.direction = direction;
 		switch (direction) {
 		case DIRECTION_RIGHT:
-			layer.setRange(Window.DREAM_WIDTH, layer.getRange().y0,
-					Window.DREAM_WIDTH + layer.getRange().x1 - layer.getRange().x0 + distance, layer.getRange().y1);
+			layer.setRange(MainWindow.DREAM_WIDTH, layer.getRange().y0,
+					MainWindow.DREAM_WIDTH + layer.getRange().x1 - layer.getRange().x0 + distance, layer.getRange().y1);
 			break;
 		case DIRECTION_LEFT:
 			layer.setRange(-distance, layer.getRange().y0, 0, layer.getRange().y1);
 			break;
 		case DIRECTION_DOWN:
-			layer.setRange(layer.getRange().x0, Window.DREAM_HEIGHT, layer.getRange().x1,
-					Window.DREAM_HEIGHT + layer.getRange().y1 - layer.getRange().y0 + distance);
+			layer.setRange(layer.getRange().x0, MainWindow.DREAM_HEIGHT, layer.getRange().x1,
+					MainWindow.DREAM_HEIGHT + layer.getRange().y1 - layer.getRange().y0 + distance);
 			break;
 		case DIRECTION_UP:
 			layer.setRange(layer.getRange().x0, -distance, layer.getRange().x1, 0);
@@ -70,12 +70,12 @@ public class SlideAnimation extends Animation {
 			layer.setRange(nowon - distance, layer.getRange().y0, nowon, layer.getRange().y1);
 			break;
 		case DIRECTION_LEFT:
-			layer.setRange(Window.DREAM_WIDTH - nowon, layer.getRange().y0, Window.DREAM_WIDTH + distance - nowon,
-					layer.getRange().y1);
+			layer.setRange(MainWindow.DREAM_WIDTH - nowon, layer.getRange().y0,
+					MainWindow.DREAM_WIDTH + distance - nowon, layer.getRange().y1);
 			break;
 		case DIRECTION_DOWN:
-			layer.setRange(layer.getRange().x0, Window.DREAM_HEIGHT - nowon, layer.getRange().x1,
-					Window.DREAM_HEIGHT + distance - nowon);
+			layer.setRange(layer.getRange().x0, MainWindow.DREAM_HEIGHT - nowon, layer.getRange().x1,
+					MainWindow.DREAM_HEIGHT + distance - nowon);
 			break;
 		case DIRECTION_UP:
 			layer.setRange(layer.getRange().x0, nowon, layer.getRange().x1, nowon - distance);

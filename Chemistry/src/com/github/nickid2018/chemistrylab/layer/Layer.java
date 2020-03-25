@@ -5,7 +5,7 @@ import java.util.concurrent.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.window.Mouse;
-import com.github.nickid2018.chemistrylab.window.Window;
+import com.github.nickid2018.chemistrylab.window.MainWindow;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.layer.component.*;
 
@@ -37,12 +37,12 @@ public abstract class Layer {
 //	}
 
 	public final boolean checkRange(double x, double y) {
-		return /*checkRange(range, x, y)*/true;
+		return /* checkRange(range, x, y) */true;
 	}
 
 	protected static final void doDefaultResize(Layer l) {
-		float ratioX = Window.nowWidth / Window.oldWidth;
-		float ratioY = Window.nowHeight / Window.oldHeight;
+		float ratioX = MainWindow.nowWidth / MainWindow.oldWidth;
+		float ratioY = MainWindow.nowHeight / MainWindow.oldHeight;
 		l.range.x0 *= ratioX;
 		l.range.x1 *= ratioX;
 		l.range.y0 *= ratioY;
@@ -85,9 +85,9 @@ public abstract class Layer {
 	}
 
 	public final boolean isClickLegal(long del) {
-		boolean b = ChemistryLab.getTime() - lastClick > del;
+		boolean b = TimeUtils.getTime() - lastClick > del;
 		if (b)
-			lastClick = ChemistryLab.getTime();
+			lastClick = TimeUtils.getTime();
 		return b;
 	}
 
@@ -133,8 +133,8 @@ public abstract class Layer {
 	}
 
 	public void onContainerResized() {
-		float ratioX = Window.nowWidth / Window.oldWidth;
-		float ratioY = Window.nowHeight / Window.oldHeight;
+		float ratioX = MainWindow.nowWidth / MainWindow.oldWidth;
+		float ratioY = MainWindow.nowHeight / MainWindow.oldHeight;
 		resizeSelf(ratioX, ratioY);
 		if (useComponent())
 			resizeComponents(ratioX, ratioY);

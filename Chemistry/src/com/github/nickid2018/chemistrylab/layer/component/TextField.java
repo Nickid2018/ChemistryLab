@@ -7,6 +7,7 @@ import java.util.function.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.layer.*;
 import com.github.nickid2018.chemistrylab.render.*;
+import com.github.nickid2018.chemistrylab.util.TimeUtils;
 import com.github.nickid2018.chemistrylab.window.Mouse;
 
 import java.awt.datatransfer.*;
@@ -91,9 +92,9 @@ public class TextField extends Component {
 			return;
 		focus_on = action == GLFW.GLFW_PRESS;
 		if (focus_on) {
-			startTime = ChemistryLab.getTime();
+			startTime = TimeUtils.getTime();
 		} else {
-			started = ChemistryLab.getTime() - startTime > 100;
+			started = TimeUtils.getTime() - startTime > 100;
 			if (started)
 				started_split = true;
 			else {
@@ -331,7 +332,7 @@ public class TextField extends Component {
 	@Override
 	public void render() {
 		super.render();
-		long now_t = ChemistryLab.getTime();
+		long now_t = TimeUtils.getTime();
 		boolean pt_pos = now_t % 1000 < 500;
 		float honzsize = range.x1 - range.x0;
 		float vertsize = range.y1 - range.y0;
@@ -348,17 +349,17 @@ public class TextField extends Component {
 //				glVertex2f(pos, range.y1);
 //				glEnd();
 //			}
-			if (selpostionstart == selpostionend)
-				return;
+		if (selpostionstart == selpostionend)
+			return;
 //			float sl_start = CommonRender.calcTextWidth(pa.substring(0, selpostionstart), size) + range.x0;
 //			float sl_end = CommonRender.calcTextWidth(pa.substring(0, selpostionend), size) + range.x0;
 //			selcolor.bind();
-			glBegin(GL_QUADS);
+		glBegin(GL_QUADS);
 //			glVertex2f(sl_start, range.y0);
 //			glVertex2f(sl_end, range.y0);
 //			glVertex2f(sl_end, range.y1);
 //			glVertex2f(sl_start, range.y1);
-			glEnd();
+		glEnd();
 //		} else {
 //			String topaint = CommonRender.subTextWidth(pa.substring(startpaint), size, honzsize);
 //			float tx = CommonRender.drawFont(topaint, range.x0, nexty, size, color);
@@ -369,8 +370,8 @@ public class TextField extends Component {
 //				glVertex2f(pos, range.y1);
 //				glEnd();
 //			}
-			if (selpostionstart == selpostionend)
-				return;
+		if (selpostionstart == selpostionend)
+			return;
 //			float sl_start = (startpaint < selpostionstart
 //					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionstart), size)
 //					: 0) + range.x0;
@@ -378,12 +379,12 @@ public class TextField extends Component {
 //					? CommonRender.calcTextWidth(pa.substring(startpaint, selpostionend), size)
 //					: tx - range.x0) + range.x0;
 //			selcolor.bind();
-			glBegin(GL_QUADS);
+		glBegin(GL_QUADS);
 //			glVertex2f(sl_start, range.y0);
 //			glVertex2f(sl_end, range.y0);
 //			glVertex2f(sl_end, range.y1);
 //			glVertex2f(sl_start, range.y1);
-			glEnd();
+		glEnd();
 //		}
 	}
 

@@ -13,9 +13,9 @@ import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.sound.*;
 import com.github.nickid2018.chemistrylab.render.*;
 import com.github.nickid2018.chemistrylab.debug.*;
+import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.window.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
-import com.github.nickid2018.chemistrylab.eventbus.*;
 import com.github.nickid2018.chemistrylab.layer.effect.*;
 import com.github.nickid2018.chemistrylab.layer.component.*;
 
@@ -30,7 +30,7 @@ public class Background extends Layer {
 //	public static final FastTexture tex = new FastTexture(0, 0, Window.nowWidth, Window.nowHeight, 0, 0, 1, 1, table);
 
 	public Background() {
-		super(0, 0, Window.nowWidth, Window.nowHeight);
+		super(0, 0, MainWindow.nowWidth, MainWindow.nowHeight);
 	}
 
 	private int count = 1;
@@ -169,7 +169,7 @@ public class Background extends Layer {
 		if (action != GLFW.GLFW_PRESS)
 			return;
 		if (!onCommand && key == GLFW.GLFW_KEY_SLASH) {
-			f = new TextField(0, Window.nowHeight - 16, Window.nowWidth, Window.nowHeight, this, 16);
+			f = new TextField(0, MainWindow.nowHeight - 16, MainWindow.nowWidth, MainWindow.nowHeight, this, 16);
 //			f.addEffect(new BackgroundEffect(new Color(150, 150, 150, 75), f));
 			f.setEnterEvent(s -> {
 				removeAllComponent();

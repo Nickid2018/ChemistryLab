@@ -14,7 +14,7 @@ public class Ion extends Chemical {
 		JSONArray rels = o.getJSONArray("relativeAtom");
 		for (Object ob : rels) {
 			String s = (String) ob;
-			ChemicalResource atom = ChemicalsLoader.chemicals.get(s);
+			ChemicalResource atom = ChemicalsLoader.CHEMICALS.get(s);
 			relas.add(atom);
 			mess += atom.getMess();
 		}

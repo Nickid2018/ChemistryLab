@@ -1,22 +1,21 @@
 package com.github.nickid2018.chemistrylab.reaction;
 
 import java.util.*;
+import java.util.stream.*;
 import java.util.concurrent.locks.*;
-
+import com.google.common.base.*;
+import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
-import com.github.nickid2018.chemistrylab.eventbus.*;
+import com.github.nickid2018.chemistrylab.layer.container.*;
 
-public class ChemicalMixture extends HashMap<ChemicalResource, Unit> {
-
-	public static final Event CHEMICAL_CHANGED = Event.createNewEvent("Chemical changed");
-	public static final int CHEMICAL_ADDED = 0x0;
-	public static final int CHEMICAL_CHANGE = 0x1;
+public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8142851189900240337L;
 
+	private double temperature = Environment.getTemperature();
 	private boolean shadow;
 	private ReactionController contr;
 	private ReentrantLock lock = new ReentrantLock();
@@ -37,29 +36,48 @@ public class ChemicalMixture extends HashMap<ChemicalResource, Unit> {
 		clear();
 		putAll(mix);
 		lock.unlock();
+		temperature = mix.temperature;
 	}
 
 	@Override
-	public Unit put(ChemicalResource key, Unit value) {
-		checkNonListen(value);
+	public Unit put(ChemicalItem key, Unit value) {
+		Preconditions.checkArgument(!value.isListen(), "This unit isn't a non-listen unit.");
+		value = new Unit(key.resource, Unit.UNIT_MOLE, value.toMol()).setNotListen();
 		lock.lock();
+		ChemicalChangedEvent post = new ChemicalChangedEvent();
+		post.mixture = this;
 		if (containsKey(key)) {
 			Unit ret = replace(key, get(key).add(value));
 			lock.unlock();
-			Event post = CHEMICAL_CHANGED.clone();
-			post.putExtra(CHEMICAL_CHANGE, null);
-			EventBus.postEvent(post);
+			post.item = null;
+			AbstractContainer.CHEMICAL_BUS.post(post);
 			return ret;
 		} else {
 			// Set listen environment change
 			Unit u = new Unit(value.getChemical(), value.getUnit(), value.getNum());
 			super.put(key, u);
 			lock.unlock();
-			Event post = CHEMICAL_CHANGED.clone();
-			post.putExtra(CHEMICAL_ADDED, key);
-			EventBus.postEvent(post);
+			post.item = key;
+			AbstractContainer.CHEMICAL_BUS.post(post);
 			return u;
 		}
+	}
+
+	public boolean containsChemical(ChemicalResource resource) {
+		ChemicalState[] states = ChemicalState.values();
+		for (int i = 0; i < states.length; i++) {
+			if (containsKey(new ChemicalItem(resource, states[i])))
+				return true;
+		}
+		return false;
+	}
+
+	public Set<Map.Entry<ChemicalItem, Unit>> filterByState(ChemicalState state) {
+		return entrySet().stream().filter(en -> en.getKey().state == state).collect(Collectors.toSet());
+	}
+
+	public Unit getChemicalItem(ChemicalResource res, ChemicalState state) {
+		return get(new ChemicalItem(res, state));
 	}
 
 	public ReactionController getController() {
@@ -68,8 +86,18 @@ public class ChemicalMixture extends HashMap<ChemicalResource, Unit> {
 		return contr;
 	}
 
-	static void checkNonListen(Unit u) {
-		if (EventBus.haveListener(u))
-			throw new IllegalArgumentException("This unit isn't a non-listen unit.");
+	public double getTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(double temperature) {
+		this.temperature = temperature;
+	}
+
+//	public 
+
+	public void temperatureTransfer() {
+		// TODO
+
 	}
 }

@@ -1,21 +1,28 @@
 package com.github.nickid2018.chemistrylab.reaction;
 
 import java.util.*;
-
+import com.github.nickid2018.jmcl.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 public abstract class Reaction {
 
-	protected double dH;
-	protected double dS;
+	protected final double dH;
+	protected final double dS;
 	protected Map<ChemicalResource, Integer> reacts = new HashMap<>();
 	protected Map<ChemicalResource, Integer> gets = new HashMap<>();
 
-	public Reaction(Map<ChemicalResource, Integer> reacts, Map<ChemicalResource, Integer> gets, double dH, double dS) {
+	// Constant of speed
+	protected final MathStatement k;
+	protected final String strk;
+
+	public Reaction(Map<ChemicalResource, Integer> reacts, Map<ChemicalResource, Integer> gets, double dH, double dS,
+			String k) throws MathException {
 		this.reacts = reacts;
 		this.gets = gets;
 		this.dH = dH;
 		this.dS = dS;
+		strk = k;
+		this.k = MathStatement.format(k);
 	}
 
 	public Map<ChemicalResource, Integer> getReacts() {
@@ -32,6 +39,10 @@ public abstract class Reaction {
 
 	public double getdS() {
 		return dS;
+	}
+
+	public boolean isReactionCanWork(double temperature) {
+		return dH - temperature * dS < 0;
 	}
 
 	public final int computeSign() {
