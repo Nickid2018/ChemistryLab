@@ -25,7 +25,7 @@
 	<classpathentry kind="lib" path="libs/org/apache/commons/math3-3.6.1/commons-math3-3.6.1.jar"/>
 	<classpathentry kind="lib" path="libs/org/objectweb/asm-6.0-BETA/asm-debug-all-6.0_BETA.jar"/>
 	<classpathentry kind="lib" path="libs/org/lwjgl-3.2.3/lwjgl-stb.jar"/>
-	<classpathentry kind="lib" path="libs/com/github/nickid2018/jmcl-1.0/jmcl-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/com/github/nickid2018/jmcl-1.0/jmcl-1.0.jar" sourcepath="/JMCL/src"/>
 	<classpathentry kind="lib" path="libs/com/github/nickid2018/rdt-1.0/rdt-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
