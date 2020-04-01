@@ -8,6 +8,7 @@ import com.alibaba.fastjson.*;
 import org.apache.commons.io.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
+import com.github.nickid2018.chemistrylab.resource.ResourceManager;
 
 public class ChemicalResource {
 

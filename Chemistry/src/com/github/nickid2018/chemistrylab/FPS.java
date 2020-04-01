@@ -1,7 +1,6 @@
 package com.github.nickid2018.chemistrylab;
 
 import com.github.nickid2018.chemistrylab.util.TimeUtils;
-import com.github.nickid2018.chemistrylab.window.*;
 
 public class FPS {
 
@@ -30,15 +29,15 @@ public class FPS {
 	}
 
 	public static void update() {
-		if (TimeUtils.getTime() - Mouse.lastTime > 1000) {
-			FPS.fps = FPS.fpsCount;
-			FPS.fpsCount = 0;
-			FPS.ups = FPS.upsCount;
-			FPS.upsCount = 0;
-			Mouse.lastTime = TimeUtils.getTime();
-			// FPS Recording
-			DebugSystem.addFPSInfo(FPS.fps);
-		}
+//		if (TimeUtils.getTime() - Mouse.lastTime > 1000) {
+//			FPS.fps = FPS.fpsCount;
+//			FPS.fpsCount = 0;
+//			FPS.ups = FPS.upsCount;
+//			FPS.upsCount = 0;
+//			Mouse.lastTime = TimeUtils.getTime();
+//			// FPS Recording
+//			DebugSystem.addFPSInfo(FPS.fps);
+//		}
 		// Memory Recording
 		if (FPS.fpsCount % 20 == 0)
 			DebugSystem.addMemInfo(ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory());

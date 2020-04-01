@@ -6,7 +6,8 @@ import java.util.concurrent.locks.*;
 import com.google.common.base.*;
 import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
+import com.github.nickid2018.chemistrylab.chemicals.attributes.Dissolve;
+import com.github.nickid2018.chemistrylab.container.*;
 
 public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 
@@ -75,9 +76,20 @@ public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 	public Set<Map.Entry<ChemicalItem, Unit>> filterByState(ChemicalState state) {
 		return entrySet().stream().filter(en -> en.getKey().state == state).collect(Collectors.toSet());
 	}
+	
+	public Unit get(ChemicalItem key) {
+		Unit ret = super.get(key);
+		return ret == null ? Unit.NULL_UNIT : ret;
+	}
 
 	public Unit getChemicalItem(ChemicalResource res, ChemicalState state) {
 		return get(new ChemicalItem(res, state));
+	}
+
+	// For aq
+	public double getConcentration(ChemicalResource res) {
+		return get(new ChemicalItem(res, ChemicalState.AQUEOUS)).getNum()
+				/ (get(Dissolve.DEFAULT_SOLVENT).getNum() * ChemicalsLoader.CHEMICALS.get("H2O").getMess() / 1000);
 	}
 
 	public ReactionController getController() {

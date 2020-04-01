@@ -3,13 +3,14 @@ package com.github.nickid2018.chemistrylab.debug;
 import java.util.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
+
+import com.github.nickid2018.chemistrylab.container.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
 
 public class ContainerCommand extends Command {
 
-	private static final ContainerLoader LOADER = InitLoader.getContainerLoader();
+	private static final ContainerLoader LOADER = null;
 
 	@Override
 	public Message[] invokeCommand(String info) throws CommandException {
@@ -33,12 +34,12 @@ public class ContainerCommand extends Command {
 				return new Message[] {
 						new Message().addMessageEntry(new MessageEntry(I18N.getString("command.container.add")))
 								.addMessageEntry(new MessageEntry("UUID = " + abc.getUUID()).setUnderline(true)
-										.setClickEvent((button, action, mods) -> {
-											if (button != 0)
-												return;
-											Transferable trans = new StringSelection(abc.getUUID().toString());
-											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-										})) };
+//										.setClickEvent((button, action, mods) -> {
+//											if (button != 0)
+//												return;
+//											Transferable trans = new StringSelection(abc.getUUID().toString());
+//											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+										/*})*/) };
 			case "remove":
 				// Format: container remove {uuid}
 				String uuid = split[1];
@@ -46,12 +47,12 @@ public class ContainerCommand extends Command {
 				return new Message[] {
 						new Message().addMessageEntry(new MessageEntry(I18N.getString("command.container.remove")))
 								.addMessageEntry(new MessageEntry("UUID = " + uuid).setUnderline(true)
-										.setClickEvent((button, action, mods) -> {
-											if (button != 0)
-												return;
-											Transferable trans = new StringSelection(uuid.toString());
-											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-										})) };
+//										.setClickEvent((button, action, mods) -> {
+//											if (button != 0)
+//												return;
+//											Transferable trans = new StringSelection(uuid.toString());
+//											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
+										/*})*/) };
 			case "info-container":
 				// Format: container info-container container.XXX.model
 				String model0 = split[1];

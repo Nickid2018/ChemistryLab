@@ -7,7 +7,7 @@ import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 /**
- * An attribute of chemical, in a reaction process it will be called twice,so
+ * An attribute of chemical, in a reaction process it will be called twice, so
  * the speed rate is half of environment speed.
  * 
  * @author Nickid2018
@@ -31,7 +31,7 @@ public class Dissolve extends ChemicalAttribute {
 		// Chemistry: like AgCl dissolves in water (AgCl == Ag_1p + Cl_1n)
 		// or CH3COOH dissolves in water (CH3COOH == CH3COO_1n + H_1p)
 		// Physics: like O2 dissolves in water
-		// or CH3CH2OH dissolve in water
+		// or CH3CH2OH dissolves in water
 		functionDissolve = o.getBoolean("isReaction");
 		if (functionDissolve) {
 			double dH = o.getDoubleValue("deltaH");
@@ -54,9 +54,19 @@ public class Dissolve extends ChemicalAttribute {
 			physicsDissolve = MathStatement.format(o.getString("dissolveSpeed"));
 			solubility = MathStatement.format(o.getString("solubility"));
 		}
+		item = new ChemicalItem(res, ChemicalState.AQUEOUS);
+		gasitem = new ChemicalItem(resource, ChemicalState.GAS);
+		liqitem = new ChemicalItem(resource, ChemicalState.LIQUID);
+		soliditem = new ChemicalItem(resource, ChemicalState.SOLID);
 	}
 
-	private static ChemicalItem DEFAULT_SOLVENT;
+	public static ChemicalItem DEFAULT_SOLVENT;
+	private static final Map<String, Double> args = new HashMap<>();
+
+	private ChemicalItem item;
+	private ChemicalItem gasitem;
+	private ChemicalItem liqitem;
+	private ChemicalItem soliditem;
 
 	/**
 	 * This will be run in pre and post reaction
@@ -70,8 +80,42 @@ public class Dissolve extends ChemicalAttribute {
 		if (functionDissolve) {
 			reaction.doReaction(mixture);
 		} else {
-			
+			double gas = mixture.get(gasitem).getNum();
+			double liquid = mixture.get(liqitem).getNum();
+			double solid = mixture.get(soliditem).getNum();
+			args.put("T", Environment.getTemperature());
+			double solubility = this.solubility.calc(args);
+			double now = convertSolubility(mixture.getConcentration(resource));
+			double minus = solubility - now;
+			double dodissolve = Math.signum(minus) * physicsDissolve.calc(args) * Environment.getSpeed() / 50;
+			dodissolve = Math.abs(dodissolve) - Math.abs(minus) < 0 ? dodissolve : minus;
+			double endConvert = convertMolPerL(dodissolve) * mixture.get(DEFAULT_SOLVENT).getNum()
+					+ mixture.getChemicalItem(resource, ChemicalState.AQUEOUS).getNum();
+			mixture.replace(item, new Unit(resource, Unit.UNIT_MOLE, endConvert));
+			double all = gas + liquid + solid;
+			gas -= dodissolve * gas / all;
+			liquid -= dodissolve * liquid / all;
+			solid -= dodissolve * solid / all;
+			if (gas != 0)
+				mixture.replace(gasitem, new Unit(resource, Unit.UNIT_MOLE, gas));
+			else
+				mixture.remove(gasitem);
+			if (liquid != 0)
+				mixture.replace(liqitem, new Unit(resource, Unit.UNIT_MOLE, liquid));
+			else
+				mixture.remove(liqitem);
+			if (solid != 0)
+				mixture.replace(soliditem, new Unit(resource, Unit.UNIT_MOLE, solid));
+			else
+				mixture.remove(soliditem);
 		}
 	}
 
+	public double convertSolubility(double mol_l) {
+		return mol_l * resource.getMess() / 10;
+	}
+
+	public double convertMolPerL(double g_100g) {
+		return g_100g * 10 / resource.getMess();
+	}
 }

@@ -1,11 +1,8 @@
 package com.github.nickid2018.chemistrylab.util;
 
 import java.util.*;
-import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import com.github.nickid2018.chemistrylab.*;
-import com.github.nickid2018.chemistrylab.render.*;
-import com.github.nickid2018.chemistrylab.window.*;
 
 public class Message implements Cloneable {
 
@@ -62,9 +59,9 @@ public class Message implements Cloneable {
 	}
 
 	public void onMouseEvent(int button, int action, int mods) {
-		if (action != GLFW.GLFW_PRESS)
-			return;
-		double x = Mouse.getX();
+//		if (action != GLFW.GLFW_PRESS)
+//			return;
+//		double x = Mouse.getX();
 		int l = 0;
 		for (MessageEntry en : entries) {
 //			l += CommonRender.calcTextWidth(en.getText(), 16);
@@ -98,15 +95,15 @@ public class Message implements Cloneable {
 		}
 	}
 
-	public void onCursorIn() {
-		if (haveEvent) {
-			GLFW.glfwSetCursor(MainWindow.window, Cursor.HAND_CURSOR);
-		}
-	}
-
-	public void onCursorOut() {
-		GLFW.glfwSetCursor(MainWindow.window, Cursor.ARROW_CURSOR);
-	}
+//	public void onCursorIn() {
+//		if (haveEvent) {
+//			GLFW.glfwSetCursor(MainWindow.window, Cursor.HAND_CURSOR);
+//		}
+//	}
+//
+//	public void onCursorOut() {
+//		GLFW.glfwSetCursor(MainWindow.window, Cursor.ARROW_CURSOR);
+//	}
 
 	@Override
 	public Message clone() {

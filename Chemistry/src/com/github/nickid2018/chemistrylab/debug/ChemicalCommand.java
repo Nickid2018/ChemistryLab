@@ -1,7 +1,7 @@
 package com.github.nickid2018.chemistrylab.debug;
 
 import com.github.nickid2018.chemistrylab.chemicals.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
+import com.github.nickid2018.chemistrylab.container.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.util.*;
 

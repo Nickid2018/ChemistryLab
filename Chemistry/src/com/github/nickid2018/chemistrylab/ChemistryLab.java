@@ -1,8 +1,10 @@
 package com.github.nickid2018.chemistrylab;
 
+import java.io.*;
 import org.apache.log4j.*;
-import java.lang.management.*;
-import com.github.mmc1234.minigoldengine.font.*;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.backends.lwjgl.*;
+import com.github.nickid2018.chemistrylab.init.*;
 
 public class ChemistryLab {
 
@@ -11,48 +13,31 @@ public class ChemistryLab {
 
 	// Memory Manager
 	public static final Runtime RUNTIME = Runtime.getRuntime();
-	public static final MemoryMXBean MEMORY = ManagementFactory.getMemoryMXBean();
 
-	public static final FontRenderer fontRender = new BitmapFontRenderer("assets/textures/font/unicode_");
+	// Version
+	public static final com.github.nickid2018.chemistrylab.util.Version VERSION = com.github.nickid2018.chemistrylab.util.Version
+			.fromString("1.0.0 indev");
+
+	public static Application APPLICATION;
 
 	public static void main(String[] args) {
 		Thread.currentThread().setName("Main Thread");
-		new Thread(new EngineChemistryLab()).start();
+		try {
+			ProgramOptions.init(args);
+		} catch (IOException e) {
+		}
 
-//			InitLoader.init();
-//
-
-		// Main loop of program
-		// Status Changed
-//				if (I18N.i18nReload) {
-//					I18N.i18nReload = false;
-//					glfwSetWindowTitle(MainWindow.window, I18N.getString("window.title"));
-//				}
-
-		// Recreate Screen
-//				if (MainWindow.recreateWindow) {
-//					MainWindow.recreateWindow = false;
-//					// Recreate Window
-////					MainWindow.swapFullScreen();
-//				}
-
-		// Cover Surface
-//				CommonRender.drawFont("Program Crashed!",
-//						Window.nowWidth / 2 - CommonRender.winToOthWidth(CommonRender.formatSize(16 * 7)), 20, 32,
-//						Color.red);
-//				CommonRender.drawFont("The crash report has been saved in " + crash, 20,
-//						40 + CommonRender.winToOthHeight(CommonRender.formatSize(32)), 16, Color.black);
-//				CommonRender.drawItaticFont(
-//						"Please report this crash report to https://github.com/Nickid2018/ChemistryLab/", 20,
-//						(int) (40 + CommonRender.winToOthHeight(CommonRender.formatSize(48))), 16, Color.blue, .32f);
-//				CommonRender.drawFont("Stack Trace:", 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(64)),
-//						16, Color.red);
-//				CommonRender.drawFont(stack, 20, 40 + CommonRender.winToOthHeight(CommonRender.formatSize(80)), 16,
-//						Color.yellow.darker(0.3f));
+		APPLICATION = new LwjglApplication(new GameChemistry(), getConfig());
 	}
 
-	// Get Total Memory
-	public static final double getTotalMemory() {
-		return RUNTIME.maxMemory();
+	private static LwjglApplicationConfiguration getConfig() {
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "Chemistry Lab";
+		config.resizable = true;
+		config.vSyncEnabled = true;
+		config.width = ProgramOptions.getWindowOptionInt("width");
+		config.height = ProgramOptions.getWindowOptionInt("height");
+		config.fullscreen = ProgramOptions.getWindowOptionBool("fullscreen");
+		return config;
 	}
 }

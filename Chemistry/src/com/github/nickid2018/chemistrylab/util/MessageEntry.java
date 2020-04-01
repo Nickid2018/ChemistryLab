@@ -1,7 +1,5 @@
 package com.github.nickid2018.chemistrylab.util;
 
-import com.github.nickid2018.chemistrylab.window.*;
-
 public class MessageEntry {
 
 	private String text = "";

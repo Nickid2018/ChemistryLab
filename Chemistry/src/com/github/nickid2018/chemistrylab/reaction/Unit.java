@@ -3,8 +3,8 @@ package com.github.nickid2018.chemistrylab.reaction;
 import com.google.common.eventbus.*;
 import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
+import com.github.nickid2018.chemistrylab.container.*;
 import com.github.nickid2018.chemistrylab.properties.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
 
 public class Unit {
 
@@ -14,6 +14,8 @@ public class Unit {
 	public static final int UNIT_G = 0x1;
 	/** Unit: L */
 	public static final int UNIT_L = 0x2;
+
+	public static final Unit NULL_UNIT = new Unit(null, UNIT_MOLE, 0);
 
 	private final ChemicalResource chemical;
 	private boolean isListen = true;

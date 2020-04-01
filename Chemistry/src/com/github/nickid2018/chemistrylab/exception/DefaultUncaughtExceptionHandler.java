@@ -2,19 +2,14 @@ package com.github.nickid2018.chemistrylab.exception;
 
 import javax.swing.*;
 import java.lang.Thread.*;
-import com.github.nickid2018.chemistrylab.window.*;
 
 public class DefaultUncaughtExceptionHandler implements UncaughtExceptionHandler {
 
 	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		System.gc();
-		if (MainWindow.inited) {
-
-		} else {
-			// Use AWT
-			onError(e);
-		}
+		// Use AWT
+		onError(e);
 	}
 
 	public static void onError(Throwable t) {

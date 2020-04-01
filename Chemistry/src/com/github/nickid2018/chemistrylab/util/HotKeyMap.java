@@ -1,9 +1,6 @@
 package com.github.nickid2018.chemistrylab.util;
 
 import java.util.*;
-import org.lwjgl.glfw.*;
-import com.google.common.eventbus.*;
-import com.github.mmc1234.minigoldengine.event.*;
 
 public class HotKeyMap {
 
@@ -27,15 +24,10 @@ public class HotKeyMap {
 		keymap.replace(key, ref);
 	}
 
-	@Subscribe
-	public static void keyActive(EventKey key) {
-		activeKey(key.getKey(), key.getScancode(), key.getAction(), key.getMods());
-	}
-
 	public static void activeKey(int key, int scancode, int action, int mods) {
 		keymap.forEach((i, r) -> {
-			if (i == key && action == GLFW.GLFW_PRESS)
-				r.hotKeyActive(scancode, action, mods);
+//			if (i == key && action == GLFW.GLFW_PRESS)
+//				r.hotKeyActive(scancode, action, mods);
 		});
 	}
 }

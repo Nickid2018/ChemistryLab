@@ -5,7 +5,7 @@ import com.google.common.eventbus.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
+import com.github.nickid2018.chemistrylab.container.*;
 
 public class ReactionController {
 
@@ -29,15 +29,22 @@ public class ReactionController {
 		return shadow;
 	}
 
-	private boolean stopNow = false;
+	// Run in different thread, so it should be volatile
+	private volatile boolean stopNow = false;
+
 	private boolean lastTickOver = true;
 
 	@Subscribe
-	public void listenChemicalChange(ChemicalChangedEvent e) {
+	// Run in RENDER THREAD
+	public void onChemicalChange(ChemicalChangedEvent e) {
 		// Stop tick-update
 		stopNow = true;
+
+		// Ensure mixture
 		if (e.mixture != mix)
 			return;
+
+		// Check update reaction
 		if (e.item != null) {
 			ChemicalResource chem = e.item.resource;
 			// Add Reactions
@@ -53,12 +60,21 @@ public class ReactionController {
 				reactions.add(r);
 			});
 		}
+
 		// Override shadow mixture
 		shadow.copy(mix);
+
+		// Ensure flush successfully
+		stopNow = true;
+
+		// Under dream condition, the tick should be stopped once. But under worst
+		// condition, it may stop twice and cause some wrong things.
 	}
 
 	@Subscribe
+	// Run in TICK-COUNT-THREAD
 	public void onTickUpdate(TickerEvent e) {
+
 		// Tick update
 		if (!lastTickOver) {
 			e.isSomeCancelled = true;
@@ -66,27 +82,37 @@ public class ReactionController {
 			return;
 		}
 		lastTickOver = false;
+
 		// Destination Speed = 0.04s x Environment.speed
-		if (!stopNow)
-			// Something, like dissolve, need to work before reaction works
+
+		if (!isStop())
+			// Something, like dissolve, needs to work before reaction works
 			AbstractContainer.CHEMICAL_BUS.post(new ReactionWorkPre(shadow, this));
+
+		// Reaction Run!
 		for (Reaction r : reactions) {
-			if (stopNow) {
-				stopNow = false;
-				shadow.copy(mix);
-				break;
+			if (isStop()) {
+				lastTickOver = true;
+				return;
 			}
 			r.doReaction(shadow);
 		}
-		shadow.temperatureTransfer();
-		if (stopNow) {
-			// Override display mixture
-			if (!shadow.equals(mix)) {
-				mix.copy(shadow);
-			}
-			stopNow = false;
+
+//		shadow.temperatureTransfer();
+
+		// Copy and over
+		if (!isStop() && !shadow.equals(mix)) {
+			mix.copy(shadow);
 		}
 		lastTickOver = true;
 	}
 
+	private boolean isStop() {
+		boolean stop = stopNow;
+		if (stopNow) {
+			stopNow = false;
+			shadow.copy(mix);
+		}
+		return stop;
+	}
 }

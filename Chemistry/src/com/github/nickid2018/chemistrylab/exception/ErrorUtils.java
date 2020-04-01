@@ -3,12 +3,9 @@ package com.github.nickid2018.chemistrylab.exception;
 import java.io.*;
 import java.util.*;
 import org.lwjgl.*;
-import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.apache.commons.io.*;
 import com.github.nickid2018.chemistrylab.*;
-import com.github.nickid2018.chemistrylab.layer.*;
-import com.github.nickid2018.chemistrylab.sound.*;
 
 public class ErrorUtils {
 
@@ -71,7 +68,6 @@ public class ErrorUtils {
 	}
 
 	public static String outputCrashLog(Thread errorthread, Throwable e) {
-		LayerRender.popLayers();
 		if (errorthread == null)
 			errorthread = Thread.currentThread();
 		Date date = new Date();
@@ -102,15 +98,11 @@ public class ErrorUtils {
 			IOUtils.write(
 					"Java:" + System.getProperty("java.version") + "\tPath:" + System.getProperty("java.home") + l, w);
 			IOUtils.write("Library Path: " + System.getProperty("java.library.path").replaceAll(";", l) + l, w);
-			IOUtils.write("LWJGL Version: " + Version.getVersion() + l, w);
-			IOUtils.write("GLFW Version: " + GLFW.glfwGetVersionString() + l, w);
 			IOUtils.write("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION) + l, w);
-			IOUtils.write("OpenAL Version: " + SoundSystem.getALVersion() + " ALC " + SoundSystem.getALCVersion() + l,
-					w);
 			w.flush();
 			w.close();
 		} catch (IOException e2) {
-			EngineChemistryLab.logger.error("Write crash-report error.", e2);
+//			EngineChemistryLab.logger.error("Write crash-report error.", e2);
 		}
 		return crash;
 	}

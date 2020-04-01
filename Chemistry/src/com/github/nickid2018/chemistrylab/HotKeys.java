@@ -5,16 +5,11 @@ import java.io.*;
 import java.nio.*;
 import java.util.*;
 import org.lwjgl.*;
-import org.lwjgl.glfw.*;
 import javax.imageio.*;
 import java.awt.image.*;
 import org.lwjgl.opengl.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.event.*;
-import com.github.nickid2018.chemistrylab.layer.*;
-import com.github.nickid2018.chemistrylab.window.*;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class HotKeys {
 
@@ -26,25 +21,25 @@ public class HotKeys {
 
 	// HotKey Operations
 	public static final void registerMainHotKeys() {
-		HotKeyMap.addHotKey(GLFW.GLFW_KEY_F3, (scancode, action, mods) -> {
-			if (action != GLFW.GLFW_PRESS)
-				return;
+//		HotKeyMap.addHotKey(GLFW.GLFW_KEY_F3, (scancode, action, mods) -> {
+//			if (action != GLFW.GLFW_PRESS)
+//				return;
 			HotKeys.f3 = !HotKeys.f3;
-			EngineChemistryLab.logger.info("Debug Mode:" + (HotKeys.f3 ? "on" : "off"));
+//			EngineChemistryLab.logger.info("Debug Mode:" + (HotKeys.f3 ? "on" : "off"));
 //			if (HotKeys.f3) {
 //				EventBus.postEvent(DEBUG_ON);
 //			} else {
 //				EventBus.postEvent(DEBUG_OFF);
 //			}
-			HotKeys.f3_with_shift = (mods & GLFW.GLFW_MOD_SHIFT) == GLFW.GLFW_MOD_SHIFT;
-			HotKeys.f3_with_ctrl = (mods & GLFW.GLFW_MOD_CONTROL) == GLFW.GLFW_MOD_CONTROL;
-		});
-		HotKeyMap.addHotKey(GLFW_KEY_F2, (scancode, action, mods) -> {
-			if (action != GLFW.GLFW_PRESS)
-				return;
+//			HotKeys.f3_with_shift = (mods & GLFW.GLFW_MOD_SHIFT) == GLFW.GLFW_MOD_SHIFT;
+//			HotKeys.f3_with_ctrl = (mods & GLFW.GLFW_MOD_CONTROL) == GLFW.GLFW_MOD_CONTROL;
+//		});
+//		HotKeyMap.addHotKey(GLFW_KEY_F2, (scancode, action, mods) -> {
+//			if (action != GLFW.GLFW_PRESS)
+//				return;
 			GL11.glReadBuffer(GL11.GL_FRONT);
-			int width = (int) MainWindow.nowWidth;
-			int height = (int) MainWindow.nowHeight;
+			int width = 0;
+			int height = 0;
 			int bpp = 4; // Assuming a 32-bit display with a byte each for
 							// red, green, blue, and alpha.
 			ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
@@ -73,10 +68,10 @@ public class HotKeys {
 				try {
 					ImageIO.write(image, format, file);
 					// Yes, as you see, you are blind!
-					MessageBoard.INSTANCE.addMessage(
-							new Message().addMessageEntry(new MessageEntry(I18N.getString("screenshot.success")))
-									.addMessageEntry(new MessageEntry(file.getAbsolutePath()).setUnderline(true)
-											.setClickEvent((button, action2, mods2) -> {
+//					MessageBoard.INSTANCE.addMessage(
+//							new Message().addMessageEntry(new MessageEntry(I18N.getString("screenshot.success")))
+//									.addMessageEntry(new MessageEntry(file.getAbsolutePath()).setUnderline(true)
+//											.setClickEvent((button, action2, mods2) -> {
 //												if (button == 0 && isSystemClickLegal(100)
 //														&& Desktop.isDesktopSupported()) {
 //													try {
@@ -84,21 +79,21 @@ public class HotKeys {
 //													} catch (Exception e) {
 //													}
 //												}
-											})));
+//											})));
 				} catch (Exception e) {
 //					MessageBoard.INSTANCE.addMessage(new Message().addMessageEntry(
 //							new MessageEntry(I18N.getString("screenshot.failed")).setColor(Color.RED)));
 				}
 			});
-		});
-		HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
-			if (action != GLFW.GLFW_PRESS)
+//		});
+//		HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
+//			if (action != GLFW.GLFW_PRESS)
 				return;
 			// Send Recreate Request
 			// P.S. Recreate cannot be run to callback
-			HotKeys.fullScreen = !HotKeys.fullScreen;
-			EngineChemistryLab.logger.info("Fullscreen:" + (HotKeys.fullScreen ? "on" : "off"));
-			MainWindow.recreateWindow = true;
-		});
+//			HotKeys.fullScreen = !HotKeys.fullScreen;
+//			EngineChemistryLab.logger.info("Fullscreen:" + (HotKeys.fullScreen ? "on" : "off"));
+//			MainWindow.recreateWindow = true;
+//		});
 	}
 }

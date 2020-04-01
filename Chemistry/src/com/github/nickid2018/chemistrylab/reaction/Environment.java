@@ -5,9 +5,10 @@ import java.util.*;
 import com.github.nickid2018.jmcl.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.container.*;
 import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.properties.*;
-import com.github.nickid2018.chemistrylab.layer.container.*;
+import com.github.nickid2018.chemistrylab.resource.ResourceManager;
 
 public final class Environment {
 
