@@ -17,7 +17,7 @@ public class Oxide extends Chemical {
 		for (Object ob : rels) {
 			String s = (String) ob;
 			String[] info = s.split(":", 2);
-			ChemicalResource ion = ChemicalsLoader.CHEMICALS.get(info[0]);
+			ChemicalResource ion = ChemicalLoader.CHEMICALS.get(info[0]);
 			int count = Integer.parseInt(info[1]);
 			relas.put(ion, count);
 			mess += ion.getMess() * count;

@@ -1,16 +1,19 @@
 Manifest-Version: 1.0
 Main-Class: com.chemistrylab.ChemistryLab
 Class-Path: libs\com\alibaba\fastjson-1.2.58\fastjson-1.2.58.jar
-            libs\com\jcraft\jogg.jar
-            libs\com\cj\jmcl-1.0\jmcl-1.0.jar
-            libs\com\cj\rdt-1.0\rdt-1.0.jar
-            libs\org\apache\commons\codec-1.13\commons-codec-1.13.jar
+			libs\com\badlogic\gdx\gdx.jar
+			libs\com\badlogic\gdx\gdx-freetype.jar
+			libs\com\badlogic\gdx\gdx-backend-lwjgl.jar
+			libs\com\badlogic\gdx\gdx-backend-jglfw.jar
+			libs\com\github\mmc1234\pinkengine-alpha-1.2\PinkEngine-alpha-1.2.jar
+			libs\com\github\mmc1234\mod-1.1\Mod-1.1.jar
+			libs\com\github\nickid2018\jmcl-1.0\jmcl-1.0.jar
+			libs\com\github\nickid2018\rdt-1.0\rdt-1.0.jar
+			libs\com\google\guava-26.0\guava-26.0-jre.jar
+			libs\org\objectweb\asm-6.0-BETA\asm-debug-all-6.0_BETA.jar
             libs\org\apache\commons\io-2.6\commons-io-2.6.jar
+            libs\org\apache\commons\math3-3.6.1\commons-math3-3.6.1.jar
+            libs\org\apache\commons\codec-1.13\commons-codec-1.13.jar
             libs\org\apache\log4j-1.2.17\log4j-1.2.17.jar
             libs\org\hyperic\sigar.jar
-            libs\org\lwjgl-3.2.3\lwjgl.jar
-            libs\org\lwjgl-3.2.3\lwjgl-glfw.jar
-            libs\org\lwjgl-3.2.3\lwjgl-opengl.jar
-            libs\org\lwjgl-3.2.3\lwjgl-openal.jar
-            libs\org\newdawn\slick.jar
 

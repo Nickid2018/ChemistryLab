@@ -4,6 +4,8 @@ import java.lang.reflect.*;
 import com.github.mmc1234.mod.*;
 import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.init.*;
+import com.github.nickid2018.chemistrylab.mod.event.ModLifeCycleEvent;
+import com.github.nickid2018.chemistrylab.mod.event.ModPreInitEvent;
 import com.github.nickid2018.chemistrylab.util.*;
 
 public final class ModContainer {
@@ -20,33 +22,44 @@ public final class ModContainer {
 	ModContainer(ModInstance instance) {
 		this.instance = instance;
 		annotations = instance.getAnnotationMap();
+
 		// Check Version
 		AnnotationItem item = annotations.get(ModController.MOD_ANNOTATION);
 		String range = "none";
 		for (AnnotationAttrib attrib : item) {
-			if (attrib.getKey() == "acceptVersion") {
+			if (attrib.getKey().equals("acceptVersion")) {
 				range = (String) attrib.getValue();
-				break;
+			}
+			if (attrib.getKey().equals("modid")) {
+				modid = (String) attrib.getValue();
 			}
 		}
 		try {
 			if (!range.equals("none") && !VersionUtils.isInRange(ChemistryLab.VERSION, range)) {
-				onError(EnumModError.VERSION_MISMATCH, "The mod cannot run in this version.", new Exception());
+				onError(EnumModError.VERSION_MISMATCH, "The mod cannot run in this version.",
+						new ModVersionException(modid, range));
 				return;
 			}
 		} catch (Throwable t) {
 			onError(EnumModError.MOD_CODE_ERROR, "Cannot check version, statement is wrong?", t);
 			return;
 		}
+
 		// Load the class
 		try {
-			modClass = Class.forName(instance.getModMain());
+			String clazz = instance.getModMain();
+			clazz = clazz.substring(0, clazz.length() - 6);
+			modClass = Class.forName(clazz);
 		} catch (ClassNotFoundException e) {
 			onError(EnumModError.CLASS_LOAD_FAIL, "Cannot load the mod main class.", e);
 			return;
+		} catch (ExceptionInInitializerError e) {
+			onError(EnumModError.CLASS_LOAD_FAIL,
+					"Cannot load the mod because initialization is interrupted by exception.", e);
+			return;
 		}
 		mod = modClass.getAnnotation(Mod.class);
-		modid = mod.modid();
+
 		// Create instance
 		try {
 			modObject = modClass.newInstance();
@@ -58,6 +71,19 @@ public final class ModContainer {
 			onError(EnumModError.INTERAL_ERROR, "ModLoader cannot create instance of mod main class,"
 					+ " please check the class has a public default null constructor.", e);
 			return;
+		}
+
+		// Fill instance
+		Field[] fields = modClass.getDeclaredFields();
+		for (Field field : fields) {
+			if (field.isAnnotationPresent(Instance.class)) {
+				field.setAccessible(true);
+				try {
+					field.set(instance, instance);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					onError(EnumModError.UNKNOWN_ERROR, "Set instance error! We cannot know what happens =QAQ=", e);
+				}
+			}
 		}
 	}
 
@@ -93,8 +119,14 @@ public final class ModContainer {
 		return instance.getModFile().getModFilePath();
 	}
 
+	public Mod getMod() {
+		return mod;
+	}
+
 	public void sendPreInit(TextureRegistry registry) {
 		ModPreInitEvent event = new ModPreInitEvent(modid, registry);
+		if (isFailed())
+			return;
 		state = ModState.PREINIT;
 		sendEvent(event);
 	}
@@ -110,8 +142,8 @@ public final class ModContainer {
 					onError(EnumModError.MOD_CODE_ERROR, "Error happens in mod code.", e.getTargetException());
 					break;
 				} catch (IllegalAccessException | IllegalArgumentException e) {
-					onError(EnumModError.INTERAL_ERROR, "ModLoader cannot invoke the event method, is it non-access?",
-							e);
+					onError(EnumModError.INTERAL_ERROR,
+							"ModLoader cannot invoke the event method, is it non-access or static?", e);
 					break;
 				} catch (Exception e) {
 					onError(EnumModError.UNKNOWN_ERROR, "We cannot know what happens =QAQ=", e);
@@ -121,9 +153,9 @@ public final class ModContainer {
 	}
 
 	private void onError(EnumModError error, String errorm, Throwable err) {
-		state = ModState.FAILED;
-		this.error = error;
 		ModController.logger.error("[Mod " + modid + "(File: " + getModFile() + " State: " + state + ")]Load Failed: "
 				+ error + " Detail: " + errorm, err);
+		state = ModState.FAILED;
+		this.error = error;
 	}
 }

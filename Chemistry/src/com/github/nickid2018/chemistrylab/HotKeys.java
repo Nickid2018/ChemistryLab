@@ -46,7 +46,7 @@ public class HotKeys {
 			GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 			// Run in Thread Manager
 			// Concurrent Operation
-			ThreadManger.invoke(() -> {
+			ThreadManager.invoke(() -> {
 				Date date = new Date();
 				File file = new File("screenshot/screenshot_"
 						+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".png"); // The

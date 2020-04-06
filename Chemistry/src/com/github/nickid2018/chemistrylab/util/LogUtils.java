@@ -1,8 +1,5 @@
 package com.github.nickid2018.chemistrylab.util;
 
-import java.io.*;
-import com.github.nickid2018.chemistrylab.*;
-
 public class LogUtils {
 
 	// Clear logs

@@ -1,4 +1,4 @@
-package com.github.nickid2018.chemistrylab.mod;
+package com.github.nickid2018.chemistrylab.mod.event;
 
 public class ModPostInitEvent extends ModLifeCycleEvent {
 

@@ -21,6 +21,7 @@ public class NameMapping {
 	static {
 		// Default Mappings
 		addMapName("gui", "texture", "assets/textures/gui/%s.png");
-		
+		addMapName("atom", "model", "assets/models/chemicals/atoms/%s.json");
+		addMapName("ion", "model", "assets/models/chemicals/ions/%s.json");
 	}
 }

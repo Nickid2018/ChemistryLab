@@ -23,12 +23,13 @@
 	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx-backend-jglfw.jar" sourcepath="D:/cj/LWJGL/libgdx/gdx-backend-jglfw-sources.jar"/>
 	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx-backend-lwjgl.jar" sourcepath="D:/cj/LWJGL/libgdx/gdx-backend-lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx.jar" sourcepath="D:/cj/LWJGL/libgdx/gdx-sources.jar"/>
-	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx-freetype.jar"/>
+	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx-freetype.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/gdx-freetype-sources.jar"/>
 	<classpathentry kind="lib" path="natives/gdx-backend-jglfw-natives.jar"/>
 	<classpathentry kind="lib" path="natives/gdx-backend-lwjgl-natives.jar"/>
 	<classpathentry kind="lib" path="natives/gdx-freetype-natives.jar"/>
 	<classpathentry kind="lib" path="natives/gdx-natives.jar"/>
-	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine/PinkEngine-alpha-1.2.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/PinkEngine-alpha-1.2-source.jar"/>
-	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine/Mod-1.1.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/Mod-1.1-source.jar"/>
+	<classpathentry kind="lib" path="libs/com/github/mmc1234/mod-1.1/Mod-1.1.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/Mod-1.1-source.jar"/>
+	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine-alpha-1.2/PinkEngine-alpha-1.2.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/PinkEngine-alpha-1.2-source.jar"/>
+	<classpathentry kind="lib" path="natives/sigar-natives.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

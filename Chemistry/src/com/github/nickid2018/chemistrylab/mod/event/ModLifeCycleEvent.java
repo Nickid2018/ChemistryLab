@@ -1,6 +1,9 @@
-package com.github.nickid2018.chemistrylab.mod;
+package com.github.nickid2018.chemistrylab.mod.event;
 
 import org.apache.log4j.*;
+
+import com.github.nickid2018.chemistrylab.mod.ModContainer;
+import com.github.nickid2018.chemistrylab.mod.ModController;
 
 public abstract class ModLifeCycleEvent {
 

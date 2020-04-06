@@ -16,7 +16,7 @@ public class ChemicalCommand extends Command {
 				// Format: chemical add {uuid} {chemical} {unit} {count}
 				String container = split[1];
 				AbstractContainer con = Containers.getContainer(container);
-				ChemicalResource chem = ChemicalsLoader.CHEMICALS.get(split[2]);
+				ChemicalResource chem = ChemicalLoader.CHEMICALS.get(split[2]);
 				String unit = split[3];
 				String count = split[4];
 				double num = Double.parseDouble(count);

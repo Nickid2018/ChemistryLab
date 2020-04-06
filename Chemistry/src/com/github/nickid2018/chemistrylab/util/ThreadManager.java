@@ -2,7 +2,7 @@ package com.github.nickid2018.chemistrylab.util;
 
 import java.util.concurrent.*;
 
-public class ThreadManger {
+public class ThreadManager {
 
 	private static final ExecutorService manager = Executors.newCachedThreadPool(r -> new Thread(r, "Thread Manager"));
 

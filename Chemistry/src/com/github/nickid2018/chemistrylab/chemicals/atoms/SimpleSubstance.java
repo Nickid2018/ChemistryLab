@@ -26,10 +26,10 @@ public class SimpleSubstance extends Chemical {
 	}
 
 	static {
-		try {
-			ChemicalsLoader.mapping.put("simple-substance",
-					SimpleSubstance.class.getConstructor(JSONObject.class, ChemicalResource.class));
-		} catch (NoSuchMethodException | SecurityException e) {
-		}
+//		try {
+//			ChemicalLoader.MAPPING.put("simple-substance",
+//					SimpleSubstance.class.getConstructor(JSONObject.class, ChemicalResource.class));
+//		} catch (NoSuchMethodException | SecurityException e) {
+//		}
 	}
 }

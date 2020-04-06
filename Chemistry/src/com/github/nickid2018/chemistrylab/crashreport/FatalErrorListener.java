@@ -1,4 +1,4 @@
-package com.github.nickid2018.chemistrylab.exception;
+package com.github.nickid2018.chemistrylab.crashreport;
 
 import com.google.common.eventbus.*;
 import com.github.nickid2018.chemistrylab.event.*;

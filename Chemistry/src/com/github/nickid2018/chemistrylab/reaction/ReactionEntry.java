@@ -33,7 +33,7 @@ public class ReactionEntry extends RDTTagBase {
 		Map<ChemicalResource, Integer> react = new HashMap<>();
 		ArrayList<TagPair> reactss = reacts.getTags();
 		for (TagPair p : reactss) {
-			react.put(ChemicalsLoader.CHEMICALS.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
+			react.put(ChemicalLoader.CHEMICALS.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
 		}
 		// Things to get
 		inp.readByte();
@@ -43,7 +43,7 @@ public class ReactionEntry extends RDTTagBase {
 		Map<ChemicalResource, Integer> get = new HashMap<>();
 		ArrayList<TagPair> getss = gets.getTags();
 		for (TagPair p : getss) {
-			get.put(ChemicalsLoader.CHEMICALS.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
+			get.put(ChemicalLoader.CHEMICALS.get(p.getKey().toString()), ((TagInt) p.getValue()).getVal());
 		}
 		// Conditions (K,deltaH,deltaS)
 		double dH = inp.readDouble();

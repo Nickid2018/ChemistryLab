@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
 import com.github.mmc1234.mod.*;
+import com.github.mmc1234.pinkengine.ClassUtils;
+
 import org.apache.commons.io.filefilter.*;
 import com.github.nickid2018.chemistrylab.init.*;
 
@@ -13,7 +15,7 @@ public final class ModController {
 	public static final Logger logger = Logger.getLogger("ModLoader");
 	public static final String MOD_ANNOTATION = "com.github.nickid2018.chemistrylab.mod.Mod";
 
-	static final Map<String, Logger> MOD_LOGGERS = new HashMap<>();
+	public static final Map<String, Logger> MOD_LOGGERS = new HashMap<>();
 
 	public static void findMods() {
 		String[] findedModJars = new File("mods").list(new SuffixFileFilter("jar"));
@@ -21,11 +23,12 @@ public final class ModController {
 			return;
 		for (String jar : findedModJars) {
 			try {
-				for (ModInstance instance : ModLoader.load(jar, MOD_ANNOTATION)) {
+				ClassUtils.addURL("mods/" + jar);
+				for (ModInstance instance : ModLoader.load("mods/" + jar, MOD_ANNOTATION)) {
 					ModContainer container = new ModContainer(instance);
 					MODS.put(container.getModId(), container);
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				logger.error("Can't load mod " + jar, e);
 			}
 		}

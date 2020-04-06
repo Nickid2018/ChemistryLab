@@ -6,7 +6,6 @@ import java.lang.reflect.*;
 import java.util.function.*;
 import com.alibaba.fastjson.*;
 import org.apache.commons.io.*;
-import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.resource.ResourceManager;
 
@@ -58,15 +57,15 @@ public class ChemicalResource {
 		JSONArray classes = object.getJSONArray("classes");
 		classes.forEach((o) -> {
 			String cl = (String) o;
-			Constructor<?> cls = ChemicalsLoader.mapping.get(cl);
+			Constructor<?> cls = ChemicalLoader.DECOMPILER_REGISTRY.MAPPING.get(cl);
 			try {
 				JSONObject obj = object.getJSONObject("type:" + cl);
 				Chemical chem = (Chemical) cls.newInstance(obj, this);
 				clazz.put(cl, chem);
 			} catch (Exception e) {
-				ChemicalsLoader.logger.warn("Chemical Load Error at " + resourcePath + " in type " + cl
+				ChemicalLoader.logger.warn("Chemical Load Error at " + resourcePath + " in type " + cl
 						+ ((e instanceof NullPointerException) ? ",because this type wasn't loaded." : "."));
-				ChemicalsLoader.CHEMICALS.addFailed();
+				ChemicalLoader.CHEMICALS.addFailed();
 			}
 		});
 		return this;

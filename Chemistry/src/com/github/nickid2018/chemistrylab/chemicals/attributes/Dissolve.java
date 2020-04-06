@@ -26,7 +26,7 @@ public class Dissolve extends ChemicalAttribute {
 	public Dissolve(JSONObject o, ChemicalResource res) throws MathException {
 		super(o, res);
 		if (DEFAULT_SOLVENT == null)
-			DEFAULT_SOLVENT = new ChemicalItem(ChemicalsLoader.CHEMICALS.get("H2O"), ChemicalState.LIQUID);
+			DEFAULT_SOLVENT = new ChemicalItem(ChemicalLoader.CHEMICALS.get("H2O"), ChemicalState.LIQUID);
 		// Dissolve have two functions:chemistry or physics
 		// Chemistry: like AgCl dissolves in water (AgCl == Ag_1p + Cl_1n)
 		// or CH3COOH dissolves in water (CH3COOH == CH3COO_1n + H_1p)
@@ -45,7 +45,7 @@ public class Dissolve extends ChemicalAttribute {
 			Map<ChemicalResource, Integer> gets = new HashMap<>();
 			for (int i = 0; i < array.size(); i++) {
 				JSONObject obj = array.getJSONObject(i);
-				ChemicalResource resource = ChemicalsLoader.CHEMICALS.get(obj.getString("chemical"));
+				ChemicalResource resource = ChemicalLoader.CHEMICALS.get(obj.getString("chemical"));
 				int number = obj.getIntValue("number");
 				gets.put(resource, number);
 			}

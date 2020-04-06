@@ -24,18 +24,18 @@ public class SimpleSubstanceA extends Chemical {
 			sb.getClazz().put("simple-substance", new SimpleSubstance(o, sb));
 			classes.forEach((ob) -> {
 				String cl = (String) ob;
-				Constructor<?> cls = ChemicalsLoader.mapping.get(cl);
+				Constructor<?> cls = ChemicalLoader.DECOMPILER_REGISTRY.MAPPING.get(cl);
 				try {
 					JSONObject obj = object.getJSONObject("type:" + cl);
 					Chemical chem = (Chemical) cls.newInstance(obj, sb);
 					sb.getClazz().put(cl, chem);
 				} catch (Exception e) {
-					ChemicalsLoader.logger.warn("Chemical Load Error at " + r.getResourcePath() + count + " in type "
+					ChemicalLoader.logger.warn("Chemical Load Error at " + r.getResourcePath() + count + " in type "
 							+ cl + ((e instanceof NullPointerException) ? ",because this type wasn't loaded." : "."));
-					ChemicalsLoader.CHEMICALS.addFailed();
+					ChemicalLoader.CHEMICALS.addFailed();
 				}
 			});
-			ChemicalsLoader.CHEMICALS.put(r.getFinalName() + count, sb);
+			ChemicalLoader.CHEMICALS.put(r.getFinalName() + count, sb);
 		}
 	}
 

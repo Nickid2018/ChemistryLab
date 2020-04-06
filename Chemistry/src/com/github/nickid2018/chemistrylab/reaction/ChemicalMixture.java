@@ -89,7 +89,7 @@ public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 	// For aq
 	public double getConcentration(ChemicalResource res) {
 		return get(new ChemicalItem(res, ChemicalState.AQUEOUS)).getNum()
-				/ (get(Dissolve.DEFAULT_SOLVENT).getNum() * ChemicalsLoader.CHEMICALS.get("H2O").getMess() / 1000);
+				/ (get(Dissolve.DEFAULT_SOLVENT).getNum() * ChemicalLoader.CHEMICALS.get("H2O").getMess() / 1000);
 	}
 
 	public ReactionController getController() {
