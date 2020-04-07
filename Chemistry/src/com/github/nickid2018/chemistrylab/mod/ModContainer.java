@@ -79,7 +79,7 @@ public final class ModContainer {
 			if (field.isAnnotationPresent(Instance.class)) {
 				field.setAccessible(true);
 				try {
-					field.set(instance, instance);
+					field.set(modObject, modObject);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					onError(EnumModError.UNKNOWN_ERROR, "Set instance error! We cannot know what happens =QAQ=", e);
 				}
@@ -123,8 +123,8 @@ public final class ModContainer {
 		return mod;
 	}
 
-	public void sendPreInit(TextureRegistry registry) {
-		ModPreInitEvent event = new ModPreInitEvent(modid, registry);
+	public void sendPreInit(TextureRegistry registry, LoadingWindowProgress progresses) {
+		ModPreInitEvent event = new ModPreInitEvent(modid, registry, progresses);
 		if (isFailed())
 			return;
 		state = ModState.PREINIT;

@@ -1,37 +1,33 @@
 package com.github.nickid2018.chemistrylab.init;
 
-import java.util.List;
+import java.util.*;
 import org.hyperic.sigar.*;
-import com.badlogic.gdx.files.*;
 import com.badlogic.gdx.graphics.*;
-import com.google.common.collect.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.github.mmc1234.pinkengine.*;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.github.nickid2018.chemistrylab.*;
-import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.github.nickid2018.chemistrylab.util.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 import com.github.nickid2018.chemistrylab.mod.*;
 import com.github.nickid2018.chemistrylab.resource.*;
-import com.github.nickid2018.chemistrylab.util.ThreadManager;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 public class LoadingWorld extends World {
 
-	public static final List<String> LOADING_STATUS = Lists.newArrayList("Preparing Mods", "Pre Initialization",
-			"Initializing Program", "Mod IMC Enqueue", "Post Initialization", "Finishing Initialization");
-
-	public ProgressBar memorybar;
+	public SimpleProgressBar memorybar;
 	public Text2D textmemory;
+	public LoadingWindowProgress progresses;
 
 	public TextureRegistry textureRegistry = new TextureRegistry("Root Registry");
 
-	private LoadingStatus status = LoadingStatus.START;
+	private volatile LoadingStatus status = LoadingStatus.START;
 
 	/**
 	 * Why this is volatile? Because it is about thread-safe problem.
 	 */
-	private volatile boolean lastOperationOver = true;
+	private volatile boolean lastOperationOver = false;
+
+	private static final Map<LoadingStatus, Runnable> OPERATIONS = new HashMap<>();
 
 	public LoadingWorld(GameChemistry engine) {
 		super(engine);
@@ -57,37 +53,40 @@ public class LoadingWorld extends World {
 		setClearColor(255, 255, 255, 255);
 
 		Box box = createBox();
+		setBox(box);
+		progresses = new LoadingWindowProgress(box);
 
-		memorybar = new ProgressBar(0, ChemistryLab.RUNTIME.maxMemory() / 1048576.0f, 0.000001f, false,
-				UIStyles.PROGRESS_BAR_STYLE);
-		memorybar.setPosition(100, 75);
+		// Fill in progress operations
+		fillInOperations();
+
+		memorybar = new SimpleProgressBar(ChemistryLab.RUNTIME.maxMemory(), UIStyles.PROGRESSBAR_BACKGROUND,
+				UIStyles.PROGRESSBAR_FOREGROUND);
+		memorybar.setPosition(100, 100);
 		memorybar.setSize(1080, 28);
 		box.add(memorybar);
 
-		textmemory = box.createText2D(new VectorFont(new FileHandle("C:\\Windows\\Fonts\\MSYH.TTC")));
-		textmemory.setPosition(100, 50);
-		textmemory.setFontSize(28);
-		textmemory.setColor(0, 0, 0, 255);
-		textmemory.setText("Memory Heap");
+//		textmemory = box.createText2D(UIStyles.FONT);
+//		textmemory.setPosition(100, 50);
+//		textmemory.setColor(0, 0, 0, 255);
+
+		TextureRegion logo_region = new TextureRegion(
+				engine.manager.get(NameMapping.mapName("gui.chemistrylab_logo.texture")), 512, 128);
+		logo_region.flip(false, true);
+		Image2D logo = box.createGameObject(logo_region);
+		logo.setPosition(158, 150);
+		logo.setSize(1024, 256);
 
 		// Run in ThreadManager (Concurrent Thread)
-		ThreadManager.invoke(() -> {
-			status = LoadingStatus.PRE_INIT;
-			lastOperationOver = false;
-			// Mod PreInit!
-			ModController.sendPreInit(textureRegistry);
-			textureRegistry.doInit(engine.manager);
-			lastOperationOver = true;
-		});
+		ThreadManager.invoke(this::doOnPreInit);
 	}
 
 	@Override
 	public void preRender(float delta) {
 		super.preRender(delta);
+		trySwapNextStatus();
 		float heap = ChemistryLab.APPLICATION.getJavaHeap() / 1048576.0f;
 		float max = ChemistryLab.RUNTIME.maxMemory() / 1048576.0f;
-		memorybar.setValue(heap);
-		textmemory.setText("Memory Heap: " + MathHelper.eplison(heap, 1) + "MB/" + MathHelper.eplison(max, 1) + "MB");
+		memorybar.setCurrent(ChemistryLab.APPLICATION.getJavaHeap());
 		// Upadte Status
 	}
 
@@ -95,19 +94,10 @@ public class LoadingWorld extends World {
 		engine.manager.load(NameMapping.mapName("gui.progressbar.texture"), Texture.class);
 		engine.manager.finishLoading();
 		Texture progressbar = engine.manager.get(NameMapping.mapName("gui.progressbar.texture"));
-		TextureRegionDrawable background = new TextureRegionDrawable(new TextureRegion(progressbar, 0, 0, 128, 16));
-		TextureRegionDrawable foreground = new TextureRegionDrawable(new TextureRegion(progressbar, 0, 16, 128, 16));
-		TextureRegionDrawable dis_back = new TextureRegionDrawable(new TextureRegion(progressbar, 0, 32, 128, 16));
-		TextureRegionDrawable dis_fore = new TextureRegionDrawable(new TextureRegion(progressbar, 0, 48, 128, 16));
-		UIStyles.PROGRESS_BAR_STYLE = new ProgressBar.ProgressBarStyle();
-		foreground.setMinWidth(0);
-		dis_fore.setMinWidth(0);
-		background.setMinHeight(28);
-		foreground.setMinHeight(28);
-		UIStyles.PROGRESS_BAR_STYLE.background = background;
-		UIStyles.PROGRESS_BAR_STYLE.knobBefore = foreground;
-		UIStyles.PROGRESS_BAR_STYLE.disabledBackground = dis_back;
-		UIStyles.PROGRESS_BAR_STYLE.disabledKnobBefore = dis_fore;
+		UIStyles.PROGRESSBAR_BACKGROUND = new TextureRegion(progressbar, 0, 0, 128, 16);
+		UIStyles.PROGRESSBAR_FOREGROUND = new TextureRegion(progressbar, 0, 16, 128, 16);
+		UIStyles.PROGRESSBAR_DIS_BACKGROUND = new TextureRegion(progressbar, 0, 32, 128, 16);
+		UIStyles.PROGRESSBAR_DIS_FOREGROUND = new TextureRegion(progressbar, 0, 48, 128, 16);
 	}
 
 	private void loadSigarLibrary() {
@@ -118,7 +108,70 @@ public class LoadingWorld extends World {
 		}
 	}
 
-	private void doOnInit() {
+	private void fillInOperations() {
+		OPERATIONS.put(LoadingStatus.INIT_TEXTURE, this::doOnInitTexture);
+		OPERATIONS.put(LoadingStatus.INIT_MOD, this::doModInit);
+		OPERATIONS.put(LoadingStatus.INIT_CHEMISTRY, this::doChemistryInit);
+		OPERATIONS.put(LoadingStatus.IMC_ENQUEUE, this::doModIMCEnqueue);
+		OPERATIONS.put(LoadingStatus.POST_INIT, this::doOnPostInit);
+		OPERATIONS.put(LoadingStatus.IMC_PROCESS, this::doModIMCProcess);
+		OPERATIONS.put(LoadingStatus.FINISHING, this::doOnFinishing);
+	}
 
+	// Render Thread
+	private void trySwapNextStatus() {
+		// THREAD-SAFE!!!!!!!!!!!!!!
+		if (lastOperationOver) {
+			if (status != LoadingStatus.FINISHING) {
+				// I don't know whether is right, because the variable may not use volatile...
+				status = LoadingStatus.values()[status.ordinal() + 1];
+				lastOperationOver = false;
+				ThreadManager.invoke(OPERATIONS.get(status));
+			} else {
+				// Release STRONG REFERENCE
+				OPERATIONS.clear();
+				// To Next World
+			}
+		}
+	}
+
+	// Concurrent Thread
+	private void doOnPreInit() {
+		status = LoadingStatus.PRE_INIT;
+		EngineTextureRegisterer.registerGUI(textureRegistry);
+		// Mod PreInit!
+		ModController.sendPreInit(textureRegistry,progresses);
+		textureRegistry.lock();
+		lastOperationOver = true;
+	}
+
+	// Concurrent Thread
+	private void doOnInitTexture() {
+		textureRegistry.doInit(engine.manager);
+		lastOperationOver = true;
+	}
+	
+	private void doModInit() {
+		lastOperationOver = true;
+	}
+	
+	private void doChemistryInit() {
+		lastOperationOver = true;
+	}
+	
+	private void doModIMCEnqueue() {
+		lastOperationOver = true;
+	}
+	
+	private void doOnPostInit() {
+		lastOperationOver = true;
+	}
+	
+	private void doModIMCProcess() {
+		lastOperationOver = true;
+	}
+	
+	private void doOnFinishing() {
+		lastOperationOver = true;
 	}
 }

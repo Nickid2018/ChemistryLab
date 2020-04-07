@@ -18,7 +18,7 @@ public enum LoadingStatus {
 	 */
 	INIT_MOD("Initialization - Mod Initialization"),
 	/**
-	 * Contains three status: CHEMICAL_LOAD, CONTAINER_LOAD, REACTION_LOAD
+	 * Contains three statuses: CHEMICAL_LOAD, CONTAINER_LOAD, REACTION_LOAD
 	 */
 	INIT_CHEMISTRY("Initialization - Chemistry Engine"),
 	/**

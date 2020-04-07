@@ -11,6 +11,7 @@ public class TextureRegistry implements Comparable<TextureRegistry> {
 	protected Set<String> texturesPath = new TreeSet<>();
 	private boolean locked = false;
 	private final String name;
+	private int index = 0;
 
 	protected TextureRegistry(String name) {
 		this.name = name;
@@ -20,6 +21,15 @@ public class TextureRegistry implements Comparable<TextureRegistry> {
 		if (locked)
 			throw new UnsupportedOperationException();
 		TextureRegistry registry = new TextureRegistry(name);
+		subRegistries.add(registry);
+		return registry;
+	}
+
+	public TextureRegistry newRegistry(String name, int index) {
+		if (locked)
+			throw new UnsupportedOperationException();
+		TextureRegistry registry = new TextureRegistry(name);
+		registry.index = index;
 		subRegistries.add(registry);
 		return registry;
 	}
@@ -38,26 +48,35 @@ public class TextureRegistry implements Comparable<TextureRegistry> {
 
 	public void lock() {
 		locked = true;
+		subRegistries.forEach(TextureRegistry::lock);
 	}
 
 	public void register(String path) {
+		if (locked)
+			throw new UnsupportedOperationException();
 		texturesPath.add(path);
 	}
 
 	public void unregister(String path) {
+		if (locked)
+			throw new UnsupportedOperationException();
 		texturesPath.remove(path);
 	}
 
 	public void unregisterAll() {
+		if (locked)
+			throw new UnsupportedOperationException();
 		texturesPath.clear();
 	}
 
 	@Override
 	public int compareTo(TextureRegistry o) {
-		return name.compareTo(o.name);
+		return index - o.index == 0 ? name.compareTo(o.name) : index - o.index;
 	}
 
 	public int doInit(AssetManager manager) {
+		if (!locked)
+			throw new UnsupportedOperationException();
 		texturesPath.forEach(path -> manager.load(path, Texture.class));
 		subRegistries.forEach(registry -> registry.doInit(manager));
 		return texturesPath.size();

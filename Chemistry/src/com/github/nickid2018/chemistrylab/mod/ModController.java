@@ -4,9 +4,8 @@ import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
 import com.github.mmc1234.mod.*;
-import com.github.mmc1234.pinkengine.ClassUtils;
-
 import org.apache.commons.io.filefilter.*;
+import com.github.mmc1234.pinkengine.*;
 import com.github.nickid2018.chemistrylab.init.*;
 
 public final class ModController {
@@ -34,7 +33,15 @@ public final class ModController {
 		}
 	}
 
-	public static void sendPreInit(TextureRegistry registry) {
-		MODS.values().forEach(container -> container.sendPreInit(registry));
+	public static void sendPreInit(TextureRegistry registry, LoadingWindowProgress progresses) {
+		LoadingWindowProgress.ProgressEntry entry = progresses.push(MODS.size());
+		List<ModContainer> containers = new ArrayList<>(MODS.values());
+		for (int i = 0; i < containers.size(); i++) {
+			ModContainer container = containers.get(i);
+			entry.progress.setCurrent(i + 1);
+			// Set Text
+			container.sendPreInit(registry, progresses);
+		}
+//		progresses.pop();
 	}
 }
