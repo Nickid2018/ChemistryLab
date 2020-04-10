@@ -33,7 +33,7 @@ public class ChemistryLab {
 		}
 
 		APPLICATION = new LwjglApplication(new GameChemistry(), getConfig());
-		
+
 		Thread.setDefaultUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler());
 	}
 

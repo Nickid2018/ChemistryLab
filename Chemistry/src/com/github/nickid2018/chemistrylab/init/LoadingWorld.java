@@ -17,15 +17,19 @@ public class LoadingWorld extends World {
 	public SimpleProgressBar memorybar;
 	public Text2D textmemory;
 	public LoadingWindowProgress progresses;
+	public LoadingWindowProgress.ProgressEntry process;
 
 	public TextureRegistry textureRegistry = new TextureRegistry("Root Registry");
 
-	private volatile LoadingStatus status = LoadingStatus.START;
+	private LoadingStatus status = LoadingStatus.START;
 
 	/**
 	 * Why this is volatile? Because it is about thread-safe problem.
 	 */
 	private volatile boolean lastOperationOver = false;
+
+	private Runnable doInPreRender;
+	private Runnable doInPostRender;
 
 	private static final Map<LoadingStatus, Runnable> OPERATIONS = new HashMap<>();
 
@@ -38,6 +42,9 @@ public class LoadingWorld extends World {
 
 		// Sigar
 		loadSigarLibrary();
+
+		// Resource Manager
+		ResourceManager.loadPacks();
 
 		// Preload Progress Bar Texture
 		preloadProgressBarStyle();
@@ -65,16 +72,22 @@ public class LoadingWorld extends World {
 		memorybar.setSize(1080, 28);
 		box.add(memorybar);
 
-//		textmemory = box.createText2D(UIStyles.FONT);
-//		textmemory.setPosition(100, 50);
-//		textmemory.setColor(0, 0, 0, 255);
+		textmemory = new Text2D(UIStyles.FONT);
+		textmemory.setColor(Color.BLACK);
+		textmemory.getInfo().setSize(23);
+		textmemory.setPosition(100, 70);
+		textmemory.setColor(0, 0, 0, 255);
+		box.add(textmemory);
 
 		TextureRegion logo_region = new TextureRegion(
 				engine.manager.get(NameMapping.mapName("gui.chemistrylab_logo.texture")), 512, 128);
 		logo_region.flip(false, true);
-		Image2D logo = box.createGameObject(logo_region);
+		Image2D logo = new Image2D(logo_region, box.camera2D);
 		logo.setPosition(158, 150);
 		logo.setSize(1024, 256);
+		box.add(logo);
+
+		process = progresses.push(LoadingStatus.values().length);
 
 		// Run in ThreadManager (Concurrent Thread)
 		ThreadManager.invoke(this::doOnPreInit);
@@ -84,10 +97,22 @@ public class LoadingWorld extends World {
 	public void preRender(float delta) {
 		super.preRender(delta);
 		trySwapNextStatus();
-		float heap = ChemistryLab.APPLICATION.getJavaHeap() / 1048576.0f;
-		float max = ChemistryLab.RUNTIME.maxMemory() / 1048576.0f;
+		double heap = MathHelper.eplison(ChemistryLab.APPLICATION.getJavaHeap() / 1048576.0, 1);
+		double max = MathHelper.eplison(ChemistryLab.RUNTIME.maxMemory() / 1048576.0, 1);
+		double alloc = MathHelper.eplison(ChemistryLab.RUNTIME.totalMemory() / 1048576.0, 1);
 		memorybar.setCurrent(ChemistryLab.APPLICATION.getJavaHeap());
-		// Upadte Status
+		textmemory.getInfo().setText("Memory Heap " + heap + "MB / " + max + "MB (Allocated: " + alloc + "MB)");
+		if (doInPreRender != null) {
+			doInPreRender.run();
+		}
+	}
+
+	@Override
+	public void postRender(float delta) {
+		super.postRender(delta);
+		if (doInPostRender != null) {
+			doInPostRender.run();
+		}
 	}
 
 	private void preloadProgressBarStyle() {
@@ -118,19 +143,30 @@ public class LoadingWorld extends World {
 		OPERATIONS.put(LoadingStatus.FINISHING, this::doOnFinishing);
 	}
 
+	private boolean statusOver = false;
+
 	// Render Thread
 	private void trySwapNextStatus() {
 		// THREAD-SAFE!!!!!!!!!!!!!!
 		if (lastOperationOver) {
 			if (status != LoadingStatus.FINISHING) {
-				// I don't know whether is right, because the variable may not use volatile...
 				status = LoadingStatus.values()[status.ordinal() + 1];
+				process.progress.setCurrent(status.ordinal() + 1);
+				process.message.getInfo().setText(status.status);
 				lastOperationOver = false;
 				ThreadManager.invoke(OPERATIONS.get(status));
 			} else {
-				// Release STRONG REFERENCE
-				OPERATIONS.clear();
-				// To Next World
+				if (!statusOver) {
+					// Release STRONG REFERENCE
+					OPERATIONS.clear();
+					progresses.pop();
+					process = null;
+					statusOver = true;
+					textureRegistry = null;
+					// To Next World
+					engine.setWorld(new ReactionTableWorld(engine));
+					doInPostRender = this::dispose;
+				}
 			}
 		}
 	}
@@ -138,39 +174,96 @@ public class LoadingWorld extends World {
 	// Concurrent Thread
 	private void doOnPreInit() {
 		status = LoadingStatus.PRE_INIT;
+		process.progress.setCurrent(status.ordinal() + 1);
+		process.message.getInfo().setText(status.status);
 		EngineTextureRegisterer.registerGUI(textureRegistry);
 		// Mod PreInit!
-		ModController.sendPreInit(textureRegistry,progresses);
+		ModController.sendPreInit(textureRegistry, progresses);
 		textureRegistry.lock();
 		lastOperationOver = true;
 	}
 
+	private byte[] lock = new byte[0];
+
 	// Concurrent Thread
 	private void doOnInitTexture() {
 		textureRegistry.doInit(engine.manager);
+		LoadingWindowProgress.ProgressEntry allProgress = progresses.push(textureRegistry.getTotalSize());
+		LoadingWindowProgress.ProgressEntry detailProgress = progresses.push(1);
+		doInPreRender = () -> {
+			int nowProgress = textureRegistry.getTotalSize() - engine.manager.getQueuedAssets();
+			allProgress.progress.setCurrent(nowProgress);
+			allProgress.message.getInfo()
+					.setText("Loading Textures (" + nowProgress + "/" + textureRegistry.getTotalSize());
+			TextureRegistry.ProgressInfo info = textureRegistry.getProgress(nowProgress);
+			detailProgress.progress.setMax(info.all);
+			detailProgress.progress.setCurrent(info.progress);
+			detailProgress.message.getInfo().setText(info.name + " (" + info.progress + "/" + info.all + ")");
+			if (engine.manager.update()) {
+				synchronized (lock) {
+					lock.notifyAll();
+				}
+				doInPreRender = null;
+			}
+		};
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (InterruptedException e) {
+			}
+		}
+		progresses.pop();
+		progresses.pop();
 		lastOperationOver = true;
 	}
-	
+
+	// Concurrent Thread
 	private void doModInit() {
+		ModController.sendInit(ChemicalLoader.CHEMICAL_REGISTRY, progresses);
 		lastOperationOver = true;
 	}
-	
+
+	// Concurrent Thread
 	private void doChemistryInit() {
+		LoadingWindowProgress.ProgressEntry allProgress = progresses.push(3);
+		allProgress.message.getInfo().setText("Registering Chemical Decompilers (1/3)");
+		allProgress.progress.setCurrent(1);
+		ChemicalLoader.DECOMPILER_REGISTRY.convertConstructor();
+		allProgress.message.getInfo().setText("Loading chemicals (2/3)");
+		allProgress.progress.setCurrent(2);
+		ChemicalLoader.CHEMICAL_REGISTRY.doInit(engine.manager);
+		LoadingWindowProgress.ProgressEntry detailProgress = progresses
+				.push(ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize());
+		doInPreRender = () -> {
+			int now = ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize() - engine.manager.getQueuedAssets();
+			String nowLoading = ChemicalLoader.CHEMICAL_REGISTRY.getNowLoading(now);
+			detailProgress.progress.setCurrent(now);
+			detailProgress.message.getInfo()
+					.setText(nowLoading + " (" + now + "/" + ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize() + ")");
+		};
+		engine.manager.finishLoading();
+		doInPreRender = null;
+		progresses.pop();
+		progresses.pop();
 		lastOperationOver = true;
 	}
-	
+
+	// Concurrent Thread
 	private void doModIMCEnqueue() {
 		lastOperationOver = true;
 	}
-	
+
+	// Concurrent Thread
 	private void doOnPostInit() {
 		lastOperationOver = true;
 	}
-	
+
+	// Concurrent Thread
 	private void doModIMCProcess() {
 		lastOperationOver = true;
 	}
-	
+
+	// Concurrent Thread
 	private void doOnFinishing() {
 		lastOperationOver = true;
 	}

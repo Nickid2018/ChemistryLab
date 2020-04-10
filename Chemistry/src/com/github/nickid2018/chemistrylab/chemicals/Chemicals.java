@@ -3,7 +3,7 @@ package com.github.nickid2018.chemistrylab.chemicals;
 import java.util.*;
 
 //The map to save ChemicalResource
-public class Chemicals extends HashMap<String, ChemicalResource> {
+public class Chemicals extends TreeMap<String, ChemicalResource> {
 
 	/**
 	 * 
@@ -38,10 +38,18 @@ public class Chemicals extends HashMap<String, ChemicalResource> {
 		return r;
 	}
 
+	// Conflict!
+	public ChemicalResource put(String key, ChemicalResource value, String modid) {
+		return super.put(key + ":" + modid, value);
+	}
+
 	public ChemicalResource get(String key) {
 		ChemicalResource ret = super.get(key);
-		if (ret == null)
+		if (ret == null) {
+			// May be not merged/overwrite
+			// TODO
 			throw new IllegalArgumentException("Can't find chemical \'" + key + "\'");
+		}
 		return ret;
 	}
 }

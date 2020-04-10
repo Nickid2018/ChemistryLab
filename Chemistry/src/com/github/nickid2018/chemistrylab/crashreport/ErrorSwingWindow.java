@@ -2,7 +2,7 @@ package com.github.nickid2018.chemistrylab.crashreport;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.*;
 
 public class ErrorSwingWindow extends JDialog {
 

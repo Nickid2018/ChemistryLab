@@ -1,6 +1,5 @@
 package com.github.nickid2018.chemistrylab;
 
-import java.awt.Desktop;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -9,7 +8,6 @@ import javax.imageio.*;
 import java.awt.image.*;
 import org.lwjgl.opengl.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.nickid2018.chemistrylab.event.*;
 
 public class HotKeys {
 
@@ -24,7 +22,7 @@ public class HotKeys {
 //		HotKeyMap.addHotKey(GLFW.GLFW_KEY_F3, (scancode, action, mods) -> {
 //			if (action != GLFW.GLFW_PRESS)
 //				return;
-			HotKeys.f3 = !HotKeys.f3;
+		HotKeys.f3 = !HotKeys.f3;
 //			EngineChemistryLab.logger.info("Debug Mode:" + (HotKeys.f3 ? "on" : "off"));
 //			if (HotKeys.f3) {
 //				EventBus.postEvent(DEBUG_ON);
@@ -37,37 +35,37 @@ public class HotKeys {
 //		HotKeyMap.addHotKey(GLFW_KEY_F2, (scancode, action, mods) -> {
 //			if (action != GLFW.GLFW_PRESS)
 //				return;
-			GL11.glReadBuffer(GL11.GL_FRONT);
-			int width = 0;
-			int height = 0;
-			int bpp = 4; // Assuming a 32-bit display with a byte each for
-							// red, green, blue, and alpha.
-			ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-			GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-			// Run in Thread Manager
-			// Concurrent Operation
-			ThreadManager.invoke(() -> {
-				Date date = new Date();
-				File file = new File("screenshot/screenshot_"
-						+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".png"); // The
-																														// file
-																														// to
-																														// save
-																														// to.
-				String format = "PNG";
-				BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < height; y++) {
-						int i = (x + (width * y)) * bpp;
-						int r = buffer.get(i) & 0xFF;
-						int g = buffer.get(i + 1) & 0xFF;
-						int b = buffer.get(i + 2) & 0xFF;
-						image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-					}
+		GL11.glReadBuffer(GL11.GL_FRONT);
+		int width = 0;
+		int height = 0;
+		int bpp = 4; // Assuming a 32-bit display with a byte each for
+						// red, green, blue, and alpha.
+		ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
+		GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+		// Run in Thread Manager
+		// Concurrent Operation
+		ThreadManager.invoke(() -> {
+			Date date = new Date();
+			File file = new File("screenshot/screenshot_"
+					+ String.format("%tY%tm%td%tH%tM%tS%tL", date, date, date, date, date, date, date) + ".png"); // The
+																													// file
+																													// to
+																													// save
+																													// to.
+			String format = "PNG";
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			for (int x = 0; x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					int i = (x + (width * y)) * bpp;
+					int r = buffer.get(i) & 0xFF;
+					int g = buffer.get(i + 1) & 0xFF;
+					int b = buffer.get(i + 2) & 0xFF;
+					image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
 				}
-				try {
-					ImageIO.write(image, format, file);
-					// Yes, as you see, you are blind!
+			}
+			try {
+				ImageIO.write(image, format, file);
+				// Yes, as you see, you are blind!
 //					MessageBoard.INSTANCE.addMessage(
 //							new Message().addMessageEntry(new MessageEntry(I18N.getString("screenshot.success")))
 //									.addMessageEntry(new MessageEntry(file.getAbsolutePath()).setUnderline(true)
@@ -80,17 +78,17 @@ public class HotKeys {
 //													}
 //												}
 //											})));
-				} catch (Exception e) {
+			} catch (Exception e) {
 //					MessageBoard.INSTANCE.addMessage(new Message().addMessageEntry(
 //							new MessageEntry(I18N.getString("screenshot.failed")).setColor(Color.RED)));
-				}
-			});
+			}
+		});
 //		});
 //		HotKeyMap.addHotKey(GLFW_KEY_F11, (scancode, action, mods) -> {
 //			if (action != GLFW.GLFW_PRESS)
-				return;
-			// Send Recreate Request
-			// P.S. Recreate cannot be run to callback
+		return;
+		// Send Recreate Request
+		// P.S. Recreate cannot be run to callback
 //			HotKeys.fullScreen = !HotKeys.fullScreen;
 //			EngineChemistryLab.logger.info("Fullscreen:" + (HotKeys.fullScreen ? "on" : "off"));
 //			MainWindow.recreateWindow = true;

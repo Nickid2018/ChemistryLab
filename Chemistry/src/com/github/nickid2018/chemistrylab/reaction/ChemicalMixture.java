@@ -76,7 +76,7 @@ public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 	public Set<Map.Entry<ChemicalItem, Unit>> filterByState(ChemicalState state) {
 		return entrySet().stream().filter(en -> en.getKey().state == state).collect(Collectors.toSet());
 	}
-	
+
 	public Unit get(ChemicalItem key) {
 		Unit ret = super.get(key);
 		return ret == null ? Unit.NULL_UNIT : ret;

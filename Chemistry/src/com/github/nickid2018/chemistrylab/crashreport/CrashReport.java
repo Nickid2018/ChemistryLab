@@ -28,6 +28,7 @@ public class CrashReport {
 		Writer writer = new FileWriter(file);
 		IOUtils.write("Program had crashed.This report is the detail of this error." + LINE_SEPARATOR, writer);
 		outputTime(writer);
+		IOUtils.write("//" + WITTY_MESSAGES[(int) (WITTY_MESSAGES.length * Math.random())] + LINE_SEPARATOR, writer);
 		IOUtils.write(message + LINE_SEPARATOR, writer);
 		outputStackTrace(writer);
 		outputThreadDumps(writer);
@@ -69,8 +70,14 @@ public class CrashReport {
 
 	public static final void outputModInfos(Writer writer) throws IOException {
 		IOUtils.write("=== M O D S ===" + LINE_SEPARATOR, writer);
-		for (ModContainer container : ModController.MODS.values()) {
-			IOUtils.write("modid: " + container.getModId() + "(File: \"" + container.getModFile() + "\") State: "
+		for (ModContainer container : ModController.MODS) {
+			String modFile;
+			try {
+				modFile = container.getModFile();
+			} catch (Exception e) {
+				modFile = "Internal";
+			}
+			IOUtils.write("modid: " + container.getModId() + "(File: \"" + modFile + "\") State: "
 					+ container.getState() + " Error: " + container.getError() + LINE_SEPARATOR, writer);
 		}
 	}
@@ -119,4 +126,9 @@ public class CrashReport {
 			IOUtils.write("// Cannot get CPU information" + LINE_SEPARATOR, writer);
 		}
 	}
+
+	private static final String[] WITTY_MESSAGES = new String[] { "Oh, this is not my fault, must be yours!",
+			"Oh My God!", "QAQ, I promise I will fix the bug in next version!",
+			"Error in rendering? Ask to mmc1234, don't ask to me.>_<", "**** *** ****, **** **** *****.",
+			"The crash must be occurred in your code, not mine!" };
 }

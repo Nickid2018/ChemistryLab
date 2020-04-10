@@ -9,9 +9,9 @@ public class ModPreInitEvent extends ModLifeCycleEvent {
 	private final ModTextureRegistry tex_registry;
 	private final ChemicalDecompilerRegistry decompile_registry;
 
-	public ModPreInitEvent(String modid, TextureRegistry parent, LoadingWindowProgress progresses) {
-		super(modid, progresses);
-		tex_registry = parent.newModRegistry(modid);
+	public ModPreInitEvent(ModContainer mod, TextureRegistry parent, LoadingWindowProgress progresses) {
+		super(mod, progresses);
+		tex_registry = parent.newModRegistry(mod.getModId());
 		decompile_registry = ChemicalLoader.DECOMPILER_REGISTRY;
 	}
 

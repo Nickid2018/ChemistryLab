@@ -1,7 +1,5 @@
 package com.github.nickid2018.chemistrylab.container;
 
-import com.github.nickid2018.chemistrylab.init.*;
-
 public class ContainerReagent extends AbstractContainer {
 
 	public ContainerReagent(int x0, int y0, Size s) {

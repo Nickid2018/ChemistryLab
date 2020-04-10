@@ -3,10 +3,10 @@ package com.github.nickid2018.chemistrylab.mod;
 import java.lang.reflect.*;
 import com.github.mmc1234.mod.*;
 import com.github.nickid2018.chemistrylab.*;
+import com.github.nickid2018.chemistrylab.chemicals.ChemicalRegistry;
 import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.mod.event.ModLifeCycleEvent;
-import com.github.nickid2018.chemistrylab.mod.event.ModPreInitEvent;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.mod.event.*;
 
 public final class ModContainer {
 
@@ -60,31 +60,14 @@ public final class ModContainer {
 		}
 		mod = modClass.getAnnotation(Mod.class);
 
-		// Create instance
-		try {
-			modObject = modClass.newInstance();
-		} catch (InstantiationException e) {
-			onError(EnumModError.MOD_CODE_ERROR, "ModLoader cannot create instance of mod main class,"
-					+ " please check the class has default null constructor.", e);
-			return;
-		} catch (IllegalAccessException e) {
-			onError(EnumModError.INTERAL_ERROR, "ModLoader cannot create instance of mod main class,"
-					+ " please check the class has a public default null constructor.", e);
-			return;
-		}
+		createInstanceAndSet();
+	}
 
-		// Fill instance
-		Field[] fields = modClass.getDeclaredFields();
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(Instance.class)) {
-				field.setAccessible(true);
-				try {
-					field.set(modObject, modObject);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					onError(EnumModError.UNKNOWN_ERROR, "Set instance error! We cannot know what happens =QAQ=", e);
-				}
-			}
-		}
+	ModContainer(Class<?> clazz) {
+		modClass = clazz;
+		mod = modClass.getAnnotation(Mod.class);
+		modid = mod.modid();
+		createInstanceAndSet();
 	}
 
 	public boolean isFailed() {
@@ -124,10 +107,18 @@ public final class ModContainer {
 	}
 
 	public void sendPreInit(TextureRegistry registry, LoadingWindowProgress progresses) {
-		ModPreInitEvent event = new ModPreInitEvent(modid, registry, progresses);
 		if (isFailed())
 			return;
+		ModPreInitEvent event = new ModPreInitEvent(this, registry, progresses);
 		state = ModState.PREINIT;
+		sendEvent(event);
+	}
+
+	public void sendInit(ChemicalRegistry registry, LoadingWindowProgress progresses) {
+		if (isFailed())
+			return;
+		ModInitEvent event = new ModInitEvent(this, registry, progresses);
+		state = ModState.INIT;
 		sendEvent(event);
 	}
 
@@ -153,9 +144,43 @@ public final class ModContainer {
 	}
 
 	private void onError(EnumModError error, String errorm, Throwable err) {
-		ModController.logger.error("[Mod " + modid + "(File: " + getModFile() + " State: " + state + ")]Load Failed: "
+		String modFile;
+		try {
+			modFile = getModFile();
+		} catch (Exception e) {
+			modFile = "Internal";
+		}
+		ModController.logger.error("[Mod " + modid + "(File: " + modFile + " State: " + state + ")]Load Failed: "
 				+ error + " Detail: " + errorm, err);
 		state = ModState.FAILED;
 		this.error = error;
+	}
+
+	private void createInstanceAndSet() {
+		// Create instance
+		try {
+			modObject = modClass.newInstance();
+		} catch (InstantiationException e) {
+			onError(EnumModError.MOD_CODE_ERROR, "ModLoader cannot create instance of mod main class,"
+					+ " please check the class has default null constructor.", e);
+			return;
+		} catch (IllegalAccessException e) {
+			onError(EnumModError.INTERAL_ERROR, "ModLoader cannot create instance of mod main class,"
+					+ " please check the class has a public default null constructor.", e);
+			return;
+		}
+
+		// Fill instance
+		Field[] fields = modClass.getDeclaredFields();
+		for (Field field : fields) {
+			if (field.isAnnotationPresent(Instance.class)) {
+				field.setAccessible(true);
+				try {
+					field.set(modObject, modObject);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					onError(EnumModError.UNKNOWN_ERROR, "Set instance error! We cannot know what happens =QAQ=", e);
+				}
+			}
+		}
 	}
 }

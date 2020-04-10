@@ -9,6 +9,8 @@ public @interface Mod {
 
 	String modid();
 
+	int priority() default 0;
+
 	String name() default "";
 
 	String[] author() default {};

@@ -7,9 +7,10 @@ import java.util.function.*;
 import com.alibaba.fastjson.*;
 import org.apache.commons.io.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
-import com.github.nickid2018.chemistrylab.resource.ResourceManager;
+import com.github.nickid2018.chemistrylab.resource.*;
+import com.github.nickid2018.chemistrylab.mod.imc.*;
 
-public class ChemicalResource {
+public class ChemicalResource implements IConflictable<ChemicalResource> {
 
 	public static enum ChemicalType {
 		/**
@@ -40,6 +41,9 @@ public class ChemicalResource {
 	protected double melting = Double.MAX_VALUE;
 	protected double boiling = Double.MAX_VALUE;
 	protected final List<Reaction> reacts = new ArrayList<>();
+	protected final RedirectableObject<ChemicalResource> redirect = new RedirectableObject<>(this);
+
+	public static final ChemicalResource NULL = new ChemicalResource("<null>", "<null>");
 
 	public ChemicalResource(String respath, String name) {
 		resourcePath = respath;
@@ -127,5 +131,40 @@ public class ChemicalResource {
 
 	public void foreach(Consumer<Reaction> o) {
 		reacts.forEach(o);
+	}
+
+	public ChemicalResource merge(ChemicalResource resource) {
+		ChemicalResource merged = new ChemicalResource("<merge>", "<merge>");
+		merged.boiling = boiling;
+		merged.cas = cas;
+		merged.clazz.putAll(clazz);
+		merged.clazz.putAll(((ChemicalResource) resource).clazz);
+		merged.melting = melting;
+		merged.reacts.addAll(reacts);
+		merged.reacts.addAll(((ChemicalResource) resource).reacts);
+		merged.type = type;
+		merged.unlocalizedName = unlocalizedName;
+		setRedirectableObject(merged);
+		resource.setRedirectableObject(merged);
+		return merged;
+	}
+
+	@Override
+	public ChemicalResource mergeAll(ChemicalResource... conflicts) {
+		ChemicalResource resource = this;
+		for (ChemicalResource conflict : conflicts) {
+			resource = resource.merge(conflict);
+		}
+		return resource;
+	}
+
+	@Override
+	public RedirectableObject<ChemicalResource> getRedirectableObject() {
+		return redirect;
+	}
+
+	@Override
+	public void setRedirectableObject(ChemicalResource conflict) {
+		redirect.setObject(conflict);
 	}
 }

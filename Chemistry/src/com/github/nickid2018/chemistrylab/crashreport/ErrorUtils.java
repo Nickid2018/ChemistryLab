@@ -1,12 +1,5 @@
 package com.github.nickid2018.chemistrylab.crashreport;
 
-import java.io.*;
-import java.util.*;
-import org.lwjgl.*;
-import org.lwjgl.opengl.*;
-import org.apache.commons.io.*;
-import com.github.nickid2018.chemistrylab.*;
-
 public class ErrorUtils {
 
 	// Print Throwable as String

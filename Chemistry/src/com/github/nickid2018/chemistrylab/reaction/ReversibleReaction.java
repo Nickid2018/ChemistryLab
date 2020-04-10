@@ -32,7 +32,7 @@ public class ReversibleReaction extends Reaction {
 		double nowK = MathHelper.eplison(K.calc(args), 10);
 		double react = 1;
 		reacts.forEach((c, i) -> {
-			
+
 		});
 	}
 

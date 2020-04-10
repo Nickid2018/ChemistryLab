@@ -3,7 +3,6 @@ package com.github.nickid2018.chemistrylab.crashreport;
 import java.io.*;
 import javax.swing.*;
 import java.lang.Thread.*;
-import com.badlogic.gdx.*;
 import com.github.nickid2018.chemistrylab.*;
 
 public class DefaultUncaughtExceptionHandler implements UncaughtExceptionHandler {

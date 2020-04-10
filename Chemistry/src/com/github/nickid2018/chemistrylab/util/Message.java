@@ -2,7 +2,7 @@ package com.github.nickid2018.chemistrylab.util;
 
 import java.util.*;
 import org.lwjgl.opengl.*;
-import com.github.nickid2018.chemistrylab.*;
+//import com.github.nickid2018.chemistrylab.*;
 
 public class Message implements Cloneable {
 
@@ -10,7 +10,7 @@ public class Message implements Cloneable {
 	private final ArrayList<MessageEntry> entries;
 	private long surviveTime;
 	private long disappearTime = 5000;
-	private boolean haveEvent = false;
+//	private boolean haveEvent = false;
 
 	public Message() {
 		this(15000);
@@ -27,8 +27,8 @@ public class Message implements Cloneable {
 
 	public Message addMessageEntry(MessageEntry en) {
 		entries.add(en);
-		if (en.getClickEvent() != null)
-			haveEvent = true;
+//		if (en.getClickEvent() != null)
+//			haveEvent = true;
 		return this;
 	}
 
@@ -62,21 +62,21 @@ public class Message implements Cloneable {
 //		if (action != GLFW.GLFW_PRESS)
 //			return;
 //		double x = Mouse.getX();
-		int l = 0;
-		for (MessageEntry en : entries) {
+//		int l = 0;
+//		for (MessageEntry en : entries) {
 //			l += CommonRender.calcTextWidth(en.getText(), 16);
 //			if (l > x && haveEvent) {
 //				if (en.getClickEvent() != null)
 //					en.getClickEvent().click(button, action, mods);
 //				break;
 //			}
-		}
+//		}
 	}
 
 	public void render(float y) {
 		float x = 0;
 		float lastx = 0;
-		float percent = Math.min(-(TimeUtils.getTime() - spawnTime - surviveTime) / (float) disappearTime, 1);
+//		float percent = Math.min(-(TimeUtils.getTime() - spawnTime - surviveTime) / (float) disappearTime, 1);
 		for (MessageEntry en : entries) {
 //			Color nowa = en.getColor();
 //			Color now = new Color(nowa.r, nowa.g, nowa.b, percent * nowa.a);

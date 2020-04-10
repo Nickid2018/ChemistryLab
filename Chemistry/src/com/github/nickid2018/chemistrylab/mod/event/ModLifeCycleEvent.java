@@ -9,8 +9,8 @@ public abstract class ModLifeCycleEvent {
 	public final ModContainer mod;
 	public final LoadingWindowProgress progresses;
 
-	public ModLifeCycleEvent(String modid,LoadingWindowProgress progresses) {
-		this.mod = ModController.MODS.get(modid);
+	public ModLifeCycleEvent(ModContainer mod, LoadingWindowProgress progresses) {
+		this.mod = mod;
 		this.progresses = progresses;
 	}
 

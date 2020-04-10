@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import com.google.common.base.*;
 import com.github.nickid2018.rdt.*;
-import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.reaction.Reactions.*;
 import com.github.nickid2018.chemistrylab.resource.ResourceManager;
 

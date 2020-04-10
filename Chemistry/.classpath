@@ -29,7 +29,7 @@
 	<classpathentry kind="lib" path="natives/gdx-natives.jar"/>
 	<classpathentry kind="lib" path="libs/com/github/mmc1234/mod-1.1/Mod-1.1.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/Mod-1.1-source.jar"/>
 	<classpathentry kind="lib" path="natives/sigar-natives.jar"/>
-	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine-alpha-1.3/my-gdx-backend-lwjgl.jar"/>
+	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine-alpha-1.3/my-gdx-backend-lwjgl.jar" sourcepath="D:/cj/LWJGL/libgdx/gdx-backend-lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine-alpha-1.3/PinkEngine-alpha-1.4.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/PinkEngine-alpha-1.4-source.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

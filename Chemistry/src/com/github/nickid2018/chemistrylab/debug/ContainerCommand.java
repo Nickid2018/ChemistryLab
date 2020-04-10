@@ -1,12 +1,8 @@
 package com.github.nickid2018.chemistrylab.debug;
 
 import java.util.*;
-import java.awt.*;
-import java.awt.datatransfer.*;
-
-import com.github.nickid2018.chemistrylab.container.*;
-import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.container.*;
 
 public class ContainerCommand extends Command {
 
@@ -39,7 +35,7 @@ public class ContainerCommand extends Command {
 //												return;
 //											Transferable trans = new StringSelection(abc.getUUID().toString());
 //											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-										/*})*/) };
+								/* }) */) };
 			case "remove":
 				// Format: container remove {uuid}
 				String uuid = split[1];
@@ -52,7 +48,7 @@ public class ContainerCommand extends Command {
 //												return;
 //											Transferable trans = new StringSelection(uuid.toString());
 //											Toolkit.getDefaultToolkit().getSystemClipboard().setContents(trans, null);
-										/*})*/) };
+								/* }) */) };
 			case "info-container":
 				// Format: container info-container container.XXX.model
 				String model0 = split[1];

@@ -1,7 +1,5 @@
 package com.github.nickid2018.chemistrylab;
 
-import com.github.nickid2018.chemistrylab.util.TimeUtils;
-
 public class FPS {
 
 	// FPS Limit (P.S. The FPS often over the number -_||)

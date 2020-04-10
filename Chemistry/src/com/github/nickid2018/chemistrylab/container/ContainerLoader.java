@@ -5,12 +5,7 @@ import java.lang.reflect.*;
 import org.apache.log4j.*;
 import com.alibaba.fastjson.*;
 import org.apache.commons.io.*;
-import com.github.nickid2018.chemistrylab.*;
-import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.resource.ResourceManager;
-import com.github.nickid2018.chemistrylab.util.*;
-
-import static org.lwjgl.opengl.GL11.*;
+import com.github.nickid2018.chemistrylab.resource.*;
 
 public class ContainerLoader {
 
@@ -22,7 +17,7 @@ public class ContainerLoader {
 //	private final Map<Class<?>, RangeTexture[]> tex_layers = new HashMap<>();
 
 	public void loadContainer() {
-		long lastTime = TimeUtils.getTime();
+//		long lastTime = TimeUtils.getTime();
 		int fails = 0;
 		for (int i = 0; i < containers.size(); i++) {
 			String res = "assets/models/containers/" + containers.get(i) + ".json";
@@ -37,12 +32,12 @@ public class ContainerLoader {
 				JSONArray layer_arr = obj.getJSONArray("layers");
 //				RangeTexture[] layers = new RangeTexture[layer_arr.size()];
 				for (int j = 0; j < layer_arr.size(); j++) {
-					String rp = layer_arr.getString(j);
-					String[] layer_info = rp.split(",");
-					float x0 = Float.parseFloat(layer_info[1]);
-					float y0 = Float.parseFloat(layer_info[2]);
-					float x1 = Float.parseFloat(layer_info[3]);
-					float y1 = Float.parseFloat(layer_info[4]);
+//					String rp = layer_arr.getString(j);
+//					String[] layer_info = rp.split(",");
+//					float x0 = Float.parseFloat(layer_info[1]);
+//					float y0 = Float.parseFloat(layer_info[2]);
+//					float x1 = Float.parseFloat(layer_info[3]);
+//					float y1 = Float.parseFloat(layer_info[4]);
 //					layers[j] = new RangeTexture(TextureLoader.getTexture("PNG",
 //							ResourceManager.getResourceAsStream(layer_info[0]), GL_LINEAR), x0, y0, x1, y1);
 				}

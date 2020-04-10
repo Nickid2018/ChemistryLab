@@ -1,12 +1,12 @@
 package com.github.nickid2018.chemistrylab.chemicals;
 
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.files.*;
 import org.apache.log4j.Logger;
 import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.assets.loaders.*;
 
-public class ChemicalLoader extends SynchronousAssetLoader<ChemicalResource, ChemicalLoadParameters> {
+public class ChemicalLoader extends AsynchronousAssetLoader<ChemicalResource, ChemicalLoadParameters> {
 
 	// Logger
 	public static final Logger logger = Logger.getLogger("Chemical Loader");
@@ -20,16 +20,25 @@ public class ChemicalLoader extends SynchronousAssetLoader<ChemicalResource, Che
 		super(resolver);
 	}
 
+	private ChemicalResource nowChemical = null;
+
 	@Override
-	public ChemicalResource load(AssetManager manager, String fileName, FileHandle file,
-			ChemicalLoadParameters parameter) {
+	public void loadAsync(AssetManager manager, String fileName, FileHandle file, ChemicalLoadParameters parameter) {
+		nowChemical = null;
 		String[] sps = fileName.split("/");
 		String name = sps[sps.length - 1].split("\\.")[0];
 		try {
-			return CHEMICALS.put(name, new ChemicalResource(fileName, name).preInit());
+			CHEMICALS.put(name, nowChemical = new ChemicalResource(fileName, name).preInit(),
+					file.path().split("//")[1]);
 		} catch (Exception e) {
-			return null;
+			nowChemical = ChemicalResource.NULL;
 		}
+	}
+
+	@Override
+	public ChemicalResource loadSync(AssetManager manager, String fileName, FileHandle file,
+			ChemicalLoadParameters parameter) {
+		return nowChemical;
 	}
 
 	@Override

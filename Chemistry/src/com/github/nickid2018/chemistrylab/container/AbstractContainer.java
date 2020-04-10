@@ -7,7 +7,7 @@ import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
 
-public abstract class AbstractContainer{
+public abstract class AbstractContainer {
 
 	public static final EventBus CHEMICAL_BUS = new EventBus("ChemicalBus");
 

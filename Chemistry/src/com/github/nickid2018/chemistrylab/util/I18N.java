@@ -3,9 +3,7 @@ package com.github.nickid2018.chemistrylab.util;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
-
-import com.github.nickid2018.chemistrylab.event.*;
-import com.github.nickid2018.chemistrylab.resource.ResourceManager;
+import com.github.nickid2018.chemistrylab.resource.*;
 
 public class I18N {
 
