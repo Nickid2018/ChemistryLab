@@ -18,7 +18,7 @@ public enum EnumModError {
 	/**
 	 * When the error comes from Mod Loader
 	 */
-	INTERAL_ERROR("Interal Error"),
+	INTERNAL_ERROR("Interal Error"),
 	/**
 	 * When the Mod Loader meets unknown error
 	 */

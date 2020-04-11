@@ -29,9 +29,10 @@ public class ChemicalLoader extends AsynchronousAssetLoader<ChemicalResource, Ch
 		String name = sps[sps.length - 1].split("\\.")[0];
 		try {
 			CHEMICALS.put(name, nowChemical = new ChemicalResource(fileName, name).preInit(),
-					file.path().split("//")[1]);
+					parameter.modid);
 		} catch (Exception e) {
 			nowChemical = ChemicalResource.NULL;
+			e.printStackTrace();
 		}
 	}
 

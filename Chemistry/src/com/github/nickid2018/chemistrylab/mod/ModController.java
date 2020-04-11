@@ -4,10 +4,12 @@ import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import org.apache.log4j.*;
+import com.google.common.base.*;
 import com.github.mmc1234.mod.*;
 import org.apache.commons.io.filefilter.*;
-import com.github.mmc1234.pinkengine.*;
 import com.github.nickid2018.chemistrylab.init.*;
+import com.github.nickid2018.chemistrylab.util.*;
+import com.github.mmc1234.pinkengine.ClassUtils;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 public final class ModController {
@@ -19,8 +21,7 @@ public final class ModController {
 	public static final Map<String, Logger> MOD_LOGGERS = new HashMap<>();
 
 	public static void findMods() {
-		// ============================This code will be delete in release
-		// version=========================//
+		// ============================This code will be delete in release version=========================//
 		ModContainer core = new ModContainer(com.github.nickid2018.chemistrylab.coremod.ChemistryCoreMod.class);
 		MODS.add(core);
 		// =======================================End=====================================//
@@ -50,6 +51,17 @@ public final class ModController {
 
 	public static void sendInit(ChemicalRegistry registry, LoadingWindowProgress progresses) {
 		sendModEvents(container -> container.sendInit(registry, progresses), progresses);
+	}
+
+	public static void doBeforeIMCProcess() {
+		// Re-order
+		MODS.sort((m1, m2) -> m1.getModId().compareTo(m2.getModId()));
+	}
+
+	public static ModContainer findMod(String modid) {
+		int index = CollectionUtils.binarySearch(MODS, container -> container.getModId().compareTo(modid));
+		Preconditions.checkArgument(index >= 0, "Mod is not exists.");
+		return MODS.get(index);
 	}
 
 	private static void sendModEvents(Consumer<ModContainer> runnable, LoadingWindowProgress progresses) {

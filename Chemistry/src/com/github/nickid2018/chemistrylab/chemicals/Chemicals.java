@@ -47,7 +47,11 @@ public class Chemicals extends TreeMap<String, ChemicalResource> {
 		ChemicalResource ret = super.get(key);
 		if (ret == null) {
 			// May be not merged/overwrite
-			// TODO
+			for (String unmerged : keySet()) {
+				if (unmerged.split(":")[0].equals(key)) {
+					return super.get(unmerged);
+				}
+			}
 			throw new IllegalArgumentException("Can't find chemical \'" + key + "\'");
 		}
 		return ret;

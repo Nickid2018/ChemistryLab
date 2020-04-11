@@ -236,10 +236,10 @@ public class LoadingWorld extends World {
 				.push(ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize());
 		doInPreRender = () -> {
 			int now = ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize() - engine.manager.getQueuedAssets();
-			String nowLoading = ChemicalLoader.CHEMICAL_REGISTRY.getNowLoading(now);
-			detailProgress.progress.setCurrent(now);
-			detailProgress.message.getInfo()
-					.setText(nowLoading + " (" + now + "/" + ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize() + ")");
+			Pair<String, String> nowLoading = ChemicalLoader.CHEMICAL_REGISTRY.getNowLoading(now);
+			detailProgress.progress.setCurrent(now + 1);
+			detailProgress.message.getInfo().setText(nowLoading.key + "[" + nowLoading.value + "]" + " (" + (now + 1)
+					+ "/" + ChemicalLoader.CHEMICAL_REGISTRY.getTotalSize() + ")");
 		};
 		engine.manager.finishLoading();
 		doInPreRender = null;

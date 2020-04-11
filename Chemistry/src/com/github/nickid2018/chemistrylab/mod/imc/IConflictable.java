@@ -10,4 +10,8 @@ public interface IConflictable<T extends IConflictable<T>> {
 	public RedirectableObject<T> getRedirectableObject();
 
 	public void setRedirectableObject(T conflict);
+	
+	public void disposeRedirectable();
+	
+	public boolean equals(Object obj);
 }

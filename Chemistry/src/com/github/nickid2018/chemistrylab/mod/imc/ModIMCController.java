@@ -33,8 +33,40 @@ public class ModIMCController {
 		}
 	}
 
+	// True for dealing, false for sending
+	public static boolean imcStage = false;
+
+	public static SendChannel nowChannel;
+	public static int process;
+	public static int total;
+
+	public static ConflictManager<?> nowDealing;
+
+	@SuppressWarnings("unchecked")
 	public static final void imcProcess() {
-		// First: Manage conflicts
+		// Re-order to find mod
+		ModController.doBeforeIMCProcess();
+		// Send conflicts
 		Map<Class<? extends IConflictable<?>>, Set<ModIMCEntry>> messages = new HashMap<>();
+		for (Map.Entry<SendChannel, Queue<ModIMCEntry>> en : imcEntries.entrySet()) {
+			String sendto = en.getKey().to;
+			Queue<ModIMCEntry> entrys = en.getValue();
+			nowChannel = en.getKey();
+			total = entrys.size();
+			process = 0;
+			while (!entrys.isEmpty()) {
+				process++;
+				ModIMCEntry entry = entrys.poll();
+				// Add Conflict messages
+				messages.computeIfAbsent((Class<? extends IConflictable<?>>) entry.thingToSend.getClass(),
+						k -> new HashSet<>()).add(entry);
+				ModController.findMod(sendto).sendIMCMessage(entry);
+			}
+		}
+		// Send Conflicts to Manager
+		imcStage = true;
+		for (Map.Entry<Class<? extends IConflictable<?>>, Set<ModIMCEntry>> en : messages.entrySet()) {
+			(nowDealing = Conflicts.getManager(en.getKey())).dealConflict(en.getValue());
+		}
 	}
 }

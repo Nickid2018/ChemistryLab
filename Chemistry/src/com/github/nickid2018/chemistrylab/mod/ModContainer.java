@@ -3,9 +3,10 @@ package com.github.nickid2018.chemistrylab.mod;
 import java.lang.reflect.*;
 import com.github.mmc1234.mod.*;
 import com.github.nickid2018.chemistrylab.*;
-import com.github.nickid2018.chemistrylab.chemicals.ChemicalRegistry;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.mod.imc.*;
+import com.github.nickid2018.chemistrylab.chemicals.*;
 import com.github.nickid2018.chemistrylab.mod.event.*;
 
 public final class ModContainer {
@@ -105,6 +106,27 @@ public final class ModContainer {
 	public Mod getMod() {
 		return mod;
 	}
+	
+	public void sendIMCMessage(ModIMCEntry entry) {
+		Method[] methods = modClass.getDeclaredMethods();
+		for (Method method : methods) {
+			Class<?>[] params = method.getParameterTypes();
+			if (params.length == 1 && params[0].equals(ModIMCEntry.class))
+				try {
+					method.invoke(modObject, entry);
+				} catch (InvocationTargetException e) {
+					onError(EnumModError.MOD_CODE_ERROR, "Error happens in mod code.", e.getTargetException());
+					break;
+				} catch (IllegalAccessException | IllegalArgumentException e) {
+					onError(EnumModError.INTERNAL_ERROR,
+							"ModLoader cannot invoke the event method, is it non-access?", e);
+					break;
+				} catch (Exception e) {
+					onError(EnumModError.UNKNOWN_ERROR, "We cannot know what happens =QAQ=", e);
+					break;
+				}
+		}
+	}
 
 	public void sendPreInit(TextureRegistry registry, LoadingWindowProgress progresses) {
 		if (isFailed())
@@ -117,6 +139,7 @@ public final class ModContainer {
 	public void sendInit(ChemicalRegistry registry, LoadingWindowProgress progresses) {
 		if (isFailed())
 			return;
+		registry.nowLoadMod = getModId();
 		ModInitEvent event = new ModInitEvent(this, registry, progresses);
 		state = ModState.INIT;
 		sendEvent(event);
@@ -133,7 +156,7 @@ public final class ModContainer {
 					onError(EnumModError.MOD_CODE_ERROR, "Error happens in mod code.", e.getTargetException());
 					break;
 				} catch (IllegalAccessException | IllegalArgumentException e) {
-					onError(EnumModError.INTERAL_ERROR,
+					onError(EnumModError.INTERNAL_ERROR,
 							"ModLoader cannot invoke the event method, is it non-access or static?", e);
 					break;
 				} catch (Exception e) {
@@ -165,7 +188,7 @@ public final class ModContainer {
 					+ " please check the class has default null constructor.", e);
 			return;
 		} catch (IllegalAccessException e) {
-			onError(EnumModError.INTERAL_ERROR, "ModLoader cannot create instance of mod main class,"
+			onError(EnumModError.INTERNAL_ERROR, "ModLoader cannot create instance of mod main class,"
 					+ " please check the class has a public default null constructor.", e);
 			return;
 		}

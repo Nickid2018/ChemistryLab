@@ -41,7 +41,7 @@ public class ChemicalResource implements IConflictable<ChemicalResource> {
 	protected double melting = Double.MAX_VALUE;
 	protected double boiling = Double.MAX_VALUE;
 	protected final List<Reaction> reacts = new ArrayList<>();
-	protected final RedirectableObject<ChemicalResource> redirect = new RedirectableObject<>(this);
+	protected RedirectableObject<ChemicalResource> redirect = new RedirectableObject<>(this);
 
 	public static final ChemicalResource NULL = new ChemicalResource("<null>", "<null>");
 
@@ -166,5 +166,15 @@ public class ChemicalResource implements IConflictable<ChemicalResource> {
 	@Override
 	public void setRedirectableObject(ChemicalResource conflict) {
 		redirect.setObject(conflict);
+	}
+
+	@Override
+	public void disposeRedirectable() {
+		redirect = null;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof ChemicalResource)&&((ChemicalResource)obj).name.equals(name);
 	}
 }
