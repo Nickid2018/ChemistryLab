@@ -106,7 +106,7 @@ public final class ModContainer {
 	public Mod getMod() {
 		return mod;
 	}
-	
+
 	public void sendIMCMessage(ModIMCEntry entry) {
 		Method[] methods = modClass.getDeclaredMethods();
 		for (Method method : methods) {
@@ -118,8 +118,8 @@ public final class ModContainer {
 					onError(EnumModError.MOD_CODE_ERROR, "Error happens in mod code.", e.getTargetException());
 					break;
 				} catch (IllegalAccessException | IllegalArgumentException e) {
-					onError(EnumModError.INTERNAL_ERROR,
-							"ModLoader cannot invoke the event method, is it non-access?", e);
+					onError(EnumModError.INTERNAL_ERROR, "ModLoader cannot invoke the event method, is it non-access?",
+							e);
 					break;
 				} catch (Exception e) {
 					onError(EnumModError.UNKNOWN_ERROR, "We cannot know what happens =QAQ=", e);
@@ -142,6 +142,22 @@ public final class ModContainer {
 		registry.nowLoadMod = getModId();
 		ModInitEvent event = new ModInitEvent(this, registry, progresses);
 		state = ModState.INIT;
+		sendEvent(event);
+	}
+
+	public void sendIMC(LoadingWindowProgress progresses) {
+		if (isFailed())
+			return;
+		ModIMCEvent event = new ModIMCEvent(this, progresses);
+		state = ModState.IMC_STATE;
+		sendEvent(event);
+	}
+	
+	public void sendPostInit(LoadingWindowProgress progresses) {
+		if (isFailed())
+			return;
+		ModPostInitEvent event = new ModPostInitEvent(this, progresses);
+		state = ModState.POSTINIT;
 		sendEvent(event);
 	}
 

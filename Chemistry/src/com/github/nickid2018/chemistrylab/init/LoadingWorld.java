@@ -9,6 +9,7 @@ import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 import com.github.nickid2018.chemistrylab.mod.*;
+import com.github.nickid2018.chemistrylab.mod.imc.ModIMCController;
 import com.github.nickid2018.chemistrylab.resource.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
@@ -138,8 +139,8 @@ public class LoadingWorld extends World {
 		OPERATIONS.put(LoadingStatus.INIT_MOD, this::doModInit);
 		OPERATIONS.put(LoadingStatus.INIT_CHEMISTRY, this::doChemistryInit);
 		OPERATIONS.put(LoadingStatus.IMC_ENQUEUE, this::doModIMCEnqueue);
-		OPERATIONS.put(LoadingStatus.POST_INIT, this::doOnPostInit);
 		OPERATIONS.put(LoadingStatus.IMC_PROCESS, this::doModIMCProcess);
+		OPERATIONS.put(LoadingStatus.POST_INIT, this::doOnPostInit);
 		OPERATIONS.put(LoadingStatus.FINISHING, this::doOnFinishing);
 	}
 
@@ -194,7 +195,7 @@ public class LoadingWorld extends World {
 			int nowProgress = textureRegistry.getTotalSize() - engine.manager.getQueuedAssets();
 			allProgress.progress.setCurrent(nowProgress);
 			allProgress.message.getInfo()
-					.setText("Loading Textures (" + nowProgress + "/" + textureRegistry.getTotalSize());
+					.setText("Loading Textures (" + nowProgress + "/" + textureRegistry.getTotalSize() + ")");
 			TextureRegistry.ProgressInfo info = textureRegistry.getProgress(nowProgress);
 			detailProgress.progress.setMax(info.all);
 			detailProgress.progress.setCurrent(info.progress);
@@ -250,16 +251,18 @@ public class LoadingWorld extends World {
 
 	// Concurrent Thread
 	private void doModIMCEnqueue() {
-		lastOperationOver = true;
-	}
-
-	// Concurrent Thread
-	private void doOnPostInit() {
+		ModController.sendIMCEnqueue(progresses);
 		lastOperationOver = true;
 	}
 
 	// Concurrent Thread
 	private void doModIMCProcess() {
+		ModIMCController.imcProcess(progresses);
+		lastOperationOver = true;
+	}
+
+	// Concurrent Thread
+	private void doOnPostInit() {
 		lastOperationOver = true;
 	}
 

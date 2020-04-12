@@ -15,6 +15,7 @@ public class ChemicalLoader extends AsynchronousAssetLoader<ChemicalResource, Ch
 	public static final ChemicalDecompilerRegistry DECOMPILER_REGISTRY = new ChemicalDecompilerRegistry();
 
 	public static final Chemicals CHEMICALS = new Chemicals();
+	public static final ChemicalConflictManager CONFLICT = new ChemicalConflictManager();
 
 	public ChemicalLoader(FileHandleResolver resolver) {
 		super(resolver);

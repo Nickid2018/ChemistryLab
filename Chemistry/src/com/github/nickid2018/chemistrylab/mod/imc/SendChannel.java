@@ -23,4 +23,9 @@ public final class SendChannel {
 	public int hashCode() {
 		return from.hashCode() - to.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return from + " -> " + to;
+	}
 }

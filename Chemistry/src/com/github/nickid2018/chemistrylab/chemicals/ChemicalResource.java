@@ -135,6 +135,7 @@ public class ChemicalResource implements IConflictable<ChemicalResource> {
 
 	public ChemicalResource merge(ChemicalResource resource) {
 		ChemicalResource merged = new ChemicalResource("<merge>", "<merge>");
+		merged.name = name;
 		merged.boiling = boiling;
 		merged.cas = cas;
 		merged.clazz.putAll(clazz);
@@ -176,5 +177,10 @@ public class ChemicalResource implements IConflictable<ChemicalResource> {
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof ChemicalResource)&&((ChemicalResource)obj).name.equals(name);
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
 }

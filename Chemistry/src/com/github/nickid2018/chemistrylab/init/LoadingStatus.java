@@ -26,13 +26,13 @@ public enum LoadingStatus {
 	 */
 	IMC_ENQUEUE("PostInitialization - IMC Enqueue"),
 	/**
-	 * Post-Initialization (For mods)
-	 */
-	POST_INIT("Mod PostInitialization"),
-	/**
 	 * Inter-Mod Communication Message Send
 	 */
 	IMC_PROCESS("PostInitialization - IMC Process"),
+	/**
+	 * Post-Initialization (For mods)
+	 */
+	POST_INIT("Mod PostInitialization"),
 	/**
 	 * Finishing Initialization (For many thing push-stacks)
 	 */

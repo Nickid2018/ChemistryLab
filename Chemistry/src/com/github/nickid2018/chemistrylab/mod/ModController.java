@@ -21,7 +21,8 @@ public final class ModController {
 	public static final Map<String, Logger> MOD_LOGGERS = new HashMap<>();
 
 	public static void findMods() {
-		// ============================This code will be delete in release version=========================//
+		// ============================This code will be delete in release
+		// version=========================//
 		ModContainer core = new ModContainer(com.github.nickid2018.chemistrylab.coremod.ChemistryCoreMod.class);
 		MODS.add(core);
 		// =======================================End=====================================//
@@ -53,6 +54,10 @@ public final class ModController {
 		sendModEvents(container -> container.sendInit(registry, progresses), progresses);
 	}
 
+	public static void sendIMCEnqueue(LoadingWindowProgress progresses) {
+		sendModEvents(container -> container.sendIMC(progresses), progresses);
+	}
+
 	public static void doBeforeIMCProcess() {
 		// Re-order
 		MODS.sort((m1, m2) -> m1.getModId().compareTo(m2.getModId()));
@@ -64,9 +69,10 @@ public final class ModController {
 		return MODS.get(index);
 	}
 
+	public static int index = 0;
+
 	private static void sendModEvents(Consumer<ModContainer> runnable, LoadingWindowProgress progresses) {
 		LoadingWindowProgress.ProgressEntry entry = progresses.push(MODS.size());
-		int index = 0;
 		for (ModContainer container : MODS) {
 			entry.progress.setCurrent(index + 1);
 			entry.message.getInfo().setText(container.getModId() + " (" + (index + 1) + "/" + MODS.size() + ")");

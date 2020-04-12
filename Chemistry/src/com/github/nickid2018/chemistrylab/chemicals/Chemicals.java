@@ -3,7 +3,7 @@ package com.github.nickid2018.chemistrylab.chemicals;
 import java.util.*;
 
 //The map to save ChemicalResource
-public class Chemicals extends TreeMap<String, ChemicalResource> {
+public class Chemicals extends TreeMap<String, ChemicalResource>{
 
 	/**
 	 * 

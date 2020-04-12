@@ -40,7 +40,7 @@ public class ChemistryLab {
 	private static LwjglApplicationConfiguration getConfig() {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Chemistry Lab";
-		config.resizable = true;
+		config.resizable = false;
 		config.vSyncEnabled = true;
 		config.width = ProgramOptions.getWindowOptionInt("width");
 		config.height = ProgramOptions.getWindowOptionInt("height");

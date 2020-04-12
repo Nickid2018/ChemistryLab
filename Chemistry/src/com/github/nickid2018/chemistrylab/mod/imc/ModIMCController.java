@@ -2,6 +2,7 @@ package com.github.nickid2018.chemistrylab.mod.imc;
 
 import java.util.*;
 import java.util.concurrent.*;
+import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.mod.*;
 
 public class ModIMCController {
@@ -42,31 +43,62 @@ public class ModIMCController {
 
 	public static ConflictManager<?> nowDealing;
 
-	@SuppressWarnings("unchecked")
-	public static final void imcProcess() {
+	public static final int getChannels() {
+		return imcEntries.size();
+	}
+
+	public static final int getIMCSize() {
+		int size = 0;
+		for (Queue<ModIMCEntry> entrys : imcEntries.values()) {
+			size += entrys.size();
+		}
+		return size;
+	}
+
+	@SuppressWarnings({ "unchecked"})
+	public static final void imcProcess(LoadingWindowProgress progresses) {
+		LoadingWindowProgress.ProgressEntry all = progresses.push(2);
+		all.message.getInfo().setText("Send IMC Messages (1/2)");
+		all.progress.setCurrent(1);
+		LoadingWindowProgress.ProgressEntry detail = progresses.push(getChannels());
 		// Re-order to find mod
 		ModController.doBeforeIMCProcess();
 		// Send conflicts
 		Map<Class<? extends IConflictable<?>>, Set<ModIMCEntry>> messages = new HashMap<>();
+		int index = 0;
 		for (Map.Entry<SendChannel, Queue<ModIMCEntry>> en : imcEntries.entrySet()) {
-			String sendto = en.getKey().to;
+			index++;
 			Queue<ModIMCEntry> entrys = en.getValue();
 			nowChannel = en.getKey();
 			total = entrys.size();
 			process = 0;
+			detail.progress.setCurrent(index);
 			while (!entrys.isEmpty()) {
 				process++;
+				detail.message.getInfo().setText(nowChannel + " (" + process + "/" + total + ")");
 				ModIMCEntry entry = entrys.poll();
 				// Add Conflict messages
 				messages.computeIfAbsent((Class<? extends IConflictable<?>>) entry.thingToSend.getClass(),
 						k -> new HashSet<>()).add(entry);
-				ModController.findMod(sendto).sendIMCMessage(entry);
+				ModController.findMod(entry.channel.to).sendIMCMessage(entry);
 			}
 		}
 		// Send Conflicts to Manager
 		imcStage = true;
-		for (Map.Entry<Class<? extends IConflictable<?>>, Set<ModIMCEntry>> en : messages.entrySet()) {
-			(nowDealing = Conflicts.getManager(en.getKey())).dealConflict(en.getValue());
+		all.message.getInfo().setText("Dealing Conflicts (2/2)");
+		all.progress.setCurrent(2);
+		detail.progress.setMax(messages.size());
+		detail.progress.setCurrent(0);
+		int now = 0;
+		for (ConflictManager<?> manager : Conflicts.getManagers()) {
+			now++;
+			detail.progress.setCurrent(now);
+			nowDealing = manager;
+			detail.message.getInfo().setText(nowDealing.getConflictName() + " (" + now + "/" + messages.size() + ")");
+			Set<ModIMCEntry> entries = messages.get(manager.getConflictClass());
+			nowDealing.dealConflict(entries == null ? Collections.emptySet() : entries);
 		}
+		progresses.pop();
+		progresses.pop();
 	}
 }
