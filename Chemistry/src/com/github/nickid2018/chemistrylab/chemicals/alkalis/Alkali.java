@@ -23,6 +23,19 @@ public class Alkali extends Chemical {
 	}
 
 	@Override
+	public void doOnRedirect() {
+		super.doOnRedirect();
+		List<ChemicalResource> resources = new ArrayList<>(relas.keySet());
+		for (ChemicalResource resource : resources) {
+			int get = relas.remove(resource);
+			ChemicalResource res = resource;
+			while(res.canRedirect())
+				res = res.getRedirectableObject().getObject();
+			relas.put(res, get);
+		}
+	}
+
+	@Override
 	public double getMess() {
 		return mess;
 	}

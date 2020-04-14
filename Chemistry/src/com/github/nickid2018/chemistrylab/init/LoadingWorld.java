@@ -2,6 +2,7 @@ package com.github.nickid2018.chemistrylab.init;
 
 import java.util.*;
 import org.hyperic.sigar.*;
+import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.github.mmc1234.pinkengine.*;
@@ -9,7 +10,7 @@ import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 import com.github.nickid2018.chemistrylab.mod.*;
-import com.github.nickid2018.chemistrylab.mod.imc.ModIMCController;
+import com.github.nickid2018.chemistrylab.mod.imc.*;
 import com.github.nickid2018.chemistrylab.resource.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
@@ -19,8 +20,11 @@ public class LoadingWorld extends World {
 	public Text2D textmemory;
 	public LoadingWindowProgress progresses;
 	public LoadingWindowProgress.ProgressEntry process;
+	public ChemicalLoader chemical_loader;
 
 	public TextureRegistry textureRegistry = new TextureRegistry("Root Registry");
+	
+	public static AssetManager manager;
 
 	private LoadingStatus status = LoadingStatus.START;
 
@@ -37,6 +41,8 @@ public class LoadingWorld extends World {
 	public LoadingWorld(GameChemistry engine) {
 		super(engine);
 
+		manager = engine.manager;
+		
 		// Mod Finding
 		if (Boolean.valueOf(ProgramOptions.getCommandSwitch("-modEnable", "true")))
 			ModController.findMods();
@@ -56,7 +62,8 @@ public class LoadingWorld extends World {
 		engine.manager.finishLoading();
 
 		// Register Loaders
-		engine.manager.setLoader(ChemicalResource.class, new ChemicalLoader(new InternalFileHandleResolver()));
+		engine.manager.setLoader(ChemicalResource.class,
+				chemical_loader = new ChemicalLoader(new InternalFileHandleResolver()));
 
 		setClearColor(255, 255, 255, 255);
 
@@ -251,6 +258,7 @@ public class LoadingWorld extends World {
 
 	// Concurrent Thread
 	private void doModIMCEnqueue() {
+		chemical_loader.nowChemical = null;
 		ModController.sendIMCEnqueue(progresses);
 		lastOperationOver = true;
 	}

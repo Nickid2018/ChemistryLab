@@ -16,6 +16,13 @@ public class SimpleSubstance extends Chemical {
 	}
 
 	@Override
+	public void doOnRedirect() {
+		super.doOnRedirect();
+		while (sup.canRedirect())
+			sup = sup.getRedirectableObject().getObject();
+	}
+
+	@Override
 	public double getMess() {
 		return sup.getMess() * count;
 	}

@@ -55,7 +55,7 @@ public class ModIMCController {
 		return size;
 	}
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	public static final void imcProcess(LoadingWindowProgress progresses) {
 		LoadingWindowProgress.ProgressEntry all = progresses.push(2);
 		all.message.getInfo().setText("Send IMC Messages (1/2)");
@@ -97,6 +97,7 @@ public class ModIMCController {
 			detail.message.getInfo().setText(nowDealing.getConflictName() + " (" + now + "/" + messages.size() + ")");
 			Set<ModIMCEntry> entries = messages.get(manager.getConflictClass());
 			nowDealing.dealConflict(entries == null ? Collections.emptySet() : entries);
+			messages.remove(manager.getConflictClass());
 		}
 		progresses.pop();
 		progresses.pop();

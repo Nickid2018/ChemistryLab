@@ -15,6 +15,11 @@ public abstract class Chemical {
 		return resource;
 	}
 
+	public void doOnRedirect() {
+		while (resource.canRedirect())
+			resource = resource.getRedirectableObject().getObject();
+	}
+
 	public abstract double getMess();
 
 	public boolean isActualMess() {

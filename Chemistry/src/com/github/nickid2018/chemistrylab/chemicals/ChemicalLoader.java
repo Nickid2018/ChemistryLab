@@ -21,7 +21,7 @@ public class ChemicalLoader extends AsynchronousAssetLoader<ChemicalResource, Ch
 		super(resolver);
 	}
 
-	private ChemicalResource nowChemical = null;
+	public ChemicalResource nowChemical = null;
 
 	@Override
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file, ChemicalLoadParameters parameter) {

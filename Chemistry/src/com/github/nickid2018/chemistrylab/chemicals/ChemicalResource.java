@@ -173,12 +173,23 @@ public class ChemicalResource implements IConflictable<ChemicalResource> {
 	public void disposeRedirectable() {
 		redirect = null;
 	}
-	
+
+	@Override
+	public boolean canRedirect() {
+		return redirect != null;
+	}
+
+	public void doOnRedirect() {
+		for (Chemical attrib : clazz.values()) {
+			attrib.doOnRedirect();
+		}
+	}
+
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof ChemicalResource)&&((ChemicalResource)obj).name.equals(name);
+		return (obj instanceof ChemicalResource) && ((ChemicalResource) obj).name.equals(name);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return name.hashCode();

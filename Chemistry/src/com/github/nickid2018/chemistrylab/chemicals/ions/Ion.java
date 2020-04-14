@@ -21,6 +21,19 @@ public class Ion extends Chemical {
 	}
 
 	@Override
+	public void doOnRedirect() {
+		super.doOnRedirect();
+		Set<ChemicalResource> copy = new HashSet<>();
+		for (ChemicalResource resource : relas) {
+			ChemicalResource res = resource;
+			while (res.canRedirect())
+				res = res.getRedirectableObject().getObject();
+			copy.add(res);
+		}
+		relas = copy;
+	}
+
+	@Override
 	public double getMess() {
 		return mess;
 	}

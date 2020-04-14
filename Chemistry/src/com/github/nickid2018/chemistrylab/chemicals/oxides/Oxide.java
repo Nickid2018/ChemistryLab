@@ -1,6 +1,8 @@
 package com.github.nickid2018.chemistrylab.chemicals.oxides;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.*;
@@ -24,6 +26,19 @@ public class Oxide extends Chemical {
 		}
 	}
 
+	@Override
+	public void doOnRedirect() {
+		super.doOnRedirect();
+		List<ChemicalResource> resources = new ArrayList<>(relas.keySet());
+		for (ChemicalResource resource : resources) {
+			int get = relas.remove(resource);
+			ChemicalResource res = resource;
+			while(res.canRedirect())
+				res = res.getRedirectableObject().getObject();
+			relas.put(res, get);
+		}
+	}
+	
 	@Override
 	public double getMess() {
 		return mess;

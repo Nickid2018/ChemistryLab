@@ -24,6 +24,7 @@ public class ChemistryCoreMod {
 		registry.addChemicalDecompiler("atom/nonmetal", NonMentalAtom.class);
 		registry.addChemicalDecompiler("atom/metal", MentalAtom.class);
 		registry.addChemicalDecompiler("simple", SimpleSubstanceA.class);
+		registry.addChemicalDecompiler("simple-subtance", SimpleSubstance.class);
 		registry.addChemicalDecompiler("ion/H", IonH.class);
 		registry.addChemicalDecompiler("ion/OH", IonOH.class);
 		registry.addChemicalDecompiler("ion/strong", IonStrong.class);
@@ -37,7 +38,6 @@ public class ChemistryCoreMod {
 		NameMapping.addMapName("coremod", "ion.chemical", "assets/models/chemicals/ions/%s.json");
 		NameMapping.addMapName("coremod", "oxide.chemical", "assets/models/chemicals/oxides/%s.json");
 		NameMapping.addMapName("coremod", "alkali.chemical", "assets/models/chemicals/alkalis/%s.json");
-		NameMapping.addMapName("coremod", "oxide.chemical", "assets/models/chemicals/oxides/%s.json");
 		NameMapping.addMapName("coremod", "salt.chemical", "assets/models/chemicals/salts/%s.json");
 		// Atoms
 		ChemicalRegistry registry = event.getChemicalRegistry();
@@ -52,5 +52,9 @@ public class ChemistryCoreMod {
 		registry.addChemical("coremod.NaOH.alkali.chemical");
 		registry.addChemical("coremod.H2O.oxide.chemical");
 		logger.info("Loaded basic objects of Chemistry Lab");
+	}
+	
+	public void onIMC(ModIMCEvent event) {
+		
 	}
 }

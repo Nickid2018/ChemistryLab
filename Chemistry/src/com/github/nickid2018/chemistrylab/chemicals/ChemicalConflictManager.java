@@ -24,6 +24,7 @@ public class ChemicalConflictManager extends ConflictManager<ChemicalResource> {
 	@Override
 	public void dealConflict(Set<ModIMCEntry> entries) {
 		List<String> chemicals = new ArrayList<>(ChemicalLoader.CHEMICALS.keySet());
+		Set<ChemicalResource> resources = new HashSet<>(ChemicalLoader.CHEMICALS.values());
 		chemicals.sort((s1, s2) -> s1.compareTo(s2));
 		// The Last Element cannot be computed, so add an element to ensure it is not
 		// the last one
@@ -90,12 +91,15 @@ public class ChemicalConflictManager extends ConflictManager<ChemicalResource> {
 					if (ignore && !merge) {
 						for (int i = 0; i < subList.size(); i++) {
 							ChemicalLoader.CHEMICALS.put(subList.get(i), conflicts.get(i));
+							resources.remove(conflicts.get(i));
+							conflicts.get(i).disposeRedirectable();
 						}
 					} else
 						resource = conflicts.get(0).mergeAll(conflicts.toArray(new ChemicalResource[conflicts.size()]));
 				}
 				if (!ignore || merge || override) {
 					ChemicalLoader.CHEMICALS.put(final_name, resource);
+					resource.disposeRedirectable();
 				}
 				// Finally, prepare next dealing
 				startConflict = nowIndex;
@@ -103,6 +107,16 @@ public class ChemicalConflictManager extends ConflictManager<ChemicalResource> {
 				lastName = final_name;
 			}
 		}
+		// Redirect
+		ChemicalLoader.CHEMICALS.values().forEach(ChemicalResource::doOnRedirect);
+		// Unload ChemicalResource
+		for (ChemicalResource res : resources) {
+			try {
+				LoadingWorld.manager.unload(res.getResourcePath());
+			} catch (Exception e) {
+			}
+		}
+		// Result: Released All Undealing Chemical Resources, Resources are independent
 	}
 
 }
