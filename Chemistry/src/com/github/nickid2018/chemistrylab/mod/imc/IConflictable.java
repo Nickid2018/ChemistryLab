@@ -15,6 +15,8 @@ public interface IConflictable<T extends IConflictable<T>> {
 	
 	public boolean canRedirect();
 	
+	public void doOnRedirect();
+	
 	public boolean equals(Object obj);
 	
 	public int hashCode();

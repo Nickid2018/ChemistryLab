@@ -10,7 +10,7 @@ public abstract class ChemicalAttribute extends Chemical {
 		super(o, res);
 	}
 
-	public abstract void onAttributeRun(ChemicalMixture mixture, ReactionController controller);
+	public abstract void onAttributeRun(ChemicalMixture mixture, ReactionController controller, double rate);
 
 	@Override
 	public final boolean isActualMess() {

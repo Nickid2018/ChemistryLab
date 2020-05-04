@@ -1,6 +1,32 @@
 package com.github.nickid2018.chemistrylab.util;
 
+import java.io.*;
+import java.net.*;
+import java.lang.reflect.*;
+
 public class ClassUtils {
+
+	private static URLClassLoader loader = (URLClassLoader) URLClassLoader.getSystemClassLoader();
+
+	public static void addURL(String path) throws Exception {
+		URL url = new File(path).toURI().toURL();
+		if (!isLoad(url)) {
+			Method add = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+			boolean isAccessible = add.isAccessible();
+			add.setAccessible(true);
+			add.invoke(loader, url);
+			add.setAccessible(isAccessible);
+		}
+	}
+
+	public static boolean isLoad(URL jar) {
+		for (URL url : loader.getURLs()) {
+			if (url.equals(jar)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Get the class of caller. Hack of Reflection.
@@ -28,6 +54,22 @@ public class ClassUtils {
 			// Actually, this function won't throw any error. (Except
 			// OutOfMemoryError or StackOverflowError)
 			return null;
+		}
+	}
+
+	public static <T> Constructor<T> getConstructor(Class<T> type, Class<?>... classes) {
+		try {
+			return type.getConstructor(classes);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot find the constructor!");
+		}
+	}
+
+	public static <T> Constructor<T> getDeclaredConstructor(Class<T> type, Class<?>... classes) {
+		try {
+			return type.getDeclaredConstructor(classes);
+		} catch (Exception e) {
+			throw new RuntimeException("Cannot find the constructor!");
 		}
 	}
 }

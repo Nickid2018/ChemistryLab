@@ -32,10 +32,8 @@ public class ReactionController {
 	// Run in different thread, so it should be volatile
 	private volatile boolean stopNow = false;
 
-	private boolean lastTickOver = true;
-
 	@Subscribe
-	// Run in RENDER THREAD
+	// Run in CONCURRENT THREAD
 	public void onChemicalChange(ChemicalChangedEvent e) {
 		// Stop tick-update
 		stopNow = true;
@@ -74,16 +72,7 @@ public class ReactionController {
 	@Subscribe
 	// Run in TICK-COUNT-THREAD
 	public void onTickUpdate(TickerEvent e) {
-
-		// Tick update
-		if (!lastTickOver) {
-			e.isSomeCancelled = true;
-			e.cancelledUnits++;
-			return;
-		}
-		lastTickOver = false;
-
-		// Destination Speed = 0.04s x Environment.speed
+		// Destination Speed = e.reactionRate
 
 		if (!isStop())
 			// Something, like dissolve, needs to work before reaction works
@@ -92,10 +81,9 @@ public class ReactionController {
 		// Reaction Run!
 		for (Reaction r : reactions) {
 			if (isStop()) {
-				lastTickOver = true;
 				return;
 			}
-			r.doReaction(shadow);
+			r.doReaction(shadow, e.reactionRate);
 		}
 
 //		shadow.temperatureTransfer();
@@ -104,7 +92,6 @@ public class ReactionController {
 		if (!isStop() && !shadow.equals(mix)) {
 			mix.copy(shadow);
 		}
-		lastTickOver = true;
 	}
 
 	private boolean isStop() {

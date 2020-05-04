@@ -1,81 +1,146 @@
 package com.github.nickid2018.chemistrylab.util;
 
-import java.lang.reflect.*;
 import org.apache.log4j.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import com.google.common.eventbus.*;
+import com.google.common.util.concurrent.*;
+import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.event.*;
+import com.github.nickid2018.chemistrylab.init.MathHelper;
+import com.github.nickid2018.chemistrylab.reaction.*;
+import com.github.nickid2018.chemistrylab.reaction.data.Environment;
 
 public final class Ticker {
 
 	public static final Logger logger = Logger.getLogger("Ticker");
-	public static EventBus TICK_EVENT_BUS;
+	public static final EventBus TICK_EVENT_BUS = new EventBus("Tick-EventBus");
+	public static final ExecutorService service = Executors
+			.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Ticker").build());
 
-	// Initialize eventbus
-	// Need no delay
-	static {
-		Class<?> clazz = EventBus.class;
-		Constructor<?> con;
-		try {
-			Class<?> dispatcher = Class.forName("com.google.common.eventbus.Dispatcher");
-			Method m = dispatcher.getDeclaredMethod("perThreadDispatchQueue");
-			con = clazz.getDeclaredConstructor(String.class, Executor.class, dispatcher,
-					SubscriberExceptionHandler.class);
-			con.setAccessible(true);
-			m.setAccessible(true);
-			TICK_EVENT_BUS = (EventBus) con.newInstance("Tick-EventBus", Executors.newCachedThreadPool(),
-					m.invoke(dispatcher), (SubscriberExceptionHandler) (e, c) -> {
-						logger.error(message(c), e);
-					});
-		} catch (Throwable e) {
-			logger.warn("Can't start the no-delay eventbus, system may run incorrectly in delayed eventbus.", e);
-			TICK_EVENT_BUS = new EventBus("Tick-EventBus");
-		}
+	public static void main(String[] args) {
+		PropertyConfigurator.configure(ChemistryLab.class.getResourceAsStream("/assets/log4j.properties"));
+		Ticker.init();
+		new Thread(() -> {
+			while (true) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				logger.info("Tick Rate: " + getTicks() + " Reaction Rate: " + reactionRate + " Counter: " + skipCounter
+						+ " Normal: " + normalSkipCounter + " Delay: " + tick_sender.getDelay() + " MSPT: " + mspt);
+			}
+		}).start();
+		TICK_EVENT_BUS.register(new Object() {
+			boolean a = true;
+
+			@Subscribe
+			public void listenTick(TickerEvent e) throws Exception {
+				if (a) {
+					try {
+						Thread.sleep(1000);
+					} catch (Exception e1) {
+					}
+					a = false;
+				}
+			}
+		});
 	}
-//
-//	public static void main(String[] args) {
-//		PropertyConfigurator.configure(Ticker.class.getResource("/assets/log4j.properties"));
-//		Ticker.init();
-//		TICK_EVENT_BUS.register(new Object() {
-//			@Subscribe
-//			public void onTick(TickerEvent e) {
-//				if (Math.random() < 0.9) {
-//					e.isSomeCancelled = true;
-//					e.cancelledUnits++;
-//				}
-//			}
-//		});
-//		while (true) {
-//		}
-//	}
 
 	// Atomic Operation
-	private static AtomicBoolean stopped = new AtomicBoolean();
+	private static AtomicBoolean stopped = new AtomicBoolean(false);
 
 	private static long lastTicks;
 	private static int ticks;
 	private static int printTicks;
-	private static TickerEvent lastEvent = new TickerEvent();
-	private static int delayColdDown = 0;
-
-	private static final javax.swing.Timer tick_sender = new javax.swing.Timer(39, e -> {
-		if (lastEvent.isSomeCancelled) {
-			if (delayColdDown % 40 == 0)
-				logger.warn("Is something took too much time? A tick event has been cancelled by "
-						+ lastEvent.cancelledUnits + " unit(s).");
-			delayColdDown++;
-		} else
-			delayColdDown = delayColdDown == 0 ? 0 : delayColdDown - 1;
-		TICK_EVENT_BUS.post(lastEvent = new TickerEvent());
-		updateTick();
-	});
+	private static int skipCounter = 0;
+	private static int normalSkipCounter = 0;
+	private static int nowNeedFix = 0;
+	private static int fixTickRate = 8;
+	private static int skipReactionCounter = 0;
+	private static float reactionRate = 1;
+	private static Future<?> future;
+	private static Future<?> idlefuture;
+	private static int tickRate = 40;
+	private static javax.swing.Timer tick_sender = new javax.swing.Timer(tickRate, null);
+	private static TickerEvent event = new TickerEvent();
+	private static TickerIdleEvent idle = new TickerIdleEvent();
+	private static float mspt;
 
 	private Ticker() {
 	}
 
 	public static void init() {
 		lastTicks = TimeUtils.getTime();
+		tick_sender.addActionListener(e -> {
+			if (idlefuture != null && idlefuture.isDone()) {
+				idlefuture.cancel(true);
+			}
+			if (stopped.get()) {
+				future.cancel(true);
+				return;
+			}
+			if (future == null || future.isDone()) {
+				event.isSkipReaction = false;
+				event.skipTimes = 0;
+				event.reactionRate = reactionRate * 0.04 * Environment.getSpeed();
+				event.startTime = TimeUtils.getNanoTime();
+				skipReactionCounter = 0;
+				fixTickRate = 8;
+				if (nowNeedFix == 0) {
+					skipCounter = 0;
+					normalSkipCounter = 0;
+					reactionRate = 1;
+					tick_sender.setDelay(tickRate);
+				}
+				future = service.submit(() -> {
+					TICK_EVENT_BUS.post(event);
+					long current = TimeUtils.getNanoTime();
+					mspt = (float) MathHelper.eplison((current - event.startTime) / 1000_100.0, 2);
+					idlefuture = service.submit(() -> {
+						idle.startTime = current;
+						TICK_EVENT_BUS.post(idle);
+					});
+				});
+				if (nowNeedFix != 0) {
+					nowNeedFix--;
+				}
+				updateTick();
+			} else {
+				// Skip This Tick
+				skipCounter++;
+				normalSkipCounter++;
+				if (normalSkipCounter >= 100) {
+					future.cancel(true);
+					reactionRate = 1;
+					normalSkipCounter = 0;
+					skipCounter = 0;
+					skipReactionCounter++;
+					fixTickRate = 8;
+					nowNeedFix = 0;
+					event.isSkipReaction = true;
+					event.skipTimes = skipReactionCounter * 100;
+					event.reactionRate = 4 * Environment.getSpeed() * skipReactionCounter;
+					event.startTime = TimeUtils.getNanoTime();
+					// Need to record snapshot to restore data if possible
+					future = service.submit(() -> TICK_EVENT_BUS.post(event));
+					updateTick();
+					tick_sender.setDelay(tickRate);
+					logger.warn("Can't keep up! Skipped reaction during " + event.skipTimes + " ticks or "
+							+ event.skipTimes / 25.0 + " seconds.");
+					return;
+				}
+				if (normalSkipCounter % 20 == 0) {
+					skipCounter /= 2;
+					nowNeedFix = fixTickRate *= 4;
+					reactionRate = normalSkipCounter / (float) skipCounter;
+					logger.warn("Can't keep up! Skipped " + normalSkipCounter + " ticks or " + normalSkipCounter / 25.0
+							+ " seconds.");
+				}
+				tick_sender.setDelay(tickRate * fixTickRate / (skipCounter + fixTickRate));
+			}
+		});
 		tick_sender.start();
 		logger.info("Ticker initialized.");
 	}
@@ -97,7 +162,9 @@ public final class Ticker {
 
 	public static void setTickRate(int newRate) {
 		tick_sender.stop();
-		tick_sender.setDelay(1000 / newRate);
+		tickRate = 1000 / newRate;
+		if (skipCounter == 0)
+			tick_sender.setDelay(tickRate);
 		tick_sender.start();
 	}
 
@@ -108,12 +175,5 @@ public final class Ticker {
 			lastTicks = TimeUtils.getTime();
 		}
 		ticks++;
-	}
-
-	private static String message(SubscriberExceptionContext context) {
-		Method method = context.getSubscriberMethod();
-		return "Exception thrown by subscriber method " + method.getName() + '('
-				+ method.getParameterTypes()[0].getName() + ')' + " on subscriber " + context.getSubscriber()
-				+ " when dispatching event: " + context.getEvent();
 	}
 }

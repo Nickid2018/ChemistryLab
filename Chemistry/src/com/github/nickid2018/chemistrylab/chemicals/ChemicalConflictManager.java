@@ -110,12 +110,12 @@ public class ChemicalConflictManager extends ConflictManager<ChemicalResource> {
 		// Redirect
 		ChemicalLoader.CHEMICALS.values().forEach(ChemicalResource::doOnRedirect);
 		// Unload ChemicalResource
-		for (ChemicalResource res : resources) {
-			try {
-				LoadingWorld.manager.unload(res.getResourcePath());
-			} catch (Exception e) {
-			}
-		}
+//		for (ChemicalResource res : resources) {
+//			try {
+//				LoadingWorld.manager.unload(res.getResourcePath());
+//			} catch (Exception e) {
+//			}
+//		}
 		// Result: Released All Undealing Chemical Resources, Resources are independent
 	}
 

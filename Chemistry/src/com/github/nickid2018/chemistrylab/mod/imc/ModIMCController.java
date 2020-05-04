@@ -58,8 +58,8 @@ public class ModIMCController {
 	@SuppressWarnings({ "unchecked" })
 	public static final void imcProcess(LoadingWindowProgress progresses) {
 		LoadingWindowProgress.ProgressEntry all = progresses.push(2);
-		all.message.getInfo().setText("Send IMC Messages (1/2)");
-		all.progress.setCurrent(1);
+//		all.message.getInfo().setText("Send IMC Messages (1/2)");
+//		all.progress.setCurrent(1);
 		LoadingWindowProgress.ProgressEntry detail = progresses.push(getChannels());
 		// Re-order to find mod
 		ModController.doBeforeIMCProcess();
@@ -72,10 +72,10 @@ public class ModIMCController {
 			nowChannel = en.getKey();
 			total = entrys.size();
 			process = 0;
-			detail.progress.setCurrent(index);
+//			detail.progress.setCurrent(index);
 			while (!entrys.isEmpty()) {
 				process++;
-				detail.message.getInfo().setText(nowChannel + " (" + process + "/" + total + ")");
+//				detail.message.getInfo().setText(nowChannel + " (" + process + "/" + total + ")");
 				ModIMCEntry entry = entrys.poll();
 				// Add Conflict messages
 				messages.computeIfAbsent((Class<? extends IConflictable<?>>) entry.thingToSend.getClass(),
@@ -85,16 +85,16 @@ public class ModIMCController {
 		}
 		// Send Conflicts to Manager
 		imcStage = true;
-		all.message.getInfo().setText("Dealing Conflicts (2/2)");
-		all.progress.setCurrent(2);
-		detail.progress.setMax(messages.size());
-		detail.progress.setCurrent(0);
+//		all.message.getInfo().setText("Dealing Conflicts (2/2)");
+//		all.progress.setCurrent(2);
+//		detail.progress.setMax(messages.size());
+//		detail.progress.setCurrent(0);
 		int now = 0;
 		for (ConflictManager<?> manager : Conflicts.getManagers()) {
 			now++;
-			detail.progress.setCurrent(now);
+//			detail.progress.setCurrent(now);
 			nowDealing = manager;
-			detail.message.getInfo().setText(nowDealing.getConflictName() + " (" + now + "/" + messages.size() + ")");
+//			detail.message.getInfo().setText(nowDealing.getConflictName() + " (" + now + "/" + messages.size() + ")");
 			Set<ModIMCEntry> entries = messages.get(manager.getConflictClass());
 			nowDealing.dealConflict(entries == null ? Collections.emptySet() : entries);
 			messages.remove(manager.getConflictClass());

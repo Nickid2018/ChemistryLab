@@ -22,17 +22,21 @@ public class ReversibleReaction extends Reaction {
 		return strK;
 	}
 
-	private Map<String, Double> args = new HashMap<>();
+	private static final Map<String, Double> args = new HashMap<>();
 
 	@Override
-	public void doReaction(ChemicalMixture mix) {
+	public void doReaction(ChemicalMixture mix, double rate) {
+		if (!isReactionCanWork(mix.getTemperature()))
+			return;
 		// Chemical Equilibrium
-		args.clear();
 		args.put("T", mix.getTemperature());
 		double nowK = MathHelper.eplison(K.calc(args), 10);
-		double react = 1;
+		boolean computeLiq = false;
+		double liquidv = 1;
+		boolean computeGas = false;
+		double gasv = 1;
 		reacts.forEach((c, i) -> {
-
+			
 		});
 	}
 

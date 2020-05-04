@@ -1,7 +1,8 @@
 package com.github.nickid2018.chemistrylab.debug;
 
-import com.github.nickid2018.chemistrylab.reaction.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.util.message.*;
+import com.github.nickid2018.chemistrylab.reaction.data.*;
 
 public class EnvironmentCommand extends Command {
 

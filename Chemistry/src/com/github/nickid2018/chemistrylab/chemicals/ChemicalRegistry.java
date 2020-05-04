@@ -1,7 +1,6 @@
 package com.github.nickid2018.chemistrylab.chemicals;
 
 import java.util.*;
-import com.badlogic.gdx.assets.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.resource.*;
 
@@ -39,13 +38,13 @@ public class ChemicalRegistry {
 		return new Pair<>("Loading Finished", "Loading Finished");
 	}
 
-	public void doInit(AssetManager manager) {
-		List<Pair<String, String>> items = new ArrayList<>();
-		items.addAll(REGISTRY_ATOM);
-		items.addAll(REGISTRY_ION);
-		items.addAll(REGISTRY_CHEMICAL);
-		for (Pair<String, String> path : items) {
-			manager.load(path.key, ChemicalResource.class, new ChemicalLoadParameters(path.value));
-		}
-	}
+//	public void doInit(AssetManager manager) {
+//		List<Pair<String, String>> items = new ArrayList<>();
+//		items.addAll(REGISTRY_ATOM);
+//		items.addAll(REGISTRY_ION);
+//		items.addAll(REGISTRY_CHEMICAL);
+//		for (Pair<String, String> path : items) {
+//			manager.load(path.key, ChemicalResource.class, new ChemicalLoadParameters(path.value));
+//		}
+//	}
 }

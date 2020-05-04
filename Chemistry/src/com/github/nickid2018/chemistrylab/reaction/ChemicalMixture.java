@@ -6,8 +6,9 @@ import java.util.concurrent.locks.*;
 import com.google.common.base.*;
 import com.github.nickid2018.chemistrylab.event.*;
 import com.github.nickid2018.chemistrylab.chemicals.*;
-import com.github.nickid2018.chemistrylab.chemicals.attributes.Dissolve;
 import com.github.nickid2018.chemistrylab.container.*;
+import com.github.nickid2018.chemistrylab.reaction.data.*;
+import com.github.nickid2018.chemistrylab.chemicals.attributes.*;
 
 public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 
@@ -43,25 +44,32 @@ public class ChemicalMixture extends HashMap<ChemicalItem, Unit> {
 	@Override
 	public Unit put(ChemicalItem key, Unit value) {
 		Preconditions.checkArgument(!value.isListen(), "This unit isn't a non-listen unit.");
-		value = new Unit(key.resource, Unit.UNIT_MOLE, value.toMol()).setNotListen();
+		value = new Unit(key, Unit.UNIT_MOLE, value.toMol()).setNotListen();
+		ChemicalItem item;
 		lock.lock();
-		ChemicalChangedEvent post = new ChemicalChangedEvent();
-		post.mixture = this;
+		Unit ret;
+		// value is a temporatory object
 		if (containsKey(key)) {
-			Unit ret = replace(key, get(key).add(value));
-			lock.unlock();
-			post.item = null;
-			AbstractContainer.CHEMICAL_BUS.post(post);
-			return ret;
+			item = null;
+			ret = get(key).add(value);
 		} else {
-			// Set listen environment change
-			Unit u = new Unit(value.getChemical(), value.getUnit(), value.getNum());
-			super.put(key, u);
-			lock.unlock();
-			post.item = key;
-			AbstractContainer.CHEMICAL_BUS.post(post);
-			return u;
+			item = key;
+			ret = value.clone();
 		}
+		ChemicalChangedEvent post = Event.newEvent(ChemicalChangedEvent.class, this, item);
+		AbstractContainer.CHEMICAL_BUS.post(post);
+		if (!post.isCancelled())
+			super.put(key, ret);
+		Event.free(post);
+		lock.unlock();
+		return ret;
+	}
+
+	@Override
+	public Unit replace(ChemicalItem key, Unit value) {
+		if (value.getNum() <= 0)
+			return remove(key);
+		return put(key, value);
 	}
 
 	public boolean containsChemical(ChemicalResource resource) {

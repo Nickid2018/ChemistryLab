@@ -7,7 +7,6 @@
 			<attribute name="javadoc_location" value="jar:file:/D:/cj/Ext/fastjson-1.2.58-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/org/apache/commons/io-2.6/commons-io-2.6.jar" sourcepath="D:/cj/Ext/commons-io-2.6-src.zip"/>
 	<classpathentry kind="lib" path="libs/org/apache/commons/codec-1.13/commons-codec-1.13.jar" sourcepath="D:/cj/Ext/commons-codec-1.13-src.zip"/>
 	<classpathentry kind="lib" path="libs/org/apache/log4j-1.2.17/log4j-1.2.17.jar" sourcepath="D:/cj/Ext/log4j-1.2.17.zip"/>
 	<classpathentry kind="lib" path="libs/org/hyperic/sigar.jar">
@@ -20,16 +19,21 @@
 	<classpathentry kind="lib" path="libs/org/objectweb/asm-6.0-BETA/asm-debug-all-6.0_BETA.jar"/>
 	<classpathentry kind="lib" path="libs/com/github/nickid2018/jmcl-1.0/jmcl-1.0.jar" sourcepath="/JMCL/src"/>
 	<classpathentry kind="lib" path="libs/com/github/nickid2018/rdt-1.0/rdt-1.0.jar"/>
-	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx-backend-jglfw.jar" sourcepath="D:/cj/LWJGL/libgdx/gdx-backend-jglfw-sources.jar"/>
-	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx.jar" sourcepath="D:/cj/LWJGL/libgdx/gdx-sources.jar"/>
-	<classpathentry kind="lib" path="libs/com/badlogic/gdx/gdx-freetype.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/gdx-freetype-sources.jar"/>
-	<classpathentry kind="lib" path="natives/gdx-backend-jglfw-natives.jar"/>
-	<classpathentry kind="lib" path="natives/gdx-backend-lwjgl-natives.jar"/>
-	<classpathentry kind="lib" path="natives/gdx-freetype-natives.jar"/>
-	<classpathentry kind="lib" path="natives/gdx-natives.jar"/>
 	<classpathentry kind="lib" path="libs/com/github/mmc1234/mod-1.1/Mod-1.1.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/Mod-1.1-source.jar"/>
 	<classpathentry kind="lib" path="natives/sigar-natives.jar"/>
-	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine-alpha-1.5/my-gdx-backend-lwjgl.jar"/>
-	<classpathentry kind="lib" path="libs/com/github/mmc1234/pinkengine-alpha-1.5/PinkEngine-alpha-1.5-pre.jar" sourcepath="C:/Users/Administrator/Documents/Tencent Files/2833231379/FileRecv/PinkEngine-alpha-1.5-pre-source.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/jme3-core.jar" sourcepath="D:/cj/LWJGL/jME3.3.0/jme3-core-sources.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/jme3-jogg.jar" sourcepath="D:/cj/LWJGL/jME3.3.0/jme3-jogg-sources.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/jme3-lwjgl.jar" sourcepath="D:/cj/LWJGL/jME3.3.0/jme3-lwjgl-sources.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/lwjgl-platform-natives-windows.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/lwjgl.jar" sourcepath="D:/cj/Ext/lwjgl-source-2.9.3.zip"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/jme3-desktop.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/jme3-plugins.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/gson.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/jme3-blender.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/j-ogg-all.jar"/>
+	<classpathentry kind="lib" path="libs/org/apache/commons/io-2.6/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="libs/com/jME3.3.0/lemur-1.13.0.jar" sourcepath="D:/cj/LWJGL/jME3.3.0/lemur-1.13.0-sources.jar"/>
+	<classpathentry kind="lib" path="libs/org/slf4j/slf4j-api-1.7.9.jar"/>
+	<classpathentry kind="lib" path="libs/org/slf4j/slf4j-log4j12-1.7.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

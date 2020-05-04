@@ -8,15 +8,15 @@ public class TimeUtils {
 	 * @return The system time in milliseconds
 	 */
 	public static long getTime() {
-//		return MathHelper.fastFloor(GLFW.glfwGetTime() * 1000);
-		return 0;
+		return System.currentTimeMillis();
 	}
 
-	// Check Click Legal
-//	public static boolean isSystemClickLegal(long del) {
-//		boolean b = getTime() - Mouse.lastClick > del;
-//		if (b)
-//			Mouse.lastClick = getTime();
-//		return b;
-//	}
+	/**
+	 * Get the time in nanoseconds
+	 *
+	 * @return The system time in nanoseconds
+	 */
+	public static long getNanoTime() {
+		return System.nanoTime();
+	}
 }

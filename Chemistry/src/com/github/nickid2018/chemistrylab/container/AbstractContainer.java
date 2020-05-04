@@ -6,6 +6,7 @@ import com.google.common.eventbus.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
+import com.github.nickid2018.chemistrylab.reaction.data.*;
 
 public abstract class AbstractContainer {
 
@@ -56,6 +57,6 @@ public abstract class AbstractContainer {
 	}
 
 	public void addChemical(Unit u) {
-		mix.put(u.getChemical().getDefaultItem(), u);
+		mix.put(u.getChemical(), u);
 	}
 }

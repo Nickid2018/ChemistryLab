@@ -1,8 +1,6 @@
 package com.github.nickid2018.chemistrylab.init;
 
 import java.util.*;
-import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.graphics.*;
 import com.github.nickid2018.chemistrylab.mod.*;
 
 public class TextureRegistry implements Comparable<TextureRegistry> {
@@ -74,13 +72,13 @@ public class TextureRegistry implements Comparable<TextureRegistry> {
 		return index - o.index == 0 ? name.compareTo(o.name) : index - o.index;
 	}
 
-	public int doInit(AssetManager manager) {
-		if (!locked)
-			throw new UnsupportedOperationException();
-		texturesPath.forEach(path -> manager.load(path, Texture.class));
-		subRegistries.forEach(registry -> registry.doInit(manager));
-		return texturesPath.size();
-	}
+//	public int doInit(AssetManager manager) {
+//		if (!locked)
+//			throw new UnsupportedOperationException();
+//		texturesPath.forEach(path -> manager.load(path, Texture.class));
+//		subRegistries.forEach(registry -> registry.doInit(manager));
+//		return texturesPath.size();
+//	}
 
 	public int getTotalSize() {
 		int size = texturesPath.size();

@@ -4,6 +4,11 @@ import java.util.*;
 import com.alibaba.fastjson.*;
 import com.github.nickid2018.jmcl.*;
 import com.github.nickid2018.chemistrylab.reaction.*;
+import com.github.nickid2018.chemistrylab.reaction.data.ChemicalItem;
+import com.github.nickid2018.chemistrylab.reaction.data.ChemicalItemGetter;
+import com.github.nickid2018.chemistrylab.reaction.data.ChemicalState;
+import com.github.nickid2018.chemistrylab.reaction.data.Environment;
+import com.github.nickid2018.chemistrylab.reaction.data.Unit;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 /**
@@ -54,32 +59,27 @@ public class Dissolve extends ChemicalAttribute {
 			physicsDissolve = MathStatement.format(o.getString("dissolveSpeed"));
 			solubility = MathStatement.format(o.getString("solubility"));
 		}
-		item = new ChemicalItem(res, ChemicalState.AQUEOUS);
-		gasitem = new ChemicalItem(resource, ChemicalState.GAS);
-		liqitem = new ChemicalItem(resource, ChemicalState.LIQUID);
-		soliditem = new ChemicalItem(resource, ChemicalState.SOLID);
 	}
 
 	public static ChemicalItem DEFAULT_SOLVENT;
 	private static final Map<String, Double> args = new HashMap<>();
 
-	private ChemicalItem item;
-	private ChemicalItem gasitem;
-	private ChemicalItem liqitem;
-	private ChemicalItem soliditem;
-
 	/**
 	 * This will be run in pre and post reaction
 	 */
 	@Override
-	public void onAttributeRun(ChemicalMixture mixture, ReactionController controller) {
+	public void onAttributeRun(ChemicalMixture mixture, ReactionController controller, double rate) {
 		// First: Check solvent
 		// This will be changed in later version
 		if (!mixture.containsKey(DEFAULT_SOLVENT))
 			return;
 		if (functionDissolve) {
-			reaction.doReaction(mixture);
+			reaction.doReaction(mixture, rate);
 		} else {
+			ChemicalItem item = ChemicalItemGetter.newItem(resource, ChemicalState.AQUEOUS);
+			ChemicalItem gasitem = ChemicalItemGetter.newItem(resource, ChemicalState.GAS);
+			ChemicalItem liqitem = ChemicalItemGetter.newItem(resource, ChemicalState.LIQUID);
+			ChemicalItem soliditem = ChemicalItemGetter.newItem(resource, ChemicalState.SOLID);
 			double gas = mixture.get(gasitem).getNum();
 			double liquid = mixture.get(liqitem).getNum();
 			double solid = mixture.get(soliditem).getNum();
@@ -87,27 +87,19 @@ public class Dissolve extends ChemicalAttribute {
 			double solubility = this.solubility.calc(args);
 			double now = convertSolubility(mixture.getConcentration(resource));
 			double minus = solubility - now;
-			double dodissolve = Math.signum(minus) * physicsDissolve.calc(args) * Environment.getSpeed() / 50;
+			double dodissolve = Math.signum(minus) * physicsDissolve.calc(args) * rate / 2;
 			dodissolve = Math.abs(dodissolve) - Math.abs(minus) < 0 ? dodissolve : minus;
 			double endConvert = convertMolPerL(dodissolve) * mixture.get(DEFAULT_SOLVENT).getNum()
 					+ mixture.getChemicalItem(resource, ChemicalState.AQUEOUS).getNum();
-			mixture.replace(item, new Unit(resource, Unit.UNIT_MOLE, endConvert));
+			mixture.replace(item, new Unit(item, Unit.UNIT_MOLE, endConvert));
 			double all = gas + liquid + solid;
 			gas -= dodissolve * gas / all;
 			liquid -= dodissolve * liquid / all;
 			solid -= dodissolve * solid / all;
-			if (gas != 0)
-				mixture.replace(gasitem, new Unit(resource, Unit.UNIT_MOLE, gas));
-			else
-				mixture.remove(gasitem);
-			if (liquid != 0)
-				mixture.replace(liqitem, new Unit(resource, Unit.UNIT_MOLE, liquid));
-			else
-				mixture.remove(liqitem);
-			if (solid != 0)
-				mixture.replace(soliditem, new Unit(resource, Unit.UNIT_MOLE, solid));
-			else
-				mixture.remove(soliditem);
+			mixture.replace(gasitem, new Unit(gasitem, Unit.UNIT_MOLE, gas));
+			mixture.replace(liqitem, new Unit(liqitem, Unit.UNIT_MOLE, liquid));
+			mixture.replace(soliditem, new Unit(soliditem, Unit.UNIT_MOLE, solid));
+			ChemicalItemGetter.free(item, gasitem, liqitem, soliditem);
 		}
 	}
 

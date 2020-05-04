@@ -1,8 +1,10 @@
 package com.github.nickid2018.chemistrylab.debug;
 
 import java.util.*;
-
+import com.github.nickid2018.chemistrylab.*;
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.event.*;
+import com.github.nickid2018.chemistrylab.util.message.*;
 
 public class CommandController {
 
@@ -10,8 +12,13 @@ public class CommandController {
 
 	public static final Message[] runCommand(String command) throws CommandException {
 		// Surprise! Crash! (P.S. The function is to save breakpoint data)
-		if (command.equals("crash"))
-			throw new Error("Manually Crash");
+		if (command.equals("crash")) {
+			FatalErrorEvent event = Event.newEvent(FatalErrorEvent.class, Thread.currentThread(),
+					new Error("Matually Crash"));
+			ChemistryLab.ENGINE_EVENTBUS.post(event);
+			Event.free(event);
+			return new Message[] {};
+		}
 		String[] sa = command.split(" ", 2);
 		String head = sa[0];
 		Command c = commap.get(head);

@@ -2,8 +2,7 @@ package com.github.nickid2018.chemistrylab.init;
 
 import java.io.*;
 import java.util.*;
-
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 public class ProgramOptions {
 

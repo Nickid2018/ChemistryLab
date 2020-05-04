@@ -3,6 +3,7 @@ package com.github.nickid2018.chemistrylab.debug;
 import java.util.*;
 import com.github.nickid2018.chemistrylab.util.*;
 import com.github.nickid2018.chemistrylab.container.*;
+import com.github.nickid2018.chemistrylab.util.message.*;
 
 public class ContainerCommand extends Command {
 

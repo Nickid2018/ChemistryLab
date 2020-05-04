@@ -3,6 +3,8 @@ package com.github.nickid2018.chemistrylab.util;
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.*;
+
+import com.github.nickid2018.chemistrylab.init.ProgramOptions;
 import com.github.nickid2018.chemistrylab.resource.*;
 
 public class I18N {
@@ -22,6 +24,8 @@ public class I18N {
 
 	// Load I18N file(s)
 	public static void load() throws Exception {
+		String localename = ProgramOptions.getWindowOption("locale", "default");
+		NOW = localename.equalsIgnoreCase("default") ? SYSTEM_DEFAULT : Locale.forLanguageTag(localename);
 		String lang = NOW.toString().toLowerCase();
 		String file_name = "assets/lang/" + lang + ".lang";
 		InputStream stream;

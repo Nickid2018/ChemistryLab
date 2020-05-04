@@ -9,7 +9,6 @@ import com.github.mmc1234.mod.*;
 import org.apache.commons.io.filefilter.*;
 import com.github.nickid2018.chemistrylab.init.*;
 import com.github.nickid2018.chemistrylab.util.*;
-import com.github.mmc1234.pinkengine.ClassUtils;
 import com.github.nickid2018.chemistrylab.chemicals.*;
 
 public final class ModController {
@@ -73,9 +72,10 @@ public final class ModController {
 
 	private static void sendModEvents(Consumer<ModContainer> runnable, LoadingWindowProgress progresses) {
 		LoadingWindowProgress.ProgressEntry entry = progresses.push(MODS.size());
+		index = 0;
 		for (ModContainer container : MODS) {
-			entry.progress.setCurrent(index + 1);
-			entry.message.getInfo().setText(container.getModId() + " (" + (index + 1) + "/" + MODS.size() + ")");
+//			entry.progress.setCurrent(index + 1);
+//			entry.message.getInfo().setText(container.getModId() + " (" + (index + 1) + "/" + MODS.size() + ")");
 			runnable.accept(container);
 			index++;
 		}

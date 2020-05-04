@@ -1,6 +1,7 @@
 package com.github.nickid2018.chemistrylab.debug;
 
 import com.github.nickid2018.chemistrylab.util.*;
+import com.github.nickid2018.chemistrylab.util.message.*;
 
 public class TickerCommand extends Command {
 

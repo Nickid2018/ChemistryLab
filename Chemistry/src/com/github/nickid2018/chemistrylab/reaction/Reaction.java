@@ -49,5 +49,5 @@ public abstract class Reaction {
 		return (int) (reacts.hashCode() * gets.hashCode() - dH * dS);
 	}
 
-	public abstract void doReaction(ChemicalMixture mix);
+	public abstract void doReaction(ChemicalMixture mix, double rate);
 }

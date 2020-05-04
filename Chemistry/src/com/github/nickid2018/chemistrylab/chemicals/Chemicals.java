@@ -3,7 +3,7 @@ package com.github.nickid2018.chemistrylab.chemicals;
 import java.util.*;
 
 //The map to save ChemicalResource
-public class Chemicals extends TreeMap<String, ChemicalResource>{
+public class Chemicals extends TreeMap<String, ChemicalResource> {
 
 	/**
 	 * 
@@ -55,5 +55,9 @@ public class Chemicals extends TreeMap<String, ChemicalResource>{
 			throw new IllegalArgumentException("Can't find chemical \'" + key + "\'");
 		}
 		return ret;
+	}
+
+	public ChemicalResource get(String modid, String name) {
+		return super.get(name + ":" + modid);
 	}
 }

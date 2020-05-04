@@ -12,7 +12,9 @@ public class NonReversibleReaction extends Reaction {
 	}
 
 	@Override
-	public void doReaction(ChemicalMixture mix) {
+	public void doReaction(ChemicalMixture mix, double rate) {
+		if (!isReactionCanWork(mix.getTemperature()))
+			return;
 
 	}
 
