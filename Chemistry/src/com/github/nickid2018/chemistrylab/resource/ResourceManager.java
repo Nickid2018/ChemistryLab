@@ -3,11 +3,10 @@ package com.github.nickid2018.chemistrylab.resource;
 import java.io.*;
 import java.util.*;
 import java.net.*;
-import org.apache.log4j.*;
+import java.util.function.*;
 import org.apache.commons.io.*;
 import java.util.concurrent.locks.*;
-import java.util.function.Function;
-
+import org.apache.logging.log4j.*;
 import org.apache.commons.io.filefilter.*;
 
 /**
@@ -18,7 +17,7 @@ import org.apache.commons.io.filefilter.*;
  */
 public class ResourceManager {
 
-	public static final Logger logger = Logger.getLogger("Resource Manager");
+	public static final Logger logger = LogManager.getLogger("Resource Manager");
 
 	/** The list of locations to be searched */
 	private static ArrayList<ResourceLocation> locations = new ArrayList<>();

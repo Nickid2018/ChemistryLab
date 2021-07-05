@@ -39,4 +39,8 @@ public class CollectionUtils {
 		}
 		return obj;
 	}
+
+	public static <T> T getOrNull(T[] array, int index) {
+		return index < array.length ? array[index] : null;
+	}
 }

@@ -89,6 +89,13 @@ public class Pools {
 		}
 	}
 
+	public static void clearAll() {
+		for (Pool<?> pool : typePools.values()) {
+			pool.clear();
+		}
+		typePools.clear();
+	}
+
 	private Pools() {
 	}
 }

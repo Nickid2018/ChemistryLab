@@ -52,6 +52,10 @@ public class Version {
 				&& (ignoretype || this.type == ver.type);
 	}
 
+	public String toString() {
+		return major + "." + minor + "." + revision + " " + type.getName();
+	}
+
 	public static Version fromString(String ver) {
 		ver = ver.trim();
 		String[] splitted = ver.split(" ");

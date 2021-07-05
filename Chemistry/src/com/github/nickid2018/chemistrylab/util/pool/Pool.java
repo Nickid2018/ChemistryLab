@@ -1,6 +1,7 @@
 package com.github.nickid2018.chemistrylab.util.pool;
 
 import java.util.*;
+import com.google.common.base.*;
 
 public abstract class Pool<T extends Poolable> {
 
@@ -45,10 +46,9 @@ public abstract class Pool<T extends Poolable> {
 	 * the specified object is reset but not added to the pool.
 	 */
 	public void free(T object) {
-		if (object == null)
-			throw new IllegalArgumentException("object cannot be null.");
+		Preconditions.checkArgument(object != null, "object cannot be null.");
 		if (freeObjects.size() < max) {
-			freeObjects.add(object);
+			freeObjects.push(object);
 			peak = Math.max(peak, freeObjects.size());
 		}
 		object.reset();
@@ -61,8 +61,7 @@ public abstract class Pool<T extends Poolable> {
 	 * @see #free(Object)
 	 */
 	public void freeAll(Stack<T> objects) {
-		if (objects == null)
-			throw new IllegalArgumentException("object cannot be null.");
+		Preconditions.checkArgument(objects != null, "object cannot be null.");
 		Stack<T> freeObjects = this.freeObjects;
 		int max = this.max;
 		for (int i = 0; i < objects.size(); i++) {
@@ -70,7 +69,7 @@ public abstract class Pool<T extends Poolable> {
 			if (object == null)
 				continue;
 			if (freeObjects.size() < max)
-				freeObjects.add(object);
+				freeObjects.push(object);
 			object.reset();
 		}
 		peak = Math.max(peak, freeObjects.size());

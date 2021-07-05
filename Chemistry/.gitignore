@@ -12,3 +12,5 @@
 /sigar-x86-winnt.dll
 /log4j.config
 /mods/
+/target/
+/crash-report/

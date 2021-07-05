@@ -1,135 +1,232 @@
 package com.github.nickid2018.chemistrylab.crash;
 
+import oshi.*;
 import java.io.*;
 import java.util.*;
-import org.hyperic.sigar.*;
+import java.text.*;
+import oshi.hardware.*;
+import java.util.stream.*;
+import java.util.function.*;
 import java.lang.management.*;
 import org.apache.commons.io.*;
+import com.google.common.collect.*;
+
 import com.github.nickid2018.chemistrylab.*;
-import com.github.nickid2018.chemistrylab.init.*;
-import com.github.nickid2018.chemistrylab.mod.*;
 
 public class CrashReport {
 
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
-	public final Throwable error;
-	public final Thread thread;
-	public final String message;
-
-	public CrashReport(Throwable error, Thread thread, String message) {
-		this.error = error;
-		this.thread = thread == null ? Thread.currentThread() : thread;
-		this.message = message;
+	public static void main(String[] args) {
+		System.out.println(new CrashReport("..", new Error(".....")).populateReport());
+		new CrashReport("..", new Error(".....")).writeToFile("client");
 	}
 
-	public String writeCrash() throws IOException {
-		File file = makeCrashFile();
-		Writer writer = new FileWriter(file);
-		IOUtils.write("Program had crashed.This report is the detail of this error." + LINE_SEPARATOR, writer);
-		outputTime(writer);
-		IOUtils.write("//" + WITTY_MESSAGES[(int) (WITTY_MESSAGES.length * Math.random())] + LINE_SEPARATOR, writer);
-		IOUtils.write(message + LINE_SEPARATOR, writer);
-		outputStackTrace(writer);
-		outputThreadDumps(writer);
-		if (Boolean.valueOf(ProgramOptions.getCommandSwitch("-modEnable", "true")))
-			outputModInfos(writer);
-		outputVMRuntime(writer);
-		outputSystemInfos(writer);
-		writer.flush();
-		writer.close();
-		return file.getAbsolutePath();
+	private List<CrashReportSession> sessions = Lists.newArrayList();
+	private String detail;
+	private Throwable throwable;
+
+	public CrashReport(String detail, Throwable error) {
+		this.detail = detail;
+		throwable = error;
 	}
 
-	public static final File makeCrashFile() throws IOException {
-		File file = new File(
-				String.format("crash-reports/crash-report_%1$tY%1$tm%1$td%1$tH%1$tM%1$tS%1$tL.csh.log", new Date()));
-		if (!file.exists())
-			file.createNewFile();
-		return file;
-	}
-
-	public static final void outputTime(Writer writer) throws IOException {
-		IOUtils.write(String.format("Time %tc" + LINE_SEPARATOR, new Date()), writer);
-	}
-
-	public final void outputStackTrace(Writer writer) throws IOException {
-		IOUtils.write("=== S T A C K T R A C E ===" + LINE_SEPARATOR, writer);
-		IOUtils.write("Error in Thread \"" + thread.getName() + "\"" + LINE_SEPARATOR, writer);
-		IOUtils.write(ErrorUtils.asStack(error) + LINE_SEPARATOR, writer);
-	}
-
-	public static final void outputThreadDumps(Writer writer) throws IOException {
-		IOUtils.write("=== T H R E A D S ===" + LINE_SEPARATOR, writer);
-		for (Map.Entry<Thread, StackTraceElement[]> en : Thread.getAllStackTraces().entrySet()) {
-			IOUtils.write("Thread \"" + en.getKey().getName() + "\" State:" + en.getKey().getState() + LINE_SEPARATOR,
-					writer);
-			IOUtils.write(ErrorUtils.asStack(en.getValue()) + LINE_SEPARATOR, writer);
+	public String populateReport() {
+		fillSystemDetails();
+		StringWriter s = new StringWriter();
+		PrintWriter writer = new PrintWriter(s);
+		writer.println(" ----- Chemistry Lab Crash Report");
+		writer.println(getWittyComment());
+		writer.println("Time: " + (new SimpleDateFormat()).format(new Date()));
+		writer.println("Description: " + detail);
+		writer.println("Stack Trace:");
+		throwable.printStackTrace(writer);
+		writer.println();
+		writer.println(" ----- The details are as follows: ");
+		for (CrashReportSession session : sessions) {
+			writer.println();
+			writer.println(session.toString());
 		}
+		writer.println();
+		writer.println(
+				"// REM: If you want to use the crash report to report a bug, please delete all of private information!");
+		return s.toString();
 	}
 
-	public static final void outputModInfos(Writer writer) throws IOException {
-		IOUtils.write("=== M O D S ===" + LINE_SEPARATOR, writer);
-		for (ModContainer container : ModController.MODS) {
-			String modFile;
-			try {
-				modFile = container.getModFile();
-			} catch (Exception e) {
-				modFile = "Internal";
-			}
-			IOUtils.write("modid: " + container.getModId() + "(File: \"" + modFile + "\") State: "
-					+ container.getState() + " Error: " + container.getError() + LINE_SEPARATOR, writer);
-		}
-	}
-
-	public static final void outputVMRuntime(Writer writer) throws IOException {
-		IOUtils.write("=== R U N T I M E ===" + LINE_SEPARATOR, writer);
-		// VM Args
-		RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
-		IOUtils.write("Arguments: " + runtime.getInputArguments() + LINE_SEPARATOR, writer);
-		IOUtils.write("Boot Class Path: " + runtime.getBootClassPath().replaceAll(";", LINE_SEPARATOR) + LINE_SEPARATOR,
-				writer);
-		IOUtils.write("Class Path: " + runtime.getClassPath().replaceAll(";", LINE_SEPARATOR) + LINE_SEPARATOR, writer);
-		IOUtils.write("Library Path: " + runtime.getLibraryPath().replaceAll(";", LINE_SEPARATOR) + LINE_SEPARATOR,
-				writer);
-		// Memory Details
-		IOUtils.write("Memory Heap: "
-				+ MathHelper.eplison(
-						(ChemistryLab.RUNTIME.totalMemory() - ChemistryLab.RUNTIME.freeMemory()) / 1048576.0f, 1)
-				+ "MB/" + MathHelper.eplison(ChemistryLab.RUNTIME.maxMemory() / 1048576.0f, 1) + "MB" + LINE_SEPARATOR,
-				writer);
-		IOUtils.write("Memory Details:" + LINE_SEPARATOR, writer);
-		List<MemoryPoolMXBean> memory = ManagementFactory.getMemoryPoolMXBeans();
-		for (MemoryPoolMXBean bean : memory) {
-			IOUtils.write(
-					"\t" + bean.getName() + "(" + bean.getType() + "):"
-							+ MathHelper.eplison(bean.getUsage().getUsed() / 1024.0f, 1) + "KB out of "
-							+ MathHelper.eplison(bean.getUsage().getMax() / 1024.0f, 1) + "KB" + LINE_SEPARATOR,
-					writer);
-		}
-	}
-
-	public static final void outputSystemInfos(Writer writer) throws IOException {
-		// OS Infos
-		IOUtils.write("=== S Y S T E M ===" + LINE_SEPARATOR, writer);
-		IOUtils.write("Operation System: " + System.getProperty("os.name") + " " + System.getProperty("os.arch")
-				+ LINE_SEPARATOR, writer);
-		IOUtils.write("Java Path: " + System.getProperty("java.version") + " at " + System.getProperty("java.home")
-				+ LINE_SEPARATOR, writer);
+	public void writeToFile(String side) {
 		try {
-			Sigar sigar = new Sigar();
-			CpuInfo[] infos = sigar.getCpuInfoList();
-			StringBuilder builder = new StringBuilder();
-			for (CpuInfo info : infos) {
-				builder.append("CPU: " + info + LINE_SEPARATOR);
-			}
-		} catch (Throwable e) {
-			IOUtils.write("// Cannot get CPU information" + LINE_SEPARATOR, writer);
+			File file = new File("crash-report/crash-"
+					+ (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-" + side + ".txt");
+			File dir = file.getParentFile();
+			if (!dir.isDirectory())
+				dir.mkdirs();
+			FileWriter fw;
+			fw = new FileWriter(file);
+			IOUtils.write(populateReport(), fw);
+			fw.close();
+		} catch (IOException e) {
+			System.err.println("Can't save crash report!");
+			e.printStackTrace();
 		}
 	}
 
-	private static final String[] WITTY_MESSAGES = new String[] { "Oh, this is not my fault, must be yours!",
-			"Oh My God!", "QAQ, I promise I will fix the bug in next version!",
-			"Error in rendering? Ask to mmc1234, don't ask to me.>_<", "**** *** ****, **** **** *****.",
-			"The crash must be occurred in your code, not mine!" };
+	public void addSession(CrashReportSession session) {
+		sessions.add(session);
+	}
+
+	public void addSession(CrashReportSession session, int pos) {
+		sessions.add(pos, session);
+	}
+
+	private void fillSystemDetails() {
+		CrashReportSession system = new CrashReportSession("System & Runtime Details");
+		sessions.add(system);
+		system.addDetail("Chemistry Lab version", Constants.VERSION_IN_STRING);
+		system.addDetail("Operating System", () -> System.getProperty("os.name") + " (" + System.getProperty("os.arch")
+				+ ") version " + System.getProperty("os.version"));
+		system.addDetail("Java Version",
+				() -> System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
+		system.addDetail("Java VM Version", () -> System.getProperty("java.vm.name") + " ("
+				+ System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
+		system.addDetail("Memory", () -> {
+			Runtime runtime = Runtime.getRuntime();
+			long l = runtime.maxMemory();
+			long l1 = runtime.totalMemory();
+			long l2 = runtime.freeMemory();
+			long l3 = l / 1024L / 1024L;
+			long l4 = l1 / 1024L / 1024L;
+			long l5 = l2 / 1024L / 1024L;
+			return l2 + " bytes (" + l5 + " MB) / " + l1 + " bytes (" + l4 + " MB) up to " + l + " bytes (" + l3
+					+ " MB)";
+		});
+		system.addDetail("CPU Count", Integer.valueOf(Runtime.getRuntime().availableProcessors()));
+		system.addDetail("VM Arguments", () -> {
+			StringBuilder sb = new StringBuilder();
+			List<String> vmArgs = getVmArguments().collect(Collectors.toList());
+			sb.append("Total count ");
+			sb.append(vmArgs.size());
+			sb.append(";");
+			vmArgs.forEach(s -> sb.append(" " + s));
+			return sb.toString();
+		});
+		system.addDetail("User Arguments", () -> {
+			StringBuilder sb = new StringBuilder();
+			List<String> userArgs = getUserArguments().collect(Collectors.toList());
+			sb.append("Total count ");
+			sb.append(userArgs.size());
+			sb.append(";");
+			userArgs.forEach(s -> sb.append(" " + s));
+			return sb.toString();
+		});
+		HardwareAbstractionLayer hardware = getOrNull(() -> new SystemInfo().getHardware());
+		system.addDetail("Processor", () -> {
+			if (hardware == null)
+				return "Unknown";
+			CentralProcessor processor = hardware.getProcessor();
+			CentralProcessor.ProcessorIdentifier id = processor.getProcessorIdentifier();
+			if (id == null)
+				return "Unknown";
+			StringBuilder sb = new StringBuilder();
+			sb.append("Vendor=");
+			sb.append(id.getVendor());
+			sb.append("; Name=");
+			sb.append(id.getName());
+			sb.append("; Identifier=");
+			sb.append(id.getIdentifier());
+			sb.append("; Microarchitecture=");
+			sb.append(id.getMicroarchitecture());
+			sb.append("; Frequency=");
+			sb.append(String.format("%.2f", ((float) id.getVendorFreq()) / 1.0E9F));
+			sb.append("GHz; Physical packages=");
+			sb.append(processor.getPhysicalPackageCount());
+			sb.append("; Physical CPUs=");
+			sb.append(processor.getPhysicalProcessorCount());
+			sb.append("; Logical CPUs=");
+			sb.append(processor.getLogicalProcessorCount());
+			return sb.toString();
+		});
+		List<GraphicsCard> gcards = hardware == null ? Lists.newArrayList() : hardware.getGraphicsCards();
+		for (int i = 0; i < gcards.size(); i++) {
+			GraphicsCard card = gcards.get(i);
+			system.addDetail("Graphics Card #" + i, () -> {
+				if (card == null)
+					return "Unknown";
+				StringBuilder sb = new StringBuilder();
+				sb.append("Name=");
+				sb.append(card.getName());
+				sb.append("; Vendor=");
+				sb.append(card.getVendor());
+				sb.append("; VRAM=");
+				sb.append(String.format("%.2f", ((float) card.getVRam()) / 1048576.0F));
+				sb.append("MB; DeviceId=");
+				sb.append(card.getDeviceId());
+				sb.append("; VersionInfo=");
+				sb.append(card.getVersionInfo());
+				return sb.toString();
+			});
+		}
+		GlobalMemory memory = hardware == null ? null : hardware.getMemory();
+		List<PhysicalMemory> phymems = memory == null ? Lists.newArrayList() : memory.getPhysicalMemory();
+		for (int i = 0; i < phymems.size(); i++) {
+			PhysicalMemory mem = phymems.get(i);
+			system.addDetail("Memory Slot #" + i, () -> {
+				if (mem == null)
+					return "Unknown";
+				StringBuilder sb = new StringBuilder();
+				sb.append("Capacity=");
+				sb.append(String.format("%.2f", ((float) mem.getCapacity()) / 1048576.0F));
+				sb.append("MB; Clockspeed=");
+				sb.append(String.format("%.2f", ((float) mem.getClockSpeed()) / 1.0E9F));
+				sb.append("GHz; Type=");
+				sb.append(mem.getMemoryType());
+				return sb.toString();
+			});
+		}
+		system.addDetail("Virtual Memory", () -> {
+			if (memory == null)
+				return "Unknown";
+			VirtualMemory mem = memory.getVirtualMemory();
+			StringBuilder sb = new StringBuilder();
+			sb.append("Max=");
+			sb.append(String.format("%.2f", ((float) mem.getVirtualMax()) / 1048576.0F));
+			sb.append("MB; Used=");
+			sb.append(String.format("%.2f", ((float) mem.getVirtualInUse()) / 1048576.0F));
+			sb.append("MB; Swap Total=");
+			sb.append(String.format("%.2f", ((float) mem.getSwapTotal()) / 1048576.0F));
+			sb.append("MB; Swap Used=");
+			sb.append(String.format("%.2f", ((float) mem.getSwapUsed()) / 1048576.0F));
+			sb.append("MB");
+			return sb.toString();
+		});
+	}
+
+	public static Stream<String> getVmArguments() {
+		RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+		return runtimeMXBean.getInputArguments().stream().filter(string -> string.startsWith("-X"));
+	}
+
+	public static Stream<String> getUserArguments() {
+		RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+		return runtimeMXBean.getInputArguments().stream().filter(string -> !string.startsWith("-X"));
+	}
+
+	public static final List<String> WITTY_COMMENT = Arrays.asList("To be or not to be, this is up to Archibald Lee",
+			"O, I am slain!", "===FBI WARNING===", "This bug must be created by mmc1234!", "A-W-S-L",
+			"Why the sp3 minus the sp gets the sp2?", "I have a bad feeling about this.",
+			"Make the copper multiplied by alumium and then divided by chlorine, and you can get the gold.",
+			"The polar bear can't dissolve in benzene, for it is polar.",
+			"Don't let the Fluoride Hydroxide into the lightbulb, or the liquid will make it broken.",
+			"As we know, Mercaptan and Mermaid have the same origin.",
+			"P2O5 is an excellent chemical, for it can turn the mercury into the silver.",
+			"Shout at the Hg-198:\"The new gay! Hand out your proton!\", and you can gain much gold.");
+
+	public static String getWittyComment() {
+		return "// " + WITTY_COMMENT.get(Constants.RANDOM.nextInt(WITTY_COMMENT.size()));
+	}
+
+	private static <T> T getOrNull(Supplier<T> supplier) {
+		try {
+			return supplier.get();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }
