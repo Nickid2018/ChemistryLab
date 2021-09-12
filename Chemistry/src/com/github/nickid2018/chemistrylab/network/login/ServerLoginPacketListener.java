@@ -1,8 +1,8 @@
 package com.github.nickid2018.chemistrylab.network.login;
 
-import com.github.nickid2018.chemistrylab.network.*;
+import com.github.nickid2018.chemistrylab.network.NetworkListener;
 
 public interface ServerLoginPacketListener extends NetworkListener {
 
-	public void handleName(C2SLoginNamePacket packet);
+    void handleName(C2SLoginNamePacket packet);
 }

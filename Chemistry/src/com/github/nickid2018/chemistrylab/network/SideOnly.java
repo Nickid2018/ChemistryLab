@@ -1,13 +1,16 @@
 package com.github.nickid2018.chemistrylab.network;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.*;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
 @Documented
 @Retention(CLASS)
-@Target({ TYPE, METHOD, FIELD })
+@Target({TYPE, METHOD, FIELD})
 public @interface SideOnly {
 
-	public NetworkSide value();
+    NetworkSide value();
 }

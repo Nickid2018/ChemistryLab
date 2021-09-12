@@ -2,13 +2,13 @@ package com.github.nickid2018.chemistrylab.network;
 
 public interface NetworkPacket<T extends NetworkListener> {
 
-	public void writePacket(FriendlyByteBuf buf) throws Exception;
+    void writePacket(FriendlyByteBuf buf);
 
-	public void readPacket(FriendlyByteBuf buf) throws Exception;
+    void readPacket(FriendlyByteBuf buf);
 
-	public void applyToListener(T listener);
+    void applyToListener(T listener);
 
-	public default boolean skipSupportted() {
-		return false;
-	}
+    default boolean skipSupported() {
+        return false;
+    }
 }

@@ -1,10 +1,10 @@
 package com.github.nickid2018.chemistrylab.network.login;
 
-import com.github.nickid2018.chemistrylab.network.*;
+import com.github.nickid2018.chemistrylab.network.NetworkListener;
 
-public interface ClientLoginPacketListener extends NetworkListener{
-	
-	public void handleLoginSuccess(S2CLoginSuccessPacket packet);
+public interface ClientLoginPacketListener extends NetworkListener {
 
-	public void handleCompression(S2CCompressionPacket packet);
+    void handleLoginSuccess(S2CLoginSuccessPacket packet);
+
+    void handleCompression(S2CCompressionPacket packet);
 }

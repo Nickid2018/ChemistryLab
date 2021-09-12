@@ -1,8 +1,8 @@
 package com.github.nickid2018.chemistrylab.network.play;
 
-import com.github.nickid2018.chemistrylab.network.*;
+import com.github.nickid2018.chemistrylab.network.NetworkListener;
 
 public interface ServerPlayPacketListener extends NetworkListener {
 
-	public void handleChatMessage(C2SChatPacket packet);
+    void handleChatMessage(C2SChatPacket packet);
 }

@@ -1,29 +1,32 @@
 package com.github.nickid2018.chemistrylab.util;
 
-import java.io.*;
-import javax.annotation.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class PrintStreamDegerate extends PrintStream{
-	
-	public static final Logger LOGGER = LogManager.getLogger();
-	
-	private String name;
+import javax.annotation.Nullable;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
-	public PrintStreamDegerate(String name, OutputStream out) {
-		super(out);
-		this.name = name;
-	}
+public class PrintStreamDegerate extends PrintStream {
 
-	public void println(@Nullable String string) {
-		log(string);
-	}
+    public static final Logger LOGGER = LogManager.getLogger();
 
-	public void println(Object object) {
-		log(String.valueOf(object));
-	}
-	
-	protected void log(@Nullable String string) {
-		LOGGER.info("[{}]: {}", this.name, string);
-	}
+    private final String name;
+
+    public PrintStreamDegerate(String name, OutputStream out) {
+        super(out);
+        this.name = name;
+    }
+
+    public void println(@Nullable String string) {
+        log(string);
+    }
+
+    public void println(Object object) {
+        log(String.valueOf(object));
+    }
+
+    protected void log(@Nullable String string) {
+        LOGGER.info("[{}]: {}", this.name, string);
+    }
 }

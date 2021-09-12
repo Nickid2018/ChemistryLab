@@ -1,10 +1,10 @@
 package com.github.nickid2018.chemistrylab.network;
 
-import com.github.nickid2018.chemistrylab.text.*;
+import com.github.nickid2018.chemistrylab.text.Text;
 
 public interface NetworkListener {
-	
-	public void tick();
 
-	public void onDisconnect(Text text);
+    void tick();
+
+    void onDisconnect(Text text);
 }
