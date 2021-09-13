@@ -1,9 +1,13 @@
 package com.github.nickid2018.chemistrylab.network;
 
-import com.github.nickid2018.chemistrylab.network.login.C2SLoginNamePacket;
-import com.github.nickid2018.chemistrylab.network.login.S2CCompressionPacket;
-import com.github.nickid2018.chemistrylab.network.login.S2CLoginSuccessPacket;
-import com.github.nickid2018.chemistrylab.network.play.C2SChatPacket;
+import com.github.nickid2018.chemistrylab.network.login.c2s.C2SEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.login.c2s.C2SHelloPacket;
+import com.github.nickid2018.chemistrylab.network.login.c2s.C2SLoginNamePacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CCompressionPacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CHelloPacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CLoginSuccessPacket;
+import com.github.nickid2018.chemistrylab.network.play.c2s.C2SChatPacket;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -24,6 +28,10 @@ public enum NetworkState {
 
     static {
         LOGIN.addPacket(NetworkSide.SERVER, C2SLoginNamePacket.class);
+        LOGIN.addPacket(NetworkSide.SERVER, C2SHelloPacket.class);
+        LOGIN.addPacket(NetworkSide.SERVER, C2SEncryptionPacket.class);
+        LOGIN.addPacket(NetworkSide.CLIENT, S2CHelloPacket.class);
+        LOGIN.addPacket(NetworkSide.CLIENT, S2CEncryptionPacket.class);
         LOGIN.addPacket(NetworkSide.CLIENT, S2CCompressionPacket.class);
         LOGIN.addPacket(NetworkSide.CLIENT, S2CLoginSuccessPacket.class);
         PLAY.addPacket(NetworkSide.SERVER, C2SChatPacket.class);
@@ -50,7 +58,7 @@ public enum NetworkState {
         if (map != null) {
             Class<?> clazz = map.get(id);
             try {
-                return clazz == null ? null : (NetworkPacket<?>) clazz.newInstance();
+                return clazz == null ? null : (NetworkPacket<?>) clazz.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 return null;
             }

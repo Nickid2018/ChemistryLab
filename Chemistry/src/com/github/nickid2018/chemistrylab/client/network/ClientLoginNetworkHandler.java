@@ -1,11 +1,21 @@
 package com.github.nickid2018.chemistrylab.client.network;
 
 import com.github.nickid2018.chemistrylab.network.NetworkConnection;
+import com.github.nickid2018.chemistrylab.network.NetworkEncryptionException;
+import com.github.nickid2018.chemistrylab.network.NetworkEncryptionUtil;
 import com.github.nickid2018.chemistrylab.network.NetworkState;
-import com.github.nickid2018.chemistrylab.network.login.ClientLoginPacketListener;
-import com.github.nickid2018.chemistrylab.network.login.S2CCompressionPacket;
-import com.github.nickid2018.chemistrylab.network.login.S2CLoginSuccessPacket;
+import com.github.nickid2018.chemistrylab.network.listener.ClientLoginPacketListener;
+import com.github.nickid2018.chemistrylab.network.login.c2s.C2SEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.login.c2s.C2SHelloPacket;
+import com.github.nickid2018.chemistrylab.network.login.c2s.C2SLoginNamePacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CCompressionPacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CHelloPacket;
+import com.github.nickid2018.chemistrylab.network.login.s2c.S2CLoginSuccessPacket;
 import com.github.nickid2018.chemistrylab.text.Text;
+
+import javax.crypto.SecretKey;
+import java.security.Key;
 
 public class ClientLoginNetworkHandler implements ClientLoginPacketListener {
 
@@ -15,6 +25,7 @@ public class ClientLoginNetworkHandler implements ClientLoginPacketListener {
     public ClientLoginNetworkHandler(NetworkConnection connection, String userName) {
         this.connection = connection;
         this.userName = userName;
+        connection.sendPacket(C2SHelloPacket.createPacket());
     }
 
     @Override
@@ -38,6 +49,27 @@ public class ClientLoginNetworkHandler implements ClientLoginPacketListener {
     @Override
     public void handleCompression(S2CCompressionPacket packet) {
         connection.setCompression(packet.limit);
+    }
+
+    @Override
+    public void handleEncryption(S2CEncryptionPacket packet) {
+        try {
+            byte[] nonce = packet.nonce;
+            Key serverPublicKey = NetworkEncryptionUtil.readEncodedPublicKey(packet.serverPublicKey);
+            byte[] encryptedNonce = NetworkEncryptionUtil.encrypt(serverPublicKey, nonce);
+            SecretKey aesKey = NetworkEncryptionUtil.generateKey();
+            connection.sendPacket(C2SEncryptionPacket.createPacket(
+                    encryptedNonce, NetworkEncryptionUtil.encrypt(serverPublicKey, aesKey.getEncoded())));
+            connection.setupEncryption(aesKey);
+        } catch (NetworkEncryptionException e) {
+            NetworkConnection.NETWORK_LOGGER.fatal("Cannot deserialize key", e);
+        }
+
+    }
+
+    @Override
+    public void handleHello(S2CHelloPacket packet) {
+        connection.sendPacket(C2SLoginNamePacket.createPacket(userName));
     }
 
 }

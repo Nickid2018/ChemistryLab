@@ -1,8 +1,8 @@
 package com.github.nickid2018.chemistrylab.server.network;
 
 import com.github.nickid2018.chemistrylab.network.NetworkConnection;
-import com.github.nickid2018.chemistrylab.network.play.C2SChatPacket;
-import com.github.nickid2018.chemistrylab.network.play.ServerPlayPacketListener;
+import com.github.nickid2018.chemistrylab.network.play.c2s.C2SChatPacket;
+import com.github.nickid2018.chemistrylab.network.listener.ServerPlayPacketListener;
 import com.github.nickid2018.chemistrylab.server.AbstractServer;
 import com.github.nickid2018.chemistrylab.text.Text;
 

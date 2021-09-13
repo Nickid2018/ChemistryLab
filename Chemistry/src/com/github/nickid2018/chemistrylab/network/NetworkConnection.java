@@ -22,33 +22,35 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
 import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.Queue;
 
 public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket<?>> {
 
-    public static final Logger NETWORK_LOGGER = LogManager.getLogger("Network Handler");
+    public static final Logger NETWORK_LOGGER = LogManager.getLogger("Network Connection Listener");
 
     public static final LazyLoadedValue<NioEventLoopGroup> SERVER_EVENT_GROUP = new LazyLoadedValue<>(
             () -> new NioEventLoopGroup(0,
-                    (new ThreadFactoryBuilder()).setNameFormat("[Netty]Server IO #%d").setDaemon(true).build()));
+                    (new ThreadFactoryBuilder()).setNameFormat("Server IO #%d").setDaemon(true).build()));
 
     public static final LazyLoadedValue<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = new LazyLoadedValue<>(
             () -> new EpollEventLoopGroup(0,
-                    (new ThreadFactoryBuilder()).setNameFormat("[Netty]Epoll Server IO #%d").setDaemon(true).build()));
+                    (new ThreadFactoryBuilder()).setNameFormat("Epoll Server IO #%d").setDaemon(true).build()));
 
     public static final LazyLoadedValue<NioEventLoopGroup> NETWORK_WORKER_GROUP = new LazyLoadedValue<>(
-            () -> new NioEventLoopGroup(0,
-                    (new ThreadFactoryBuilder()).setNameFormat("[Netty]Client IO #%d").setDaemon(true).build()));
+            () -> new NioEventLoopGroup(-1,
+                    (new ThreadFactoryBuilder()).setNameFormat("Client IO #%d").setDaemon(true).build()));
 
     public static final LazyLoadedValue<EpollEventLoopGroup> NETWORK_EPOLL_WORKER_GROUP = new LazyLoadedValue<>(
             () -> new EpollEventLoopGroup(0,
-                    (new ThreadFactoryBuilder()).setNameFormat("[Netty]Epoll Client IO #%d").setDaemon(true).build()));
+                    (new ThreadFactoryBuilder()).setNameFormat("Epoll Client IO #%d").setDaemon(true).build()));
 
     public static final LazyLoadedValue<DefaultEventLoopGroup> LOCAL_WORKER_GROUP = new LazyLoadedValue<>(
             () -> new DefaultEventLoopGroup(0,
-                    (new ThreadFactoryBuilder()).setNameFormat("[Netty]Local Client IO #%d").setDaemon(true).build()));
+                    (new ThreadFactoryBuilder()).setNameFormat("Local Client IO #%d").setDaemon(true).build()));
 
     public static final AttributeKey<NetworkState> ATTRIBUTE_STATE = AttributeKey.valueOf("state");
     private final NetworkSide side;
@@ -62,16 +64,17 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
     private int nowTickCount = 0;
 
     private NetworkListener listener;
+    private boolean encrypted;
 
     public NetworkConnection(NetworkSide side) {
         this.side = side;
     }
 
-    public static NetworkConnection connentToTcpServer(InetAddress addr, int port) {
-        return connentToTcpServer(addr, port, 30);
+    public static NetworkConnection connectToTcpServer(InetAddress addr, int port) {
+        return connectToTcpServer(addr, port, 30);
     }
 
-    public static NetworkConnection connentToTcpServer(InetAddress addr, int port, int timeout) {
+    public static NetworkConnection connectToTcpServer(InetAddress addr, int port, int timeout) {
         NetworkConnection connection = new NetworkConnection(NetworkSide.CLIENT);
         Class<? extends Channel> clazz;
         LazyLoadedValue<?> lazyLoadedValue;
@@ -82,7 +85,7 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
             clazz = NioSocketChannel.class;
             lazyLoadedValue = NetworkConnection.NETWORK_WORKER_GROUP;
         }
-        new Bootstrap().group((EventLoopGroup) lazyLoadedValue.get()).handler(new ChannelInitializer<Channel>() {
+        new Bootstrap().group((EventLoopGroup) lazyLoadedValue.get()).handler(new ChannelInitializer<>() {
             @Override
             protected void initChannel(Channel channel) {
                 try {
@@ -90,7 +93,9 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
                 } catch (ChannelException ignored) {
                 }
                 channel.pipeline().addLast("timeout", new ReadTimeoutHandler(timeout))
+                        .addLast("splitter", new SplitterHandler())
                         .addLast("decoder", new PacketDecoder(NetworkSide.CLIENT))
+                        .addLast("prepender", new SizePrepender())
                         .addLast("encoder", new PacketEncoder(NetworkSide.SERVER))
                         .addLast("packet_handler", connection);
             }
@@ -98,9 +103,9 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
         return connection;
     }
 
-    public static NetworkConnection connentToLocal(SocketAddress addr) {
+    public static NetworkConnection connectToLocal(SocketAddress addr) {
         NetworkConnection connection = new NetworkConnection(NetworkSide.CLIENT);
-        new Bootstrap().group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
+        new Bootstrap().group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<>() {
             @Override
             protected void initChannel(Channel channel) {
                 channel.pipeline().addLast("packet_handler", connection);
@@ -130,10 +135,10 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
             NETWORK_LOGGER.debug("Skipping packet due to errors", cause.getCause());
             return;
         }
-        if (cause instanceof TimeoutException) {
+        if (cause instanceof TimeoutException)
             NETWORK_LOGGER.debug("A client met a timeout", cause);
-        }
-
+        else
+            NETWORK_LOGGER.error("Fatal error in sending/receiving packet", cause);
     }
 
     public void sendPacket(NetworkPacket<?> packet) {
@@ -185,7 +190,7 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, NetworkPacket<?> msg) {
         if (channel.isOpen()) {
-            degerateFire(msg);
+            delegateFire(msg);
             packetReceived++;
         }
     }
@@ -221,6 +226,18 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
         }
     }
 
+    public void setupEncryption(SecretKey key) throws NetworkEncryptionException {
+        channel.pipeline().addBefore("splitter", "decrypt",
+                new PacketDecryptor(NetworkEncryptionUtil.cipherFromKey(Cipher.DECRYPT_MODE, key)));
+        channel.pipeline().addBefore("prepender", "encrypt",
+                new PacketEncryptor(NetworkEncryptionUtil.cipherFromKey(Cipher.ENCRYPT_MODE, key)));
+        encrypted = true;
+    }
+
+    public boolean isEncrypted() {
+        return this.encrypted;
+    }
+
     public void tick() {
         flushQueue();
         if (channel != null)
@@ -234,7 +251,7 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends NetworkListener> void degerateFire(NetworkPacket<T> msg) {
+    private <T extends NetworkListener> void delegateFire(NetworkPacket<T> msg) {
         msg.applyToListener((T) listener);
     }
 

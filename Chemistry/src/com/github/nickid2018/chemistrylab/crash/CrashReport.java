@@ -22,9 +22,9 @@ public class CrashReport {
     public static final List<String> WITTY_COMMENT = Arrays.asList("To be or not to be, this is up to Archibald Lee",
             "O, I am slain!", "===FBI WARNING===", "This bug must be created by mmc1234!", "A-W-S-L",
             "Why the sp3 minus the sp gets the sp2?", "I have a bad feeling about this.",
-            "Make the copper multiplied by alumium and then divided by chlorine, and you can get the gold.",
+            "Make the copper multiplied by aluminum and then divided by chlorine, and you can get the gold.",
             "The polar bear can't dissolve in benzene, for it is polar.",
-            "Don't let the Fluoride Hydroxide into the lightbulb, or the liquid will make it broken.",
+            "Don't let the Fluoride Hydroxide into the light-bulb, or the liquid will make it broken.",
             "As we know, Mercaptan and Mermaid have the same origin.",
             "P2O5 is an excellent chemical, for it can turn the mercury into the silver.",
             "Shout at the Hg-198:\"The new gay! Hand out your proton!\", and you can gain much gold.");
@@ -35,11 +35,6 @@ public class CrashReport {
     public CrashReport(String detail, Throwable error) {
         this.detail = detail;
         throwable = error;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new CrashReport("..", new Error(".....")).populateReport());
-        new CrashReport("..", new Error(".....")).writeToFile("client");
     }
 
     public static Stream<String> getVmArguments() {
@@ -158,7 +153,7 @@ public class CrashReport {
             CentralProcessor processor = hardware.getProcessor();
             CentralProcessor.ProcessorIdentifier id = processor.getProcessorIdentifier();
             return id == null ? "Unknown" : String.format("Vendor=%s; Name=%s; Identifier=%s; Micro-architecture=%s;" +
-                            " Frequency=%.2fGHz; Physical packages=%d; Physical CPUs=%d; Logical CPUs=%d"
+                            " Frequency=%.2f GHz; Physical packages=%d; Physical CPUs=%d; Logical CPUs=%d"
                     , id.getVendor(), id.getName(), id.getIdentifier(), id.getMicroarchitecture(),
                     (float) id.getVendorFreq() / 1.0E9F,
                     processor.getPhysicalPackageCount(), processor.getPhysicalProcessorCount(), processor.getLogicalProcessorCount());
@@ -167,7 +162,7 @@ public class CrashReport {
         for (int i = 0; i < gcards.size(); i++) {
             GraphicsCard card = gcards.get(i);
             system.addDetail("Graphics Card #" + i, () ->
-                    card == null ? "Unknown" : String.format("Name=%s; Vendor=%s; VRAM=%.2fMB; DeviceId=%s; VersionInfo=%s",
+                    card == null ? "Unknown" : String.format("Name=%s; Vendor=%s; VRAM=%.2f MB; DeviceId=%s; VersionInfo=%s",
                             card.getName(), card.getVendor(),
                             (float) card.getVRam() / 1048576.0F, card.getDeviceId(), card.getVersionInfo()));
         }
@@ -176,7 +171,7 @@ public class CrashReport {
         for (int i = 0; i < phymems.size(); i++) {
             PhysicalMemory mem = phymems.get(i);
             system.addDetail("Memory Slot #" + i, () ->
-                    mem == null ? "Unknown" : String.format("Capacity=%.2fMB; ClockSpeed=%.2fGHz; Type=%s",
+                    mem == null ? "Unknown" : String.format("Capacity=%.2f MB; ClockSpeed=%.2f GHz; Type=%s",
                             (float) mem.getCapacity() / 1048576.0F,
                             (float) mem.getClockSpeed() / 1.0E9F, mem.getMemoryType()));
         }
@@ -184,7 +179,7 @@ public class CrashReport {
             if (memory == null)
                 return "Unknown";
             VirtualMemory mem = memory.getVirtualMemory();
-            return String.format("Max=%.2fMB; Used=%.2fMB; Swap Total=%.2fMB; Swap Used=%.2fMB",
+            return String.format("Max=%.2f MB; Used=%.2f MB; Swap Total=%.2f MB; Swap Used=%.2f MB",
                     (float) mem.getVirtualMax() / 1048576.0F,
                     (float) mem.getVirtualInUse() / 1048576.0F,
                     (float) mem.getSwapTotal() / 1048576.0F,
