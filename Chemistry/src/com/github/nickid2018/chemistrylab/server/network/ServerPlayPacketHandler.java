@@ -1,17 +1,19 @@
 package com.github.nickid2018.chemistrylab.server.network;
 
 import com.github.nickid2018.chemistrylab.network.NetworkConnection;
-import com.github.nickid2018.chemistrylab.network.play.c2s.C2SChatPacket;
-import com.github.nickid2018.chemistrylab.network.listener.ServerPlayPacketListener;
+import com.github.nickid2018.chemistrylab.network.packet.listener.ServerPlayPacketListener;
+import com.github.nickid2018.chemistrylab.network.packet.play.c2s.C2SChatPacket;
 import com.github.nickid2018.chemistrylab.server.AbstractServer;
 import com.github.nickid2018.chemistrylab.text.Text;
 
 public class ServerPlayPacketHandler implements ServerPlayPacketListener {
 
     private final String userName;
+    private final NetworkConnection connection;
 
     public ServerPlayPacketHandler(AbstractServer server, NetworkConnection connection, String userName) {
         this.userName = userName;
+        this.connection = connection;
     }
 
     @Override
@@ -26,6 +28,11 @@ public class ServerPlayPacketHandler implements ServerPlayPacketListener {
 
     @Override
     public void onDisconnect(Text text) {
+        connection.disconnect(text);
+    }
+
+    @Override
+    public void asyncOnDisconnect(Text text) {
         NetworkConnection.NETWORK_LOGGER.info("{} lost connection: {}", userName, text.getValue());
     }
 

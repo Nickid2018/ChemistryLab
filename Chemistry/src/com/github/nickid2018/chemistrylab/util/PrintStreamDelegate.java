@@ -11,11 +11,8 @@ public class PrintStreamDelegate extends PrintStream {
 
     private final Logger logger;
 
-    private final String name;
-
     public PrintStreamDelegate(String name, OutputStream out) {
         super(out);
-        this.name = name;
         logger = LogManager.getLogger(name);
     }
 

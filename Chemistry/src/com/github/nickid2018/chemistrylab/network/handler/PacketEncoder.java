@@ -27,7 +27,7 @@ public class PacketEncoder extends MessageToByteEncoder<NetworkPacket<?>> {
         int id = state.getPacketId(side, msg);
         if (id < 0)
             throw new IOException(
-                    "Error in encoding packet (State: " + state + ", Name: " + msg.getClass().getName() + ")");
+                    "Error in encoding packet (State: %s, Name: %s)".formatted(state, msg.getClass().getName()));
         FriendlyByteBuf buf = new FriendlyByteBuf(out);
         buf.writeVarInt(id);
         try {

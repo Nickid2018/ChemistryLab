@@ -25,12 +25,12 @@ public class PacketDecoder extends ByteToMessageDecoder {
         int id = buf.readVarInt();
         NetworkPacket<?> packet = state.createPacket(side, id);
         if (packet == null)
-            throw new IOException("Bad packet (ID " + id + ", State " + state + ") - Unknown ID");
+            throw new IOException("Bad packet (ID %d, State %s) - Unknown ID".formatted(id, state));
         packet.readPacket(buf);
         if (buf.readableBytes() > 0)
             throw new IOException(
-                    String.format("Bad packet (ID %s, State %s, Name %s) - Unexpected %s byte(s) at the packet tail",
-                            id, state, packet.getClass(), buf.readableBytes()));
+                    String.format("Bad packet (ID %d, State %s, Name: %s) - Unexpected %s byte(s) at the packet tail",
+                            id, state, packet.getClass().getName(), buf.readableBytes()));
         out.add(packet);
     }
 

@@ -30,11 +30,20 @@ public class CrashReport {
             "Shout at the Hg-198:\"The new gay! Hand out your proton!\", and you can gain much gold.");
     private final List<CrashReportSession> sessions = Lists.newArrayList();
     private final String detail;
-    private final Throwable throwable;
+    private Throwable throwable;
+    private String generatedReport;
 
     public CrashReport(String detail, Throwable error) {
         this.detail = detail;
         throwable = error;
+    }
+
+    public Throwable getCause(){
+        return throwable;
+    }
+
+    public void setCause(Throwable cause){
+        throwable = cause;
     }
 
     public static Stream<String> getVmArguments() {
@@ -60,6 +69,8 @@ public class CrashReport {
     }
 
     public String populateReport() {
+        if (generatedReport != null)
+            return generatedReport;
         fillSystemDetails();
         StringWriter s = new StringWriter();
         PrintWriter writer = new PrintWriter(s);
@@ -78,7 +89,7 @@ public class CrashReport {
         writer.println();
         writer.println(
                 "// REM: If you want to use the crash report to report a bug, please delete all of private information!");
-        return s.toString();
+        return generatedReport = s.toString();
     }
 
     public void writeToFile(String side) {
@@ -109,14 +120,14 @@ public class CrashReport {
     private void fillSystemDetails() {
         CrashReportSession system = new CrashReportSession("System & Runtime Details");
         sessions.add(system);
-        system.addDetail("Chemistry Lab version", Constants.VERSION_IN_STRING);
-        system.addDetail("Operating System", () -> System.getProperty("os.name") + " (" + System.getProperty("os.arch")
+        system.addDetailObject("Chemistry Lab version", Constants.VERSION_IN_STRING);
+        system.addDetailSupplier("Operating System", () -> System.getProperty("os.name") + " (" + System.getProperty("os.arch")
                 + ") version " + System.getProperty("os.version"));
-        system.addDetail("Java Version",
+        system.addDetailSupplier("Java Version",
                 () -> System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
-        system.addDetail("Java VM Version", () -> System.getProperty("java.vm.name") + " ("
+        system.addDetailSupplier("Java VM Version", () -> System.getProperty("java.vm.name") + " ("
                 + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
-        system.addDetail("Memory", () -> {
+        system.addDetailSupplier("Memory", () -> {
             Runtime runtime = Runtime.getRuntime();
             long l = runtime.maxMemory();
             long l1 = runtime.totalMemory();
@@ -127,8 +138,8 @@ public class CrashReport {
             return l2 + " bytes (" + l5 + " MB) / " + l1 + " bytes (" + l4 + " MB) up to " + l + " bytes (" + l3
                     + " MB)";
         });
-        system.addDetail("CPU Count", Runtime.getRuntime().availableProcessors());
-        system.addDetail("VM Arguments", () -> {
+        system.addDetailObject("CPU Count", Runtime.getRuntime().availableProcessors());
+        system.addDetailSupplier("VM Arguments", () -> {
             StringBuilder sb = new StringBuilder();
             List<String> vmArgs = getVmArguments().collect(Collectors.toList());
             sb.append("Total count ");
@@ -137,7 +148,7 @@ public class CrashReport {
             vmArgs.forEach(s -> sb.append(" ").append(s));
             return sb.toString();
         });
-        system.addDetail("User Arguments", () -> {
+        system.addDetailSupplier("User Arguments", () -> {
             StringBuilder sb = new StringBuilder();
             List<String> userArgs = getUserArguments().collect(Collectors.toList());
             sb.append("Total count ");
@@ -147,7 +158,7 @@ public class CrashReport {
             return sb.toString();
         });
         HardwareAbstractionLayer hardware = getOrNull(() -> new SystemInfo().getHardware());
-        system.addDetail("Processor", () -> {
+        system.addDetailSupplier("Processor", () -> {
             if (hardware == null)
                 return "Unknown";
             CentralProcessor processor = hardware.getProcessor();
@@ -161,7 +172,7 @@ public class CrashReport {
         List<GraphicsCard> gcards = hardware == null ? Lists.newArrayList() : hardware.getGraphicsCards();
         for (int i = 0; i < gcards.size(); i++) {
             GraphicsCard card = gcards.get(i);
-            system.addDetail("Graphics Card #" + i, () ->
+            system.addDetailSupplier("Graphics Card #" + i, () ->
                     card == null ? "Unknown" : String.format("Name=%s; Vendor=%s; VRAM=%.2f MB; DeviceId=%s; VersionInfo=%s",
                             card.getName(), card.getVendor(),
                             (float) card.getVRam() / 1048576.0F, card.getDeviceId(), card.getVersionInfo()));
@@ -170,12 +181,12 @@ public class CrashReport {
         List<PhysicalMemory> phymems = memory == null ? Lists.newArrayList() : memory.getPhysicalMemory();
         for (int i = 0; i < phymems.size(); i++) {
             PhysicalMemory mem = phymems.get(i);
-            system.addDetail("Memory Slot #" + i, () ->
+            system.addDetailSupplier("Memory Slot #" + i, () ->
                     mem == null ? "Unknown" : String.format("Capacity=%.2f MB; ClockSpeed=%.2f GHz; Type=%s",
                             (float) mem.getCapacity() / 1048576.0F,
                             (float) mem.getClockSpeed() / 1.0E9F, mem.getMemoryType()));
         }
-        system.addDetail("Virtual Memory", () -> {
+        system.addDetailSupplier("Virtual Memory", () -> {
             if (memory == null)
                 return "Unknown";
             VirtualMemory mem = memory.getVirtualMemory();

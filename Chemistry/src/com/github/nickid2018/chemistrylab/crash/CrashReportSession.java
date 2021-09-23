@@ -17,13 +17,13 @@ public class CrashReportSession {
         thread = Thread.currentThread();
     }
 
-    public CrashReportSession addDetail(String name, Supplier<String> info) {
+    public CrashReportSession addDetailSupplier(String name, Supplier<String> info) {
         details.put(name, info);
         return this;
     }
 
-    public CrashReportSession addDetail(String name, Object obj) {
-        return addDetail(name, () -> {
+    public CrashReportSession addDetailObject(String name, Object obj) {
+        return addDetailSupplier(name, () -> {
             if (obj == null)
                 return "[null]";
             if (obj instanceof Throwable)

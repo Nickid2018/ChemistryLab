@@ -1,6 +1,10 @@
 package com.github.nickid2018.chemistrylab.network;
 
 import com.github.nickid2018.chemistrylab.network.handler.*;
+import com.github.nickid2018.chemistrylab.network.packet.DisconnectPacket;
+import com.github.nickid2018.chemistrylab.network.packet.listener.NetworkListener;
+import com.github.nickid2018.chemistrylab.text.BasicText;
+import com.github.nickid2018.chemistrylab.text.Text;
 import com.github.nickid2018.chemistrylab.util.LazyLoadedValue;
 import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -41,7 +45,7 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
                     (new ThreadFactoryBuilder()).setNameFormat("Epoll Server IO #%d").setDaemon(true).build()));
 
     public static final LazyLoadedValue<NioEventLoopGroup> NETWORK_WORKER_GROUP = new LazyLoadedValue<>(
-            () -> new NioEventLoopGroup(-1,
+            () -> new NioEventLoopGroup(0,
                     (new ThreadFactoryBuilder()).setNameFormat("Client IO #%d").setDaemon(true).build()));
 
     public static final LazyLoadedValue<EpollEventLoopGroup> NETWORK_EPOLL_WORKER_GROUP = new LazyLoadedValue<>(
@@ -62,6 +66,9 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
     private float avgPacketReceived = 0;
     private float avgPacketSent = 0;
     private int nowTickCount = 0;
+    private Text disconnectReason;
+    private boolean disconnected;
+    private boolean errored;
 
     private NetworkListener listener;
     private boolean encrypted;
@@ -114,6 +121,21 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
         return connection;
     }
 
+    public void disconnect(Text reason) {
+        if(channel.isOpen()) {
+            channel.close().awaitUninterruptibly();
+            disconnectReason = reason;
+        }
+    }
+
+    public void setDisconnectReason(Text disconnectReason) {
+        this.disconnectReason = disconnectReason;
+    }
+
+    public void channelInactive(ChannelHandlerContext ctx) {
+        disconnect(BasicText.newTranslateText("disconnect.endOfStream"));
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
@@ -135,10 +157,23 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
             NETWORK_LOGGER.debug("Skipping packet due to errors", cause.getCause());
             return;
         }
-        if (cause instanceof TimeoutException)
-            NETWORK_LOGGER.debug("A client met a timeout", cause);
-        else
-            NETWORK_LOGGER.error("Fatal error in sending/receiving packet", cause);
+        if(isOpen()) {
+            if(errored) {
+                NETWORK_LOGGER.error("Double fault in sending disconnect packet", cause);
+                disconnect(disconnectReason);
+            } else {
+                errored = true;
+                if (cause instanceof TimeoutException) {
+                    NETWORK_LOGGER.debug("A client met a timeout", cause);
+                    disconnectReason = BasicText.newTranslateText("disconnect.timeout");
+                } else {
+                    NETWORK_LOGGER.error("Fatal error in sending/receiving packet", cause);
+                    disconnectReason = BasicText.newTranslateText("disconnect.internal", cause);
+                }
+                sendPacket(DisconnectPacket.createPacket(disconnectReason), f -> disconnect(disconnectReason));
+                channel.config().setAutoRead(false);
+            }
+        }
     }
 
     public void sendPacket(NetworkPacket<?> packet) {
@@ -177,7 +212,7 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
     }
 
     private void flushQueue() {
-        if (channel == null || !channel.isOpen())
+        if (!isOpen())
             return;
         synchronized (packetBuffer) {
             while (!packetBuffer.isEmpty()) {
@@ -189,14 +224,10 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, NetworkPacket<?> msg) {
-        if (channel.isOpen()) {
+        if (isOpen()) {
             delegateFire(msg);
             packetReceived++;
         }
-    }
-
-    public boolean isConnected() {
-        return channel != null && channel.isOpen();
     }
 
     public boolean isConnecting() {
@@ -240,6 +271,14 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
 
     public void tick() {
         flushQueue();
+        if(listener != null)
+            listener.tick();
+        if(channel != null && !channel.isOpen() && !disconnected) {
+            disconnected = true;
+            if (listener != null)
+                listener.asyncOnDisconnect(
+                        disconnectReason == null ? BasicText.newTranslateText("disconnect.simple") : disconnectReason);
+        }
         if (channel != null)
             channel.flush();
         if (nowTickCount++ % 20 == 0) {
@@ -248,6 +287,18 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
             packetReceived = 0;
             packetSent = 0;
         }
+    }
+
+    public boolean isOpen() {
+        return channel != null && channel.isOpen();
+    }
+
+    @Override
+    public String toString() {
+        return ("NetworkConnection{side=%s, address=%s, packetReceived=%d, packetSent=%d," +
+                " avgPacketReceived=%s, avgPacketSent=%s, nowTickCount=%d, encrypted=%s, local=%s}")
+                .formatted(side, address, packetReceived, packetSent, avgPacketReceived, avgPacketSent,
+                        nowTickCount, encrypted, isLocalConnection());
     }
 
     @SuppressWarnings("unchecked")
@@ -286,7 +337,7 @@ public class NetworkConnection extends SimpleChannelInboundHandler<NetworkPacket
     private static class PacketHolder {
 
         public NetworkPacket<?> packet;
-        public @Nullable
-        GenericFutureListener<? extends Future<? super Void>> listener;
+        @Nullable
+        public GenericFutureListener<? extends Future<? super Void>> listener;
     }
 }

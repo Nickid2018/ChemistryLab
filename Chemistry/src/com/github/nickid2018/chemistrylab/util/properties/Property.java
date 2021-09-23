@@ -10,7 +10,7 @@ public abstract class Property<T> {
     public Property() {
     }
 
-    public static Map<String, Property<?>> getProperties(Properties pro, PropertyReader reader) throws Exception {
+    public static Map<String, Property<?>> getProperties(Properties pro, PropertyReader reader) {
         Map<String, Property<?>> map = new HashMap<>();
         Set<String> keys = pro.stringPropertyNames();
         for (String key : keys) {

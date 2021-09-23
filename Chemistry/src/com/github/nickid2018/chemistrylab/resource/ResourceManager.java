@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Vector;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 /**
@@ -28,18 +27,15 @@ public class ResourceManager {
      */
     private static final ArrayList<ResourceLocation> locations = new ArrayList<>();
     private static final ArrayList<String> respacks = new ArrayList<>();
-    private static final ReentrantLock reloadLock = new ReentrantLock();
     private static boolean canFuzzy = false;
 
     /**
      * Add a location that will be searched for resources
      *
-     * @param location The location that will be searched for resoruces
+     * @param location The location that will be searched for resources
      */
     public static void addResourceLocation(ResourceLocation location) {
-        reloadLock.lock();
         locations.add(location);
-        reloadLock.unlock();
     }
 
     /**
@@ -48,9 +44,7 @@ public class ResourceManager {
      * @param location The location that will be removed from the search list
      */
     public static void removeResourceLocation(ResourceLocation location) {
-        reloadLock.lock();
         locations.remove(location);
-        reloadLock.unlock();
     }
 
     /**
@@ -58,10 +52,8 @@ public class ResourceManager {
      * been added
      */
     public static void removeAllResourceLocations() {
-        reloadLock.lock();
         locations.clear();
         respacks.clear();
-        reloadLock.unlock();
     }
 
     /**
@@ -82,7 +74,6 @@ public class ResourceManager {
      * @return A stream from which the resource can be read
      */
     public static InputStream getResourceAsStream(String ref, boolean seq) {
-        reloadLock.lock();
         boolean savedFuzzy = getCanFuzzy();
         setCanFuzzy(seq);
         boolean find = false;
@@ -91,7 +82,6 @@ public class ResourceManager {
             InputStream in = location.getResourceAsStream(ref);
             if (in != null) {
                 if (!seq) {
-                    reloadLock.unlock();
                     return in;
                 } else {
                     find = true;
@@ -99,7 +89,6 @@ public class ResourceManager {
                 }
             }
         }
-        reloadLock.unlock();
         if (!find) {
             setCanFuzzy(savedFuzzy);
             throw new RuntimeException("Resource not found: " + ref);
@@ -116,15 +105,11 @@ public class ResourceManager {
      * @return True if the resource can be located
      */
     public static boolean resourceExists(String ref) {
-        reloadLock.lock();
         for (ResourceLocation location : locations) {
             URL url = location.getResource(ref);
-            if (url != null) {
-                reloadLock.unlock();
+            if (url != null)
                 return true;
-            }
         }
-        reloadLock.unlock();
         return false;
     }
 
@@ -135,23 +120,20 @@ public class ResourceManager {
      * @return A URL from which the resource can be read
      */
     public static URL getResource(String ref) {
-        return (URL) getFile(ref, (loction) -> loction.getResource(ref));
+        return (URL) getFile(ref, (location) -> location.getResource(ref));
     }
 
     public static OutputStream getOutputStream(String ref) {
-        return (OutputStream) getFile(ref, (loction) -> loction.getOutputStream(ref));
+        return (OutputStream) getFile(ref, (location) -> location.getOutputStream(ref));
     }
 
     public static Object getFile(String ref, Function<ResourceLocation, Object> function) {
-        reloadLock.lock();
         for (ResourceLocation location : locations) {
             Object obj = function.apply(location);
             if (obj != null) {
-                reloadLock.unlock();
                 return obj;
             }
         }
-        reloadLock.unlock();
         throw new RuntimeException("Resource not found: " + ref);
     }
 
@@ -169,9 +151,8 @@ public class ResourceManager {
 
     public static void flushStream() throws IOException {
         for (ResourceLocation location : locations) {
-            if (!(location instanceof ZipFileLocation))
-                continue;
-            ((ZipFileLocation) location).flushFile();
+            if (location instanceof ZipFileLocation zip)
+                zip.flushFile();
         }
     }
 
@@ -195,9 +176,7 @@ public class ResourceManager {
     }
 
     public static void reloadPacks() {
-        reloadLock.lock();
         removeAllResourceLocations();
         loadPacks();
-        reloadLock.unlock();
     }
 }

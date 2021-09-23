@@ -273,7 +273,6 @@ public class JsonUtils {
         return json.has(memberName) ? getJsonArray(json.get(memberName), memberName) : fallback;
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T deserializeClass(JsonElement json, String memberName, JsonDeserializationContext context,
                                          Class<? extends T> adapter) {
         if (json != null) {
@@ -351,7 +350,6 @@ public class JsonUtils {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T fromJson(Gson gsonIn, String s, Type adapter, boolean lenient) {
         return fromJson(gsonIn, new StringReader(s), adapter, lenient);
     }
@@ -360,12 +358,10 @@ public class JsonUtils {
         return gsonDeserialize(gsonIn, new StringReader(json), adapter, lenient);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T fromJson(Gson gsonIn, Reader readerIn, Type adapter) {
         return fromJson(gsonIn, readerIn, adapter, false);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T gsonDeserialize(Gson gsonIn, String json, Type adapter) {
         return fromJson(gsonIn, json, adapter, false);
     }

@@ -4,14 +4,14 @@ import com.github.nickid2018.chemistrylab.network.NetworkConnection;
 import com.github.nickid2018.chemistrylab.network.NetworkEncryptionException;
 import com.github.nickid2018.chemistrylab.network.NetworkEncryptionUtil;
 import com.github.nickid2018.chemistrylab.network.NetworkState;
-import com.github.nickid2018.chemistrylab.network.listener.ClientLoginPacketListener;
-import com.github.nickid2018.chemistrylab.network.login.c2s.C2SEncryptionPacket;
-import com.github.nickid2018.chemistrylab.network.login.c2s.C2SHelloPacket;
-import com.github.nickid2018.chemistrylab.network.login.c2s.C2SLoginNamePacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CCompressionPacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CEncryptionPacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CHelloPacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CLoginSuccessPacket;
+import com.github.nickid2018.chemistrylab.network.packet.listener.ClientLoginPacketListener;
+import com.github.nickid2018.chemistrylab.network.packet.login.c2s.C2SEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.c2s.C2SHelloPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.c2s.C2SLoginNamePacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CCompressionPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CHelloPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CLoginSuccessPacket;
 import com.github.nickid2018.chemistrylab.text.Text;
 
 import javax.crypto.SecretKey;
@@ -35,7 +35,13 @@ public class ClientLoginNetworkHandler implements ClientLoginPacketListener {
 
     @Override
     public void onDisconnect(Text text) {
+        connection.disconnect(text);
+    }
 
+    @Override
+    public void asyncOnDisconnect(Text text) {
+        NetworkConnection.NETWORK_LOGGER.info("{} lost connection in login process: {}", userName, text.getValue());
+        // Window...
     }
 
     @Override

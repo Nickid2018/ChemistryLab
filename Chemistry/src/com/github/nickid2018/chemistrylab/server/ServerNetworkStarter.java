@@ -5,14 +5,18 @@ import com.github.nickid2018.chemistrylab.client.network.ClientLoginNetworkHandl
 import com.github.nickid2018.chemistrylab.crash.CrashReport;
 import com.github.nickid2018.chemistrylab.crash.CrashReportSession;
 import com.github.nickid2018.chemistrylab.crash.DetectedCrashException;
+import com.github.nickid2018.chemistrylab.mod.javascript.JavaScriptModBase;
 import com.github.nickid2018.chemistrylab.network.NetworkConnection;
 import com.github.nickid2018.chemistrylab.network.NetworkSide;
 import com.github.nickid2018.chemistrylab.network.handler.PacketDecoder;
 import com.github.nickid2018.chemistrylab.network.handler.PacketEncoder;
 import com.github.nickid2018.chemistrylab.network.handler.SizePrepender;
 import com.github.nickid2018.chemistrylab.network.handler.SplitterHandler;
-import com.github.nickid2018.chemistrylab.network.play.c2s.C2SChatPacket;
+import com.github.nickid2018.chemistrylab.network.packet.DisconnectPacket;
+import com.github.nickid2018.chemistrylab.network.packet.play.c2s.C2SChatPacket;
 import com.github.nickid2018.chemistrylab.server.network.ServerLoginPacketHandler;
+import com.github.nickid2018.chemistrylab.text.BasicText;
+import com.github.nickid2018.chemistrylab.text.Text;
 import com.github.nickid2018.chemistrylab.util.LazyLoadedValue;
 import com.google.common.collect.Lists;
 import io.netty.bootstrap.ServerBootstrap;
@@ -35,12 +39,15 @@ import java.util.List;
 
 public class ServerNetworkStarter {
 
-    private final AbstractServer server;
     public static final Logger SERVER_LOGGER = LogManager.getLogger("Server Starter");
+    private final AbstractServer server;
     private final List<ChannelFuture> channels = Collections.synchronizedList(Lists.newArrayList());
     private final List<NetworkConnection> connections = Collections.synchronizedList(Lists.newArrayList());
+    private boolean active;
+    public static ServerNetworkStarter instance;
 
     public ServerNetworkStarter(AbstractServer server) {
+        instance = this;
         this.server = server;
     }
 
@@ -48,24 +55,50 @@ public class ServerNetworkStarter {
         Bootstrap.init("integrated");
         ServerNetworkStarter starter = new ServerNetworkStarter(new AbstractServer() {
         });
+        JavaScriptModBase base = new JavaScriptModBase();
+        Thread.sleep(10);
+        base.init();
+        base.evalString("""
+            if (importSystemPackage("serverInterface")) {
+                startTCPServer(InetAddress.getLocalHost(), 25565, 30);
+            } else {
+                throwJavaException(new ScriptException("Cannot load serverInterface"));
+            }
+        """);
 //		SocketAddress addr = starter.startLocalServer();
 //		NetworkConnection connection = NetworkConnection.connectToLocal(addr);
-        starter.startTcpServer(InetAddress.getLocalHost(), 25565, 30);
+//        starter.startTcpServer(InetAddress.getLocalHost(), 25565, 30);
         NetworkConnection connection = NetworkConnection.connectToTcpServer(InetAddress.getLocalHost(), 25565);
         String name = "hello";
         connection.setListener(new ClientLoginNetworkHandler(connection, name));
+        Thread t= new Thread(()->{
+            while(true) {
+                try {
+                    Thread.sleep(40);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                starter.tick();
+                connection.tick();
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+        Thread.sleep(3000);
+        connection.sendPacket(C2SChatPacket.createPacket("5fqrervvacrcacafd"));
+        connection.sendPacket(C2SChatPacket.createPacket("c234c13xxc143csaf"));
+        connection.sendPacket(C2SChatPacket.createPacket("qvt 44v2v34cadf3c"));
+        starter.connections.get(0).sendPacket(
+                DisconnectPacket.createPacket(BasicText.newLiteralText("hello")),
+                f -> connection.disconnect(BasicText.newLiteralText("hello")));
+        connection.sendPacket(C2SChatPacket.createPacket("4353523c321cqvads"));
         Thread.sleep(5000);
-        connection.tick();
-        starter.tick();
-        connection.sendPacket(C2SChatPacket.createPacket("1145wrcwc1419198wc10"));
-        connection.sendPacket(C2SChatPacket.createPacket("114f5141919gsgfsd810"));
-        connection.sendPacket(C2SChatPacket.createPacket("114cwes5141rvw919810"));
-        connection.sendPacket(C2SChatPacket.createPacket("1145sgdfs1419fs19810"));
-        connection.sendPacket(C2SChatPacket.createPacket("114514191vrrwv98vrw0"));
-        connection.sendPacket(C2SChatPacket.createPacket("1145sff14fdgs1919810"));
-        connection.sendPacket(C2SChatPacket.createPacket("vwwevew3654dssdsdd63"));
-        connection.sendPacket(C2SChatPacket.createPacket("1145d14191dvwrfs9810"));
-        Thread.sleep(5000);
+//        starter.stop();
+        base.evalString("forceStopServer();");
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public SocketAddress startLocalServer() {
@@ -86,6 +119,7 @@ public class ServerNetworkStarter {
                         }
                     }).group(NetworkConnection.SERVER_EVENT_GROUP.get()).localAddress(LocalAddress.ANY).bind()
                     .syncUninterruptibly());
+            active = true;
             return future.channel().localAddress();
         }
     }
@@ -121,7 +155,20 @@ public class ServerNetworkStarter {
                     connection.setListener(new ServerLoginPacketHandler(server, connection));
                 }
             }).group((EventLoopGroup) lazyLoadedValue.get()).localAddress(inetAddress, i).bind().syncUninterruptibly());
+            active = true;
         }
+    }
+
+    public void stop() {
+        active = false;
+        for(ChannelFuture future : channels) {
+            try {
+                future.channel().close().sync();
+            } catch (InterruptedException e) {
+                SERVER_LOGGER.error("Interrupted whilst closing channel");
+            }
+        }
+
     }
 
     public void tick() {
@@ -131,24 +178,27 @@ public class ServerNetworkStarter {
                 NetworkConnection connection = iterator.next();
                 if (connection.isConnecting())
                     continue;
-                if (connection.isConnected()) {
+                if (connection.isOpen()) {
                     try {
                         connection.tick();
                     } catch (Exception exception) {
+                        NetworkConnection.NETWORK_LOGGER.warn("Failed to handle packet for {}", connection.getRemote(),
+                                exception);
                         if (connection.isLocalConnection()) {
                             CrashReport crash = new CrashReport("Ticking local connection", exception);
                             CrashReportSession session = new CrashReportSession("Connection Detail");
-                            session.addDetail("Connection", connection);
+                            session.addDetailObject("Connection", connection);
                             crash.addSession(session);
                             throw new DetectedCrashException(crash);
                         }
-                        NetworkConnection.NETWORK_LOGGER.warn("Failed to handle packet for {}", connection.getRemote(),
-                                exception);
+                        Text reason = BasicText.newTranslateText("disconnect.serverError");
+                        connection.sendPacket(DisconnectPacket.createPacket(reason), f -> connection.disconnect(reason));
                         connection.setReadOnly();
                     }
                     continue;
                 }
                 iterator.remove();
+                connection.disconnect();
             }
         }
     }

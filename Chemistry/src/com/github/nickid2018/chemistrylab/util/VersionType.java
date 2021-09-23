@@ -11,17 +11,13 @@ public enum VersionType {
     }
 
     public static VersionType fromString(String type) {
-        switch (type.toLowerCase()) {
-            case "indev":
-                return IN_DEVELOP;
-            case "alpha":
-                return ALPHA;
-            case "beta":
-                return BETA;
-            case "trial":
-                return TRIAL;
-        }
-        return STABLE;
+        return switch (type.toLowerCase()) {
+            case "indev" -> IN_DEVELOP;
+            case "alpha" -> ALPHA;
+            case "beta" -> BETA;
+            case "trial" -> TRIAL;
+            default -> STABLE;
+        };
     }
 
     public String getName() {

@@ -1,13 +1,14 @@
 package com.github.nickid2018.chemistrylab.network;
 
-import com.github.nickid2018.chemistrylab.network.login.c2s.C2SEncryptionPacket;
-import com.github.nickid2018.chemistrylab.network.login.c2s.C2SHelloPacket;
-import com.github.nickid2018.chemistrylab.network.login.c2s.C2SLoginNamePacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CCompressionPacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CEncryptionPacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CHelloPacket;
-import com.github.nickid2018.chemistrylab.network.login.s2c.S2CLoginSuccessPacket;
-import com.github.nickid2018.chemistrylab.network.play.c2s.C2SChatPacket;
+import com.github.nickid2018.chemistrylab.network.packet.DisconnectPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.c2s.C2SEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.c2s.C2SHelloPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.c2s.C2SLoginNamePacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CCompressionPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CEncryptionPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CHelloPacket;
+import com.github.nickid2018.chemistrylab.network.packet.login.s2c.S2CLoginSuccessPacket;
+import com.github.nickid2018.chemistrylab.network.packet.play.c2s.C2SChatPacket;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -27,14 +28,22 @@ public enum NetworkState {
     PLAY(1);
 
     static {
+        // Login process packet on client
         LOGIN.addPacket(NetworkSide.SERVER, C2SLoginNamePacket.class);
         LOGIN.addPacket(NetworkSide.SERVER, C2SHelloPacket.class);
         LOGIN.addPacket(NetworkSide.SERVER, C2SEncryptionPacket.class);
+        // Login process packet on server
         LOGIN.addPacket(NetworkSide.CLIENT, S2CHelloPacket.class);
         LOGIN.addPacket(NetworkSide.CLIENT, S2CEncryptionPacket.class);
         LOGIN.addPacket(NetworkSide.CLIENT, S2CCompressionPacket.class);
         LOGIN.addPacket(NetworkSide.CLIENT, S2CLoginSuccessPacket.class);
+        // Play process packet on client
         PLAY.addPacket(NetworkSide.SERVER, C2SChatPacket.class);
+        // Disconnection
+        LOGIN.addPacket(NetworkSide.SERVER, DisconnectPacket.class);
+        LOGIN.addPacket(NetworkSide.CLIENT, DisconnectPacket.class);
+        PLAY.addPacket(NetworkSide.SERVER, DisconnectPacket.class);
+        PLAY.addPacket(NetworkSide.CLIENT, DisconnectPacket.class);
     }
 
     private final int id;

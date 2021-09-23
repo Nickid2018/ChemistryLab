@@ -1,10 +1,13 @@
 package com.github.nickid2018.chemistrylab.crash;
 
+import java.io.Serial;
+
 public class DetectedCrashException extends RuntimeException {
 
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -1430051357808450887L;
 
     private final CrashReport report;

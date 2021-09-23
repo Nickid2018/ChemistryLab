@@ -93,6 +93,7 @@ public class ZipFileLocation implements ResourceLocation {
         FileOutputStream fos = new FileOutputStream(zipFile.getName());
         outside.writeTo(fos);
         fos.close();
+        out.clear();
     }
 
     private String formatPath(String ref) {
