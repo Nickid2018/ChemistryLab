@@ -1,6 +1,8 @@
 package com.github.nickid2018.chemistrylab.server;
 
 import com.github.nickid2018.chemistrylab.Bootstrap;
+import com.github.nickid2018.chemistrylab.annotation.API;
+import com.github.nickid2018.chemistrylab.annotation.ScriptAPI;
 import com.github.nickid2018.chemistrylab.client.network.ClientLoginNetworkHandler;
 import com.github.nickid2018.chemistrylab.crash.CrashReport;
 import com.github.nickid2018.chemistrylab.crash.CrashReportSession;
@@ -44,6 +46,9 @@ public class ServerNetworkStarter {
     private final List<ChannelFuture> channels = Collections.synchronizedList(Lists.newArrayList());
     private final List<NetworkConnection> connections = Collections.synchronizedList(Lists.newArrayList());
     private boolean active;
+
+    @API
+    @ScriptAPI("serverInterface:getServerStarterInstance")
     public static ServerNetworkStarter instance;
 
     public ServerNetworkStarter(AbstractServer server) {
@@ -56,10 +61,9 @@ public class ServerNetworkStarter {
         ServerNetworkStarter starter = new ServerNetworkStarter(new AbstractServer() {
         });
         JavaScriptModBase base = new JavaScriptModBase();
-        Thread.sleep(10);
         base.init();
         base.evalString("""
-            if (importSystemPackage("serverInterface")) {
+            if (importSystemPackage("servernterface")) {
                 startTCPServer(InetAddress.getLocalHost(), 25565, 30);
             } else {
                 throwJavaException(new ScriptException("Cannot load serverInterface"));
@@ -67,11 +71,10 @@ public class ServerNetworkStarter {
         """);
 //		SocketAddress addr = starter.startLocalServer();
 //		NetworkConnection connection = NetworkConnection.connectToLocal(addr);
-//        starter.startTcpServer(InetAddress.getLocalHost(), 25565, 30);
         NetworkConnection connection = NetworkConnection.connectToTcpServer(InetAddress.getLocalHost(), 25565);
         String name = "hello";
         connection.setListener(new ClientLoginNetworkHandler(connection, name));
-        Thread t= new Thread(()->{
+        Thread t = new Thread(()->{
             while(true) {
                 try {
                     Thread.sleep(40);
@@ -124,6 +127,8 @@ public class ServerNetworkStarter {
         }
     }
 
+    @API
+    @ScriptAPI("serverInterface:startTcpServer")
     public void startTcpServer(@Nullable InetAddress inetAddress, int i, int timeout) {
         synchronized (channels) {
             Class<? extends ServerChannel> clazz;
@@ -159,6 +164,8 @@ public class ServerNetworkStarter {
         }
     }
 
+    @API
+    @ScriptAPI("serverInterface:forceStopServer")
     public void stop() {
         active = false;
         for(ChannelFuture future : channels) {

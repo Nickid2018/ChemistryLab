@@ -1,5 +1,7 @@
 package com.github.nickid2018.chemistrylab.mod.javascript;
 
+import com.github.nickid2018.chemistrylab.annotation.API;
+import com.github.nickid2018.chemistrylab.annotation.ScriptAPI;
 import com.github.nickid2018.chemistrylab.crash.CrashReport;
 import com.github.nickid2018.chemistrylab.crash.CrashReportSession;
 import com.github.nickid2018.chemistrylab.crash.DetectedCrashException;
@@ -47,7 +49,8 @@ public class JavaScriptModBase implements ModBase {
         if(valid) {
             scriptEngine.getContext().setAttribute(ScriptEngine.FILENAME, null, ScriptContext.ENGINE_SCOPE);
             scriptEngine.eval(eval);
-        }
+        } else
+            JS_LOGGER.warn("(JS Engine) Code attempts to run but engine has been disabled.");
     }
 
     private void engineInitialize() {
@@ -58,10 +61,13 @@ public class JavaScriptModBase implements ModBase {
             JS_LOGGER.warn("(JS Engine) Cannot initialize! JS Engine will be disabled.");
     }
 
-    private void evalJS(InputStream source, String name) throws IOException, ScriptException {
-        String info = IOUtils.toString(source, StandardCharsets.UTF_8);
-        scriptEngine.getContext().setAttribute(ScriptEngine.FILENAME, name, ScriptContext.ENGINE_SCOPE);
-        scriptEngine.eval(info);
+    public void evalJS(InputStream source, String name) throws IOException, ScriptException {
+        if(valid) {
+            String info = IOUtils.toString(source, StandardCharsets.UTF_8);
+            scriptEngine.getContext().setAttribute(ScriptEngine.FILENAME, name, ScriptContext.ENGINE_SCOPE);
+            scriptEngine.eval(info);
+        } else
+            JS_LOGGER.warn("(JS Engine) Code attempts to run but engine has been disabled.");
     }
 
     @Override
@@ -72,10 +78,14 @@ public class JavaScriptModBase implements ModBase {
     }
 
     // --- JS APIs ---
+    @API
+    @ScriptAPI("system:throwJavaException")
     public static void exceptionFromJS(Throwable exception) throws Throwable {
         throw exception;
     }
 
+    @API
+    @ScriptAPI("system:throwCrash")
     public static void crashFromJS(DetectedCrashException exception) {
         CrashReport report = exception.getReport();
         report.getCause().fillInStackTrace();
@@ -90,6 +100,8 @@ public class JavaScriptModBase implements ModBase {
         throw exception;
     }
 
+    @API
+    @ScriptAPI("system:importSystemPackage")
     public static boolean importSystemJS(String name) {
         if(instance.loadedPackages.contains(name))
             return true;
@@ -105,6 +117,8 @@ public class JavaScriptModBase implements ModBase {
         return true;
     }
 
+    @API
+    @ScriptAPI("system:importFilePackage")
     public static boolean importOutsideJS(String path) {
         if(instance.loadedPackages.contains(path))
             return true;
@@ -126,6 +140,8 @@ public class JavaScriptModBase implements ModBase {
      * @return a Java object
      */
     @SuppressWarnings("unchecked")
+    @API
+    @ScriptAPI("system:cast")
     public static <T> T cast(Object object, StaticClass castClass) {
         if(object instanceof ScriptObjectMirror mirror)
             return (T) mirror.to(castClass.getRepresentedClass());
