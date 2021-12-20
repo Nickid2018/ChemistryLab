@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: com.github.nickid2018.chemistrylab.server.ServerNetworkStarter
+Main-Class: io.github.nickid2018.chemistrylab.server.ServerNetworkStarter

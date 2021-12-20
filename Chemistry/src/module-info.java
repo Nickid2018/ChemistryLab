@@ -26,7 +26,7 @@ module com.github.chemistrylab {
     requires it.unimi.dsi.fastutil;
     requires jdk.dynalink;
 
-    exports com.github.nickid2018.chemistrylab.crash;
-    exports com.github.nickid2018.chemistrylab.mod.javascript;
-    exports com.github.nickid2018.chemistrylab.server;
+    exports io.github.nickid2018.chemistrylab.crash;
+    exports io.github.nickid2018.chemistrylab.mod.javascript;
+    exports io.github.nickid2018.chemistrylab.server;
 }

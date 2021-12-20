@@ -1,11 +1,11 @@
-var ServerNetworkStarter = Java.type("com.github.nickid2018.chemistrylab.server.ServerNetworkStarter");
-var InetAddress = Java.type("java.net.InetAddress");
+ServerNetworkStarter = Java.type("io.github.nickid2018.chemistrylab.server.ServerNetworkStarter");
+InetAddress = Java.type("java.net.InetAddress");
 
 /**
  * Get the "ServerStarter" instance
  */
 function getServerStarterInstance() {
-    server = ServerNetworkStarter.instance;
+    var server = ServerNetworkStarter.instance;
     if(server == null)
         throw new Error("Server Starter hasn't been constructed");
     return server;
@@ -15,7 +15,7 @@ function getServerStarterInstance() {
  * Force stop the server
  */
 function forceStopServer() {
-    server = getServerStarterInstance();
+    var server = getServerStarterInstance();
     if(!server.isActive())
         throw new Error("Server Starter hasn't been activated");
     server.stop();
@@ -37,7 +37,7 @@ function getInetAddress(address){
  * @param timeout Timeout for TCP Server
  */
 function startTCPServer(inetAddress, port, timeout) {
-    server = getServerStarterInstance();
+    var server = getServerStarterInstance();
     if(server.isActive())
         throw new Error("Server Starter has been activated");
     server.startTcpServer(inetAddress, port, timeout);

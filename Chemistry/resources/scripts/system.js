@@ -2,7 +2,7 @@
 /**
  * API Base Class
  */
-var BASE_CLASS = Java.type("com.github.nickid2018.chemistrylab.mod.javascript.JavaScriptModBase");
+BASE_CLASS = Java.type("io.github.nickid2018.chemistrylab.mod.javascript.JavaScriptModBase");
 
 /**
  * Import a system JavaScript file API
@@ -52,7 +52,7 @@ function cast(object, clazz) {
 /**
  * Logger of JS Engine
  */
-var BASE_LOGGER = BASE_CLASS.JS_LOGGER;
+BASE_LOGGER = BASE_CLASS.JS_LOGGER;
 
 /**
  * print debug message
@@ -113,19 +113,19 @@ function logFatal(message, error) {
 /**
  * Class CrashReport
  */
-var CRASH_REPORT_CLASS = Java.type("com.github.nickid2018.chemistrylab.crash.CrashReport");
+CRASH_REPORT_CLASS = Java.type("io.github.nickid2018.chemistrylab.crash.CrashReport");
 /**
  * Class CrashReportSession
  */
-var CRASH_SESSION_CLASS = Java.type("com.github.nickid2018.chemistrylab.crash.CrashReportSession");
+CRASH_SESSION_CLASS = Java.type("io.github.nickid2018.chemistrylab.crash.CrashReportSession");
 /**
  * Class DetectedCrashException
  */
-var DetectedCrashException = Java.type("com.github.nickid2018.chemistrylab.crash.DetectedCrashException");
+DetectedCrashException = Java.type("io.github.nickid2018.chemistrylab.crash.DetectedCrashException");
 /**
  * Class ScriptException
  */
-var ScriptException = Java.type("javax.script.ScriptException");
+ScriptException = Java.type("javax.script.ScriptException");
 
 /**
  * Throw a Java Exception
@@ -170,6 +170,12 @@ function newCrashSession(name) {
  */
 function throwCrash(crashReport) {
     BASE_CLASS.crashFromJS(new DetectedCrashException(crashReport));
+}
+
+System = Java.type("java.lang.System");
+
+function systemExit(value) {
+    System.exit(value);
 }
 
 // --- API Invocation ---
